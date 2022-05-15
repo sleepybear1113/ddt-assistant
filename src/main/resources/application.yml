@@ -1,0 +1,5 @@
+server:
+  port: 17171
+
+app:
+  version: @project.version@

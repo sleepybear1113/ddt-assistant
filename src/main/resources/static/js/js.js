@@ -1,0 +1,11 @@
+// let inputUsername = document.getElementById("input-username");
+// let inputPassword = document.getElementById("input-password");
+// let inputSoftId = document.getElementById("input-softId");
+// let inputCaptureInterval = document.getElementById("input-captureInterval");
+// let inputKeyPressAfterCaptchaShow = document.getElementById("input-keyPressAfterCaptchaShow");
+// let inputKeyPressAfterCaptchaDisappear = document.getElementById("input-keyPressAfterCaptchaDisappear");
+// let inputKeyPressDelayAfterCaptchaDisappear = document.getElementById("input-keyPressDelayAfterCaptchaDisappear");
+// let inputDefaultChoiceAnswer = document.getElementById("input-defaultChoiceAnswer");
+// let inputTimeout = document.getElementById("input-timeout");
+// let inputLogPrintInterval = document.getElementById("input-logPrintInterval");
+// let inputDetectNewWindowInterval = document.getElementById("input-detectNewWindowInterval");

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>DDT Assistant by sleepybear</title>
+</head>
+<script src="lib/js/axios.min.js"></script>
+<script src="js/config/axios-config.js"></script>
+<script src="js/objects.js"></script>
+<script src="js/js.js"></script>
+<script src="js/http.js"></script>
+<body onload="initUserConfig()">
+
+<div>
+    <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
+    <label for="input-username">用户名</label><input id="input-username"><br/>
+    <label for="input-password">密码</label><input id="input-password" type="password"><br/>
+    <label for="input-softId">softId</label><input id="input-softId"><br/>
+    <button onclick="testCaptcha()">测试验证码</button><br/>
+    <label for="input-captureInterval">识屏间隔(毫秒)</label><input id="input-captureInterval"><br/>
+    <label for="input-keyPressAfterCaptchaShow">当出现验证码后按下的按键</label><input id="input-keyPressAfterCaptchaShow"><br/>
+    <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后按下按键等待的时间(毫秒)</label><input
+        id="input-keyPressDelayAfterCaptchaDisappear"><br/>
+    <label for="input-keyPressAfterCaptchaDisappear">当验证码消失后按下的按键</label><input
+        id="input-keyPressAfterCaptchaDisappear"><br/>
+    <label for="input-defaultChoiceAnswer">识别出现问题的默认选择</label><input id="input-defaultChoiceAnswer"><br/>
+    <label for="input-timeout">识别超时时间(毫秒)</label><input id="input-timeout"><br/>
+    <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label><input id="input-logPrintInterval"><br/>
+    <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label><input id="input-detectNewWindowInterval"><br/>
+    <label>其中 1000 毫秒 = 1 秒</label><br/>
+    <button onclick="saveUserConfig()">保存</button>
+    <button onclick="resetUserConfig()">重置</button>
+</div>
+<hr>
+<div>
+    <button onclick="bindAll()">检测并添加所有窗口</button>
+</div>
+<hr>
+<label for="textarea-info">信息：</label><textarea id="textarea-info" style="width: 400px; height: 100px" readonly></textarea>
+</body>
+</html>
