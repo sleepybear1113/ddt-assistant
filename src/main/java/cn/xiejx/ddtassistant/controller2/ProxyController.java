@@ -7,15 +7,15 @@ import cn.xiejx.ddtassistant.utils.http.enumeration.MethodEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.springframework.util.ResourceUtils;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -36,11 +36,12 @@ public class ProxyController {
         dataInputStream.readFully(bytesFromRequest);
         dataInputStream.close();
 
-        File file = ResourceUtils.getFile("classpath:sample/zj-pic.png");
-        byte[] bytesFromResource = new byte[(int) file.length()];
-        FileInputStream fileInputStream = new FileInputStream(file);
-        int i = fileInputStream.read(bytesFromResource);
-        fileInputStream.close();
+        Resource resource = new ClassPathResource("sample/zj-pic.png");
+        long length = resource.contentLength();
+        InputStream is = resource.getInputStream();
+        byte[] bytesFromResource = new byte[(int) length];
+        int read = is.read(bytesFromResource);
+
         boolean equals = Arrays.equals(bytesFromRequest, bytesFromResource);
         if (equals) {
             log.info("验证码服务器启动测试请求捕获！");
