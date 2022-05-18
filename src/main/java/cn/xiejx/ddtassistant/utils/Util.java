@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant.utils;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -12,9 +13,10 @@ public class Util {
     public static final int TIME_ALL_FORMAT = 0;
     public static final int TIME_YMD_FORMAT = 1;
     public static final int TIME_HMS_FORMAT = 2;
-    public static void sleep(long t) {
+
+    public static void sleep(Long t) {
         try {
-            if (t > 0) {
+            if (t != null && t > 0) {
                 TimeUnit.MILLISECONDS.sleep(t);
             }
         } catch (InterruptedException ignored) {
@@ -62,5 +64,14 @@ public class Util {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean portAvailable(int port) {
+        try {
+            new ServerSocket(port).close();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 }

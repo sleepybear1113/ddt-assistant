@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author XJX
  * @date 2021/8/10 1:59
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = {"cn.xiejx.ddtassistant.controller"})
 @Slf4j
 public class ControllerReturnAdvice implements ResponseBodyAdvice<Object> {
     @Override

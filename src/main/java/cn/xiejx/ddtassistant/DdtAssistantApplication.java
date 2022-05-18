@@ -1,8 +1,8 @@
 package cn.xiejx.ddtassistant;
 
 import cn.xiejx.ddtassistant.config.AppProperties;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
 
@@ -17,10 +17,14 @@ public class DdtAssistantApplication {
         System.out.println("应用启动中............");
         System.out.println("如果启动后最后没有显示中文的输出，显示一串英文代码，那么可能是大漠插件没有注册，请打开“大漠插件注册”文件夹进行注册。");
         System.out.println("==========================================");
-        ConfigurableApplicationContext context = SpringApplication.run(DdtAssistantApplication.class, args);
+
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(DdtAssistantApplication.class);
+        ConfigurableApplicationContext context = builder.headless(false).run(args);
+
         Environment environment = context.getBean(Environment.class);
         AppProperties appProperties = context.getBean(AppProperties.class);
         String port = environment.getProperty("server.port");
+
         System.out.println("==========================================");
         System.out.println("以下是一些程序相关介绍：");
         System.out.println("如果你会使用 Java，可以在当前文件夹下找到 jar 包，，直接使用 java -jar ddt-assistant.jar 来直接运行，需要使用 Java 8 x86。");

@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.dm;
 
+import cn.xiejx.ddtassistant.config.UserConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import lombok.extern.slf4j.Slf4j;
 
@@ -45,6 +46,15 @@ public class DmDdt extends Dm {
         }
         bind = true;
         super.bindWindow(this.hwnd);
+        GlobalVariable.DM_DDT_MAP.putIfAbsent(this.hwnd, this);
+    }
+
+    public void bind(UserConfig userConfig) {
+        if (bind) {
+            return;
+        }
+        bind = true;
+        super.bindWindow(this.hwnd, userConfig);
         GlobalVariable.DM_DDT_MAP.putIfAbsent(this.hwnd, this);
     }
 

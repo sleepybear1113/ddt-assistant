@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.dm;
 
+import cn.xiejx.ddtassistant.config.UserConfig;
 import cn.xiejx.ddtassistant.utils.Util;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.ComThread;
@@ -38,6 +39,11 @@ public class Dm {
         invoke("BindWindow", hwnd, display, mouse, keypad, mode);
     }
 
+    public int getWindow(int hwnd, int flag) {
+        Variant variant = invoke("GetWindow", hwnd, flag);
+        return variant.getInt();
+    }
+
     public String getWindowClass(int hwnd) {
         Variant variant = invoke("GetWindowClass", hwnd);
         return variant.getString();
@@ -46,6 +52,11 @@ public class Dm {
     public String getWindowTitle(int hwnd) {
         Variant variant = invoke("GetWindowTitle", hwnd);
         return variant.getString();
+    }
+
+    public int setWindowState(int hwnd, int flag) {
+        Variant variant = invoke("SetWindowState", hwnd, flag);
+        return variant.getInt();
     }
 
     public int[] getWindowRect(int hwnd) {
@@ -73,6 +84,10 @@ public class Dm {
 
     public void bindWindow(Integer hwnd) {
         bindWindow(hwnd, "dx2", "windows", "windows", 0);
+    }
+
+    public void bindWindow(Integer hwnd, UserConfig userConfig) {
+        bindWindow(hwnd, "dx2", userConfig.getMouseMode(), userConfig.getKeyPadMode(), 0);
     }
 
     public void unBindWindow() {

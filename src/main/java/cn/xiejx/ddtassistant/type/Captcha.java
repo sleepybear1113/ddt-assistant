@@ -122,7 +122,7 @@ public class Captcha {
             return;
         }
 
-        dm.bind();
+        dm.bind(userConfig);
 
         identifyCaptchaRunning = true;
         log.info("绑定 flash 窗口，句柄：{}", dm.getHwnd());
@@ -167,9 +167,9 @@ public class Captcha {
         log.info("点亮屏幕");
         dm.leftClick(100, 100, 100);
         dm.leftClick(100, 100, 100);
-        Util.sleep(300);
+        Util.sleep(300L);
         dm.leftClick(100, 100, 100);
-        Util.sleep(100);
+        Util.sleep(100L);
 
         // 验证码保存路径
         String captchaDir = "captcha/" + Util.getTimeString(Util.TIME_YMD_FORMAT) + "/";
@@ -213,7 +213,7 @@ public class Captcha {
             String defaultChoiceAnswer = userConfig.getDefaultChoiceAnswer();
             if (defaultChoiceAnswer == null || defaultChoiceAnswer.length() == 0) {
                 log.info("[{}] 用户没有设置默认选项，跳过选择，等待 5000 毫秒继续下一轮检测", dm.getHwnd());
-                Util.sleep(5000);
+                Util.sleep(5000L);
                 return true;
             }
             choiceEnum = ChoiceEnum.getChoice(defaultChoiceAnswer);
@@ -226,15 +226,15 @@ public class Captcha {
 
         // 点击选项
         dm.leftClick(choiceEnum.getXy(), 100);
-        Util.sleep(300);
+        Util.sleep(300L);
         dm.leftClick(choiceEnum.getXy(), 100);
 
         // 提交答案
-        Util.sleep(500);
+        Util.sleep(500L);
         dm.leftClick(SUBMIT_BUTTON_POINT, 100);
 
         this.lastCaptchaTime = System.currentTimeMillis();
-        Util.sleep(1000);
+        Util.sleep(1000L);
         return true;
     }
 

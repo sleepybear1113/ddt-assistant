@@ -99,7 +99,7 @@ public class TjHttpUtil {
                 break;
             }
 
-            Util.sleep(100);
+            Util.sleep(100L);
             TjResponse cache = CACHER.get(id);
             if (cache == null) {
                 break;

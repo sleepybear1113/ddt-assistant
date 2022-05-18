@@ -14,6 +14,7 @@ class UserConfig {
         this.timeout = props.timeout;
         this.logPrintInterval = props.logPrintInterval;
         this.detectNewWindowInterval = props.detectNewWindowInterval;
+        this.extraPorts = props.extraPorts;
     }
 }
 
@@ -54,5 +55,28 @@ class TjPicResult {
 
         this.id = props.id;
         this.result = props.result;
+    }
+}
+
+class TestRes {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.msg = props.msg;
+        this.success = props.success;
+
+    }
+
+}
+
+class AppInfoVo {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.appVersion = props.appVersion;
     }
 }

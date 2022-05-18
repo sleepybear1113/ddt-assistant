@@ -36,3 +36,4 @@ build/
 captcha/
 user-config.json
 logs/
+application-dev.yml

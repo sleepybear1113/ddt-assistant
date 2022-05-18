@@ -13,5 +13,5 @@ public class GlobalVariable {
     public static final Map<Integer, DmDdt> DM_DDT_MAP = new ConcurrentHashMap<>();
     public static final Map<Integer, Captcha> CAPTCHA_MAP = new ConcurrentHashMap<>();
 
-    public static final ThreadPoolExecutor THREAD_POOL = new ThreadPoolExecutor(10, 30, 10, TimeUnit.SECONDS, new SynchronousQueue<>(), Executors.defaultThreadFactory(), new ThreadPoolExecutor.DiscardPolicy());
+    public static final ThreadPoolExecutor THREAD_POOL = new ThreadPoolExecutor(10, 60, 10, TimeUnit.SECONDS, new SynchronousQueue<>(), Executors.defaultThreadFactory(), new ThreadPoolExecutor.DiscardPolicy());
 }

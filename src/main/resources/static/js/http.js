@@ -29,6 +29,12 @@ function fillUserConfig(userConfig) {
     document.getElementById("input-timeout").value = userConfig.timeout;
     document.getElementById("input-logPrintInterval").value = userConfig.logPrintInterval;
     document.getElementById("input-detectNewWindowInterval").value = userConfig.detectNewWindowInterval;
+    document.getElementById("input-extraPorts").value = userConfig.extraPorts;
+}
+
+function init() {
+    initUserConfig();
+    initApp();
 }
 
 function initUserConfig() {
@@ -36,6 +42,14 @@ function initUserConfig() {
     axios.get(url).then((res) => {
         let userConfig = new UserConfig(res.data.result);
         fillUserConfig(userConfig);
+    });
+}
+
+function initApp() {
+    let url = "app/info"
+    axios.get(url).then((res) => {
+        let appInfoVo = new AppInfoVo(res.data.result);
+        document.getElementById("appVersion").innerText = appInfoVo.appVersion;
     });
 }
 
@@ -64,6 +78,7 @@ function saveUserConfig() {
     userConfig.timeout = document.getElementById("input-timeout").value;
     userConfig.logPrintInterval = document.getElementById("input-logPrintInterval").value;
     userConfig.detectNewWindowInterval = document.getElementById("input-detectNewWindowInterval").value;
+    userConfig.extraPorts = document.getElementById("input-extraPorts").value;
 
     let url = "config/update"
     console.log(userConfig);
@@ -105,4 +120,37 @@ function showInfo(msg) {
     setTimeout(() => {
         textareaInfo.value = `${new Date().Format("yyyy-MM-dd hh:mm:ss")}\n${msg}`;
     }, 100);
+}
+
+function testClick() {
+    let url = "test/click";
+    let inputTestDelay = document.getElementById("input-testDelay");
+    let inputClickX = document.getElementById("input-clickX");
+    let inputClickY = document.getElementById("input-clickY");
+    axios.get(url, {
+        params: {
+            x: inputClickX.value,
+            y: inputClickY.value,
+            delay: inputTestDelay.value
+        }
+    }).then((res) => {
+        let testRes = new TestRes(res.data.result);
+        if (testRes.success) {
+            showInfo(`已点击${testRes.msg}, 请检查游戏中是否点击到了对应坐标的位置`);
+        } else {
+            showInfo(`点击失败，${testRes.msg}`);
+        }
+    });
+}
+
+function testKeyPress() {
+    let url = "test/keyPress";
+    let inputTestDelay = document.getElementById("input-testDelay");
+    let inputKeyPress = document.getElementById("input-keyPress");
+    axios.get(url, {
+        params: {
+            key: inputKeyPress.value,
+            delay: inputTestDelay.value
+        }
+    });
 }
