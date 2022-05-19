@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>DDT Assistant by sleepybear</title>
     <link rel="stylesheet" type="text/css" href="css.css">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
 </head>
 <script src="lib/js/axios.min.js"></script>
 <script src="js/config/axios-config.js"></script>
@@ -11,7 +12,7 @@
 <script src="js/js.js"></script>
 <script src="js/http.js"></script>
 <body onload="init()">
-<span>版本号：</span><span id="appVersion"></span>
+<span>版本号：</span><span id="appVersion"></span>　　<span>作者：sleepybear</span>　　<span>交流群：879596615</span>　　<span>设置完毕之后，本页面可以关闭，但不要关闭后台程序</span>
 <div class="area">
     <h3>副本验证码功能</h3>
     <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
@@ -31,7 +32,8 @@
     <label for="input-defaultChoiceAnswer">识别出现问题的默认选择</label><input id="input-defaultChoiceAnswer"><br/>
     <label for="input-timeout">识别超时时间(毫秒)</label><input id="input-timeout" type="number"><br/>
     <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label><input id="input-logPrintInterval" type="number"><br/>
-    <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label><input id="input-detectNewWindowInterval" type="number"><br/>
+    <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label><input id="input-detectNewWindowInterval"
+                                                                             type="number"><br/>
     <label for="input-extraPorts">开启额外端口(逗号分割端口号，需要保存重启)</label><input id="input-extraPorts"><br/>
     <label>其中 1000 毫秒 = 1 秒</label><br/>
     <button onclick="saveUserConfig()">保存</button>
@@ -83,6 +85,7 @@
 
 <div id="div-test" class="area">
     <h3>以下为测试</h3>
+    <span>若点击操作无反应，请启动 “运行-管理员权限.bat”，部分人的可能存在不提高权限不能点击的情况</span><br/>
     <span>如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
     <label for="input-testDelay">以下操作延迟时间(毫秒)</label><input id="input-testDelay" type="number" value="500">
     <div id="div-click">
@@ -90,11 +93,13 @@
                                                     value="530">
         <label for="input-clickY">Y坐标</label><input id="input-clickY" type="number" maxlength="4" max="9999"
                                                     value="585">
-        <button onclick="testClick()">测试点击该坐标</button><span>(530,585)坐标正常为“充值”按钮，可以根据自己需要点击其他位置</span>
+        <button onclick="testClick()">测试点击该坐标</button>
+        <span>(530,585)坐标正常为“充值”按钮，可以根据自己需要点击其他位置</span>
     </div>
     <div id="div-keyPress">
         <label for="input-keyPress">按下键盘的按键(仅支持Fn)</label><input id="input-keyPress" value="F5">
-        <button onclick="testKeyPress()">测试按键</button><span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
+        <button onclick="testKeyPress()">测试按键</button>
+        <span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
     </div>
 </div>
 </body>

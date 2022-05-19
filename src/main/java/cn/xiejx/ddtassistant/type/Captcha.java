@@ -54,6 +54,9 @@ public class Captcha {
     public static final String TEMPLATE_PIC_DARK = Constants.RESOURCE_DIR + "template-dark.bmp";
     public static final String TEMPLATE_PIC_ALL = TEMPLATE_PIC_BRIGHT + "|" + TEMPLATE_PIC_DARK;
 
+    public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.5;
+    public static final double DEFAULT_DARK_PIC_THRESHOLD = 0.9;
+
     private final DmDdt dm;
 
     private boolean identifyCaptchaRunning;
@@ -94,7 +97,11 @@ public class Captcha {
     }
 
     public boolean findCaptcha(String templatePath) {
-        int[] pic = dm.findPic(CAPTCHA_TITLE_REACT[0], CAPTCHA_TITLE_REACT[1], CAPTCHA_TITLE_REACT[2], CAPTCHA_TITLE_REACT[3], templatePath, "050505", 0.9, 0);
+        return findCaptcha(templatePath, 0.9);
+    }
+
+    public boolean findCaptcha(String templatePath, double threshold) {
+        int[] pic = dm.findPic(CAPTCHA_TITLE_REACT[0], CAPTCHA_TITLE_REACT[1], CAPTCHA_TITLE_REACT[2], CAPTCHA_TITLE_REACT[3], templatePath, "050505", threshold, 0);
         return pic[0] > 0;
     }
 
@@ -153,10 +160,15 @@ public class Captcha {
         }
 
         // 没找到
-        if (!findCaptcha(TEMPLATE_PIC_ALL)) {
-            return true;
+        if (!findCaptcha(TEMPLATE_PIC_BRIGHT, DEFAULT_BRIGHT_PIC_THRESHOLD)) {
+            if (!findCaptcha(TEMPLATE_PIC_DARK, DEFAULT_DARK_PIC_THRESHOLD)) {
+                return true;
+            } else {
+                log.info("[{}] 发现验证码-暗！", dm.getHwnd());
+            }
+        } else {
+            log.info("[{}] 发现验证码-亮！", dm.getHwnd());
         }
-        log.info("[{}] 发现验证码！", dm.getHwnd());
 
         // 上报错误，如果有
         reportErrorResult(this.lastRemoteCaptchaId);
@@ -164,7 +176,7 @@ public class Captcha {
         // 设置按钮缓存
         CaptchaLogic.TIME_CACHER.set(CaptchaLogic.HAS_FOUND_KEY, System.currentTimeMillis(), CaptchaLogic.S, ExpireWayEnum.AFTER_UPDATE);
 
-        log.info("点亮屏幕");
+        log.info("[{}] 点亮屏幕", dm.getHwnd());
         dm.leftClick(100, 100, 100);
         dm.leftClick(100, 100, 100);
         Util.sleep(300L);
@@ -204,7 +216,6 @@ public class Captcha {
             return false;
         }
 
-        log.info("[{}] 选择结果 {}", dm.getHwnd(), response);
         if (ChoiceEnum.UNDEFINED.equals(choiceEnum)) {
             // 报错
             reportErrorResult(response.getResult().getId());
@@ -222,6 +233,8 @@ public class Captcha {
                 choiceEnum = ChoiceEnum.A;
             }
             log.info("[{}] 平台返回结果格式不正确，进行用户自定义选择，{}", dm.getHwnd(), choiceEnum);
+        } else {
+            log.info("[{}] 选择结果 {}", dm.getHwnd(), choiceEnum.getChoice());
         }
 
         // 点击选项

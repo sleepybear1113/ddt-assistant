@@ -30,7 +30,7 @@ public class TjHttpUtil {
     private static final String TJ_PREDICT_URL = "http://api.ttshitu.com/predict";
     private static final String TJ_REPORT_ERROR_URL = "http://api.ttshitu.com/reporterror.json?id=";
 
-    public static final Random R = new Random();
+    public static final Random RANDOM = new Random();
 
     private static final Cacher<Integer, TjResponse> CACHER = new CacherBuilder<Integer, TjResponse>()
             .scheduleName("cacher")
@@ -71,7 +71,6 @@ public class TjHttpUtil {
             res.setMessage("验证码获取结果为空");
             return res;
         }
-        log.info(responseBody);
         TjResponse tjResponse = JSON.parseObject(responseBody, TjResponse.class);
         TjResponse response = TjResponse.buildResponse(tjResponse);
         response.setCost(end - start);
@@ -79,12 +78,16 @@ public class TjHttpUtil {
     }
 
     public static TjResponse waitToGetChoice(long maxDelay, long afterDisappearDelay, TjPredictDto tjPredictDto) {
-        int id = R.nextInt(100000);
+        int id = RANDOM.nextInt(100000);
         CACHER.set(id, TjResponse.buildWaitingResponse(), 1000L * 60);
         GlobalVariable.THREAD_POOL.execute(() -> {
             TjResponse tjResponse = getTjResponse(tjPredictDto);
             tjResponse = TjResponse.buildResponse(tjResponse);
-            log.info("[{}] 请求结束，平台识别时间耗时 {} 毫秒", id, tjResponse.getCost());
+            if (tjResponse.getSuccess()) {
+                log.info("[{}] 请求结束，平台识别时间耗时 {} 毫秒", id, tjResponse.getCost());
+            } else {
+                log.info("[{}] 请求失败！ 原因：{}", id, tjResponse.getMessage());
+            }
 
             CACHER.set(id, tjResponse, 1000L * 60);
         });
@@ -111,7 +114,7 @@ public class TjHttpUtil {
         }
 
         long cost = System.currentTimeMillis() - startTime;
-        log.info("[{}] 识别耗时 {} 毫秒，答案为：{}，全部结果为：{}", id, cost, response.getChoiceEnum().getChoice(), response);
+        log.info("[{}] 总识别耗时 {} 毫秒，答案为：{}，全部结果为：{}", id, cost, response.getChoiceEnum().getChoice(), response);
         return response;
     }
 
