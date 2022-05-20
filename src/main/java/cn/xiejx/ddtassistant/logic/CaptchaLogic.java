@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant.logic;
 
 import cn.xiejx.ddtassistant.config.UserConfig;
+import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
@@ -12,6 +13,7 @@ import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
 import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.tj.TjResponse;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
+import cn.xiejx.ddtassistant.vo.StringRet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +21,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -31,6 +36,7 @@ public class CaptchaLogic {
     public static final Cacher<String, Long> TIME_CACHER = new CacherBuilder<String, Long>().scheduleName("timeCacher").delay(30, TimeUnit.SECONDS).build();
     public static final String HAS_FOUND_KEY = "hasFound";
     public static final long S = 5000L;
+    private static final Random RANDOM = new Random();
 
     @Resource
     private UserConfig userConfig;
@@ -105,6 +111,21 @@ public class CaptchaLogic {
         return bindResultVo;
     }
 
+    public StringRet captureCaptchaSampleRegion() {
+        Collection<Captcha> captchaList = GlobalVariable.CAPTCHA_MAP.values();
+        if (CollectionUtils.isEmpty(captchaList)) {
+            return StringRet.buildFail("当前没有正在运行的线程");
+        }
+
+        List<String> pathList = new ArrayList<>();
+        for (Captcha captcha : captchaList) {
+            String path = Constants.RESOURCE_DIR + Captcha.TEMPLATE_PIC_PREFIX + (RANDOM.nextInt(1000) + 100) + Constants.BMP_SUFFIX;
+            captcha.captureCountDownSampleRegion(path);
+            pathList.add(path);
+        }
+
+        return StringRet.buildSuccess(StringUtils.join(pathList, "\n"));
+    }
 
     public void monitorNewCaptchaLoop(UserConfig userConfig) {
         while (true) {

@@ -154,3 +154,26 @@ function testKeyPress() {
         }
     });
 }
+
+function captureCaptchaSampleRegion() {
+    let checkbox = document.getElementById("checkbox-capture-sample");
+    if (!checkbox.checked) {
+        showInfo("未勾选，不进行截图！")
+        return;
+    }
+    let url = "captcha/captureCaptchaSampleRegion";
+    axios.get(url).then((res) => {
+        let ret = new StringRet(res.data.result);
+        if (ret == null) {
+            showInfo("失败，程序没有返回任何内容");
+            return;
+        }
+        let success = ret.success;
+        if (!success) {
+            showInfo("失败，" + ret.msg);
+            return;
+        }
+
+        showInfo(`截图成功，保存至程序运行目录的下述文件夹的图片文件\n请查看并且删除多余的或者不必要的以保证效率，重启程序生效。\n${ret.msg}`);
+    });
+}

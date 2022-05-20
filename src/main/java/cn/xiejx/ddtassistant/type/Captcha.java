@@ -4,7 +4,6 @@ import cn.xiejx.ddtassistant.config.UserConfig;
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
-import cn.xiejx.ddtassistant.dm.React;
 import cn.xiejx.ddtassistant.logic.CaptchaLogic;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
@@ -16,13 +15,28 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author sleepybear
  */
 @Slf4j
 public class Captcha {
+
+    public static List<String> captchaTemplateNameList = new ArrayList<>();
+    public static List<String> captchaTemplateNameDarkList = new ArrayList<>();
+
+
     public final static int[] CAPTCHA_TITLE_REACT = {240, 110, 400, 180};
+    /**
+     * 倒计时三个字的模板区域，“验证码提示”字样最小区域
+     */
+    public final static int[] CAPTCHA_COUNTDOWN_SAMPLE_REACT = {640, 183, 708, 205};
+    /**
+     * 验证码寻找匹配区域，需要在这块区域匹配 CAPTCHA_COUNTDOWN_SAMPLE_REACT
+     */
+    public final static int[] CAPTCHA_COUNTDOWN_FIND_REACT = {600, 160, 770, 240};
     /**
      * 找图的模板，“验证码提示”字样最小区域
      */
@@ -40,6 +54,10 @@ public class Captcha {
      */
     public final static int[] CAPTCHA_FULL_REACT = {258, 132, 761, 498};
     /**
+     * 游戏的全屏区域
+     */
+    public final static int[] GAME_FULL_REACT = {0, 0, 1000, 600};
+    /**
      * 验证码选项坐标
      */
     public final static int[] ANSWER_CHOICE_POINT = {350, 373, 568, 410};
@@ -49,6 +67,8 @@ public class Captcha {
     public final static int[] ANSWER_CHOICE_POINT_B = {ANSWER_CHOICE_POINT[2], ANSWER_CHOICE_POINT[1]};
     public final static int[] ANSWER_CHOICE_POINT_C = {ANSWER_CHOICE_POINT[0], ANSWER_CHOICE_POINT[3]};
     public final static int[] ANSWER_CHOICE_POINT_D = {ANSWER_CHOICE_POINT[2], ANSWER_CHOICE_POINT[3]};
+
+    public static final String TEMPLATE_PIC_PREFIX = "captcha-template-";
 
     public static final String TEMPLATE_PIC_BRIGHT = Constants.RESOURCE_DIR + "template-bright.bmp";
     public static final String TEMPLATE_PIC_DARK = Constants.RESOURCE_DIR + "template-dark.bmp";
@@ -64,6 +84,8 @@ public class Captcha {
     private String lastRemoteCaptchaId;
 
     private final long[] errorTimeRange = {1000, 10000};
+
+    private static boolean hasGetUserInfo = false;
 
     private Captcha(DmDdt dm) {
         this.dm = dm;
@@ -101,12 +123,11 @@ public class Captcha {
     }
 
     public boolean findCaptcha(String templatePath, double threshold) {
-        int[] pic = dm.findPic(CAPTCHA_TITLE_REACT[0], CAPTCHA_TITLE_REACT[1], CAPTCHA_TITLE_REACT[2], CAPTCHA_TITLE_REACT[3], templatePath, "050505", threshold, 0);
+        if (StringUtils.isBlank(templatePath)) {
+            return false;
+        }
+        int[] pic = dm.findPic(CAPTCHA_COUNTDOWN_FIND_REACT[0], CAPTCHA_COUNTDOWN_FIND_REACT[1], CAPTCHA_COUNTDOWN_FIND_REACT[2], CAPTCHA_COUNTDOWN_FIND_REACT[3], templatePath, "050505", threshold, 0);
         return pic[0] > 0;
-    }
-
-    public React findCaptchaReact(String templatePath) {
-        return dm.findPicS(CAPTCHA_TITLE_REACT[0], CAPTCHA_TITLE_REACT[1], CAPTCHA_TITLE_REACT[2], CAPTCHA_TITLE_REACT[3], templatePath, "050505", 0.9, 0);
     }
 
     public void captureCaptchaQuestionPic(String path) {
@@ -115,6 +136,10 @@ public class Captcha {
 
     public void captureCaptchaCountDownPic(String path) {
         dm.capturePicByRegion(path, CAPTCHA_COUNT_DOWN_REACT);
+    }
+
+    public void captureCountDownSampleRegion(String path) {
+        dm.capturePicByRegion(path, CAPTCHA_COUNTDOWN_SAMPLE_REACT);
     }
 
     public void identifyCaptchaLoop(UserConfig userConfig) {
@@ -160,8 +185,8 @@ public class Captcha {
         }
 
         // 没找到
-        if (!findCaptcha(TEMPLATE_PIC_BRIGHT, DEFAULT_BRIGHT_PIC_THRESHOLD)) {
-            if (!findCaptcha(TEMPLATE_PIC_DARK, DEFAULT_DARK_PIC_THRESHOLD)) {
+        if (!findCaptcha(getTemplateBmpNames(), DEFAULT_BRIGHT_PIC_THRESHOLD)) {
+            if (!findCaptcha(getTemplateDarkBmpNames(), DEFAULT_DARK_PIC_THRESHOLD)) {
                 return true;
             } else {
                 log.info("[{}] 发现验证码-暗！", dm.getHwnd());
@@ -260,7 +285,7 @@ public class Captcha {
             return;
         }
 
-        log.info("[{}] 对上一次错误打码报错给平台，id = {}", dm.getHwnd(), id);
+        log.info("[{}] [报错] 对上一次错误打码报错给平台，id = {}", dm.getHwnd(), id);
         this.lastRemoteCaptchaId = null;
         GlobalVariable.THREAD_POOL.execute(() -> {
             try {
@@ -272,10 +297,26 @@ public class Captcha {
     }
 
     public static boolean startIdentifyCaptcha(Integer hwnd, UserConfig userConfig) {
+        GlobalVariable.THREAD_POOL.execute(() -> {
+            if (!hasGetUserInfo) {
+                hasGetUserInfo = true;
+                String accountInfo = TjHttpUtil.getAccountInfo(userConfig.getUsername(), userConfig.getPassword());
+                log.info(accountInfo);
+            }
+        });
+
         if (Captcha.isRunning(hwnd)) {
             return false;
         }
         GlobalVariable.THREAD_POOL.execute(() -> Captcha.createInstance(DmDdt.createInstance(hwnd)).identifyCaptchaLoop(userConfig));
         return true;
+    }
+
+    public static String getTemplateBmpNames() {
+        return StringUtils.join(Captcha.captchaTemplateNameList, "|");
+    }
+
+    public static String getTemplateDarkBmpNames() {
+        return StringUtils.join(Captcha.captchaTemplateNameDarkList, "|");
     }
 }

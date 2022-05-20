@@ -11,9 +11,10 @@ import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
 import com.alibaba.fastjson2.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
-import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Random;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
 public class TjHttpUtil {
     private static final String TJ_PREDICT_URL = "http://api.ttshitu.com/predict";
     private static final String TJ_REPORT_ERROR_URL = "http://api.ttshitu.com/reporterror.json?id=";
+    private static final String TJ_ACCOUNT_INFO_URL = "http://api.ttshitu.com/queryAccountInfo.json?username=%s&password=%s";
 
     public static final Random RANDOM = new Random();
 
@@ -118,7 +120,6 @@ public class TjHttpUtil {
         return response;
     }
 
-
     public static void reportError(String id) {
         RequestConfig requestConfig = RequestConfig.custom()
                 .setConnectionRequestTimeout(1000 * 5)
@@ -129,8 +130,31 @@ public class TjHttpUtil {
         HttpRequestMaker requestMaker = HttpRequestMaker.makeGetHttpHelper(TJ_REPORT_ERROR_URL + id);
         requestMaker.setConfig(requestConfig);
         HttpHelper httpHelper = new HttpHelper(requestMaker);
-        HttpResponseHelper responseHelper = httpHelper.request();
-        log.info("报错 id = {}，{}", id, responseHelper.getResponseBody());
+        httpHelper.request();
+    }
+
+    public static String getAccountInfo(String username, String password) {
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            return "";
+        }
+        try {
+            String url = String.format(TJ_ACCOUNT_INFO_URL, username, password);
+            HttpHelper httpHelper = HttpHelper.makeDefaultGetHttpHelper(url);
+            HttpResponseHelper responseHelper = httpHelper.request();
+            String responseBody = responseHelper.getResponseBody();
+
+            TjAccountInfo tjAccountInfo = JSON.parseObject(responseBody, TjAccountInfo.class);
+            if (!Boolean.TRUE.equals(tjAccountInfo.getSuccess())) {
+                return "获取用户信息失败，" + tjAccountInfo.getMessage();
+            }
+            String data = tjAccountInfo.getData();
+            TjConsumption tjConsumption = JSON.parseObject(data,TjConsumption.class);
+            return String.format("当前余额：%s，总消费：%s，总成功：%s，总失败：%s", tjConsumption.getBalance(), tjConsumption.getConsumed(), tjConsumption.getSuccessNum(), tjConsumption.getFailNum());
+        } catch (Exception e) {
+            String s = "获取用户信息失败：" + e.getMessage();
+            log.warn(s, e);
+            return "";
+        }
     }
 
 }

@@ -12,4 +12,8 @@ public class Constants {
     public static final Map<Integer, Dm> HWND_DM_MAP = new ConcurrentHashMap<>();
 
     public static final String RESOURCE_DIR = "img/";
+
+    public static final String BMP_SUFFIX = ".bmp";
+    public static final String JPG_SUFFIX = ".jpg";
+    public static final String PNG_SUFFIX = ".png";
 }

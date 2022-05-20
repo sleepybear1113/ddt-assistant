@@ -65,18 +65,16 @@ public class ProxyController {
 
     @RequestMapping("/v1/card/heartbeat")
     public String heart() {
-        return "{\"code\":400,\"message\":\"参数错误\",\"errs\":{\"CardHeartbeatParams.Token\":\"Token长度必须是20个字符\"},\"nonce\":\"\",\"sign\":\"\"}";
+        return String.format("{\"code\":0,\"message\":\"ok\",\"result\":{\"expires\":\"2099-12-31 23:59:59\",\"expires_ts\":4102415999,\"server_time\":%s}", System.currentTimeMillis() / 1000);
     }
 
     @RequestMapping("/v1/af/remote_var")
-    public String remoteVar(String action, String key, String value, String nonce, String timestamp, String sign) {
-        log.info("{}, {}, {}, {}, {}, {}", action, key, value, nonce, timestamp, sign);
+    public String remoteVar() {
         return "{\"code\":0,\"message\":\"ok\",\"result\":{\"value\":\"41541-00000123\"},\"nonce\":\"ca2cqggo3pjbikipgj70\",\"sign\":\"9138257fd0f479079873fdb686fb6db9\"}";
     }
 
     @RequestMapping("/v1/af/remote_data")
-    public String remoteData(String action, String app_key, String key, String value, String nonce, String timestamp, String sign) {
-        log.info("{}, {}, {}, {}, {}, {}, {}", action, app_key, key, value, nonce, timestamp, sign);
+    public String remoteData() {
         return "{\"code\":10522,\"message\":\"远程数据已存在\",\"nonce\":\"ca2c2jgo3pjbikic11qg\",\"sign\":\"fbdf9c90c2194f3670103d338ddb2df2\"}";
     }
 
@@ -115,8 +113,6 @@ public class ProxyController {
         }
 
         public static CardLogin build() {
-//            CardLogin cardLogin = new CardLogin(0, "ok", "c6do74bdqusp4iu51pgg", "e7a16af93887feaf284a80c010f8b0ac");
-//            cardLogin.result = new CardLoginResult("月卡", "BKoHy32HrrKg7W8sB8Qr", "2030-12-31 23:59:59", 1924963199L, "四开全套", System.currentTimeMillis() / 1000);
             CardLogin cardLogin = new CardLogin(0, "ok", "c6do74bdqusp4iu51pgg", "e7a16af93887feaf284a80c010f8b0ac");
             cardLogin.result = new CardLoginResult("月卡", "BKoHy32HrrKg7W8sB8Qr", "2099-12-31 23:59:59", 4102415999000L, CARD_TYPE, System.currentTimeMillis() / 1000);
             return cardLogin;

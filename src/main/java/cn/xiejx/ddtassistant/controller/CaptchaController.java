@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.controller;
 import cn.xiejx.ddtassistant.logic.CaptchaLogic;
 import cn.xiejx.ddtassistant.utils.tj.TjResponse;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
+import cn.xiejx.ddtassistant.vo.StringRet;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,5 +30,10 @@ public class CaptchaController {
     @RequestMapping("/captcha/addAllCaptcha")
     public BindResultVo bindAll() {
         return captchaLogic.bindAll();
+    }
+
+    @RequestMapping("/captcha/captureCaptchaSampleRegion")
+    public StringRet captureCaptchaSampleRegion() {
+        return captchaLogic.captureCaptchaSampleRegion();
     }
 }

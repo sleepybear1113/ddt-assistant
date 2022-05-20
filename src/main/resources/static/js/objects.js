@@ -80,3 +80,14 @@ class AppInfoVo {
         this.appVersion = props.appVersion;
     }
 }
+
+class StringRet {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.success = props.success;
+        this.msg = props.msg;
+    }
+}

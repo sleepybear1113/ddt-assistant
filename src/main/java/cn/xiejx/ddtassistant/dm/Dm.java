@@ -157,6 +157,11 @@ public class Dm {
         return new React(x.getInt(), y.getInt(), variant.getString());
     }
 
+    public int imageToBmp(String fromPicName, String toBmpName) {
+        Variant variant = invoke("ImageToBmp", fromPicName, toBmpName);
+        return variant.getInt();
+    }
+
     private boolean invalidFindPicParam(int x1, int y1, int x2, int y2, String templatePath) {
         return !validFindPicParam(x1, y1, x2, y2, templatePath);
     }

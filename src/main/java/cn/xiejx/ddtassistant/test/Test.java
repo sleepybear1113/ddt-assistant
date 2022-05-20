@@ -1,16 +1,19 @@
 package cn.xiejx.ddtassistant.test;
 
+import cn.xiejx.ddtassistant.config.Ioc;
+import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.DmDdt;
+import cn.xiejx.ddtassistant.type.Captcha;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
 import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.tj.TjResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -19,10 +22,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
+        c();
+    }
+
+    public static void toBmp() {
         DmDdt dm = DmDdt.createInstance(null);
-        int hwnd = 1709470;
-        System.out.println(dm.getWindowTitle(hwnd) + "-" + dm.getWindowClass(hwnd) + "-" + Arrays.toString(dm.getWindowRect(hwnd)));
-        dm.setWindowState(hwnd, 5);
+
+        dm.imageToBmp("test/count-down-bright-2.png", "test/captcha-sample-bright-2.bmp");
+    }
+
+    public static void c() {
+        int hwnd = 4264830;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.capturePicByRegion("test/template-dark-1.bmp", Captcha.CAPTCHA_COUNTDOWN_SAMPLE_REACT);
     }
 
     public static void testKey() throws AWTException {
