@@ -32,11 +32,11 @@ public class Captcha {
     /**
      * 倒计时三个字的模板区域，“验证码提示”字样最小区域
      */
-    public final static int[] CAPTCHA_COUNTDOWN_SAMPLE_REACT = {640, 183, 708, 205};
+    public final static int[] CAPTCHA_COUNTDOWN_SAMPLE_REACT = {625, 175, 708, 205};
     /**
      * 验证码寻找匹配区域，需要在这块区域匹配 CAPTCHA_COUNTDOWN_SAMPLE_REACT
      */
-    public final static int[] CAPTCHA_COUNTDOWN_FIND_REACT = {600, 160, 770, 240};
+    public final static int[] CAPTCHA_COUNTDOWN_FIND_REACT = {590, 155, 770, 240};
     /**
      * 找图的模板，“验证码提示”字样最小区域
      */
@@ -74,7 +74,7 @@ public class Captcha {
     public static final String TEMPLATE_PIC_DARK = Constants.RESOURCE_DIR + "template-dark.bmp";
     public static final String TEMPLATE_PIC_ALL = TEMPLATE_PIC_BRIGHT + "|" + TEMPLATE_PIC_DARK;
 
-    public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.5;
+    public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.6;
     public static final double DEFAULT_DARK_PIC_THRESHOLD = 0.9;
 
     private final DmDdt dm;
@@ -126,7 +126,7 @@ public class Captcha {
         if (StringUtils.isBlank(templatePath)) {
             return false;
         }
-        int[] pic = dm.findPic(CAPTCHA_COUNTDOWN_FIND_REACT[0], CAPTCHA_COUNTDOWN_FIND_REACT[1], CAPTCHA_COUNTDOWN_FIND_REACT[2], CAPTCHA_COUNTDOWN_FIND_REACT[3], templatePath, "050505", threshold, 0);
+        int[] pic = dm.findPic(CAPTCHA_COUNTDOWN_FIND_REACT[0], CAPTCHA_COUNTDOWN_FIND_REACT[1], CAPTCHA_COUNTDOWN_FIND_REACT[2], CAPTCHA_COUNTDOWN_FIND_REACT[3], templatePath, "010101", threshold, 0);
         return pic[0] > 0;
     }
 
