@@ -74,7 +74,7 @@ public class Captcha {
     public static final String TEMPLATE_PIC_DARK = Constants.RESOURCE_DIR + "template-dark.bmp";
     public static final String TEMPLATE_PIC_ALL = TEMPLATE_PIC_BRIGHT + "|" + TEMPLATE_PIC_DARK;
 
-    public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.6;
+    public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.7;
     public static final double DEFAULT_DARK_PIC_THRESHOLD = 0.9;
 
     private final DmDdt dm;
@@ -196,7 +196,7 @@ public class Captcha {
         }
 
         // 上报错误，如果有
-        reportErrorResult(this.lastRemoteCaptchaId);
+        reportErrorResult(this.lastRemoteCaptchaId, false);
 
         // 设置按钮缓存
         CaptchaLogic.TIME_CACHER.set(CaptchaLogic.HAS_FOUND_KEY, System.currentTimeMillis(), CaptchaLogic.S, ExpireWayEnum.AFTER_UPDATE);
@@ -243,7 +243,7 @@ public class Captcha {
 
         if (ChoiceEnum.UNDEFINED.equals(choiceEnum)) {
             // 报错
-            reportErrorResult(response.getResult().getId());
+            reportErrorResult(response.getResult().getId(), true);
 
             // 识别错误，那么走用户自定义
             String defaultChoiceAnswer = userConfig.getDefaultChoiceAnswer();
@@ -276,13 +276,15 @@ public class Captcha {
         return true;
     }
 
-    public void reportErrorResult(String id) {
-        long timeSub = System.currentTimeMillis() - this.lastCaptchaTime;
-        if (timeSub < this.errorTimeRange[0] || timeSub > this.errorTimeRange[1]) {
-            return;
-        }
+    public void reportErrorResult(String id, boolean force) {
         if (StringUtils.isBlank(id)) {
             return;
+        }
+        if (!force) {
+            long timeSub = System.currentTimeMillis() - this.lastCaptchaTime;
+            if (timeSub < this.errorTimeRange[0] || timeSub > this.errorTimeRange[1]) {
+                return;
+            }
         }
 
         log.info("[{}] [报错] 对上一次错误打码报错给平台，id = {}", dm.getHwnd(), id);
