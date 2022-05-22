@@ -82,6 +82,7 @@ public class Captcha {
     private boolean identifyCaptchaRunning;
     private long lastCaptchaTime;
     private String lastRemoteCaptchaId;
+    private String lastCaptchaFilePath;
 
     private final long[] errorTimeRange = {1000, 10000};
 
@@ -92,6 +93,7 @@ public class Captcha {
         this.identifyCaptchaRunning = false;
         lastCaptchaTime = 0;
         lastRemoteCaptchaId = null;
+        lastCaptchaFilePath = null;
     }
 
     public static Captcha createInstance(DmDdt dm) {
@@ -211,6 +213,7 @@ public class Captcha {
         // 验证码保存路径
         String captchaDir = "captcha/" + Util.getTimeString(Util.TIME_YMD_FORMAT) + "/";
         String captchaName = captchaDir + dm.getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
+        this.lastCaptchaFilePath = captchaName;
         File file = new File(captchaDir);
         if (!file.isDirectory()) {
             boolean mkdirs = file.mkdirs();
@@ -260,6 +263,10 @@ public class Captcha {
             log.info("[{}] 平台返回结果格式不正确，进行用户自定义选择，{}", dm.getHwnd(), choiceEnum);
         } else {
             log.info("[{}] 选择结果 {}", dm.getHwnd(), choiceEnum.getChoice());
+
+            // 上传结果到服务器
+            final ChoiceEnum answer = choiceEnum;
+            GlobalVariable.THREAD_POOL.execute(() -> Util.uploadToServer(captchaName, answer));
         }
 
         // 点击选项
@@ -288,7 +295,7 @@ public class Captcha {
         }
 
         log.info("[{}] [报错] 对上一次错误打码报错给平台，id = {}", dm.getHwnd(), id);
-        this.lastRemoteCaptchaId = null;
+
         GlobalVariable.THREAD_POOL.execute(() -> {
             try {
                 TjHttpUtil.reportError(id);
@@ -296,6 +303,11 @@ public class Captcha {
                 log.info(e.getMessage());
             }
         });
+
+        GlobalVariable.THREAD_POOL.execute(() -> Util.deleteFileFromServer(this.lastCaptchaFilePath));
+
+        this.lastRemoteCaptchaId = null;
+        this.lastCaptchaFilePath = null;
     }
 
     public static boolean startIdentifyCaptcha(Integer hwnd, UserConfig userConfig) {

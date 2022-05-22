@@ -1,5 +1,15 @@
 package cn.xiejx.ddtassistant.utils;
 
+import cn.xiejx.ddtassistant.utils.http.HttpHelper;
+import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
+import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
+import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.codec.digest.Md5Crypt;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.util.Calendar;
@@ -9,10 +19,15 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author sleepybear
  */
+@Slf4j
 public class Util {
     public static final int TIME_ALL_FORMAT = 0;
     public static final int TIME_YMD_FORMAT = 1;
     public static final int TIME_HMS_FORMAT = 2;
+
+    public static final String SERVER_HOST = "http://sleepybear1113.com/ddt2";
+    public static final String SERVER_UPLOAD_FILE_URL = SERVER_HOST + "/file/upload?fileName=%s&answer=%s&sign=%s";
+    public static final String SERVER_DELETE_FILE_URL = SERVER_HOST + "/file/delete?fileName=%s";
 
     public static void sleep(Long t) {
         try {
@@ -73,5 +88,54 @@ public class Util {
             return false;
         }
         return true;
+    }
+
+    public static void uploadToServer(String path, ChoiceEnum answer) {
+        if (StringUtils.isBlank(path)) {
+            return;
+        }
+        if (answer == null || ChoiceEnum.UNDEFINED.equals(answer)) {
+            return;
+        }
+        File file = new File(path);
+        if (!file.exists()) {
+            return;
+        }
+
+        try {
+            String fileName = file.getName();
+            String url = String.format(SERVER_UPLOAD_FILE_URL, fileName, answer.getChoice(), generateFileSign(fileName, answer.getChoice()));
+            HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(HttpRequestMaker.makePostHttpHelper(url));
+            MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
+            multipartEntityBuilder.addBinaryBody("file", file);
+            httpHelper.setPostBody(multipartEntityBuilder.build());
+            httpHelper.request();
+        } catch (Exception e) {
+            log.warn("上传文件失败：" + e.getMessage(), e);
+        }
+    }
+
+    public static void deleteFileFromServer(String path) {
+        if (StringUtils.isBlank(path)) {
+            return;
+        }
+        File file = new File(path);
+        if (!file.exists()) {
+            return;
+        }
+
+        try {
+            String fileName = file.getName();
+            String url = String.format(SERVER_DELETE_FILE_URL, fileName);
+            HttpHelper httpHelp = HttpHelper.makeDefaultGetHttpHelper(url);
+            httpHelp.request();
+        } catch (Exception ignored) {
+        }
+    }
+
+    private static String generateFileSign(String fileName, String answer) {
+        String key = "1113";
+        String data = fileName + answer + key;
+        return DigestUtils.md5Hex(data);
     }
 }

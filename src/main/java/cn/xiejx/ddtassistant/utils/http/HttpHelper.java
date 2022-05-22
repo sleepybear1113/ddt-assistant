@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.utils.http.enumeration.MethodEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
@@ -158,6 +159,10 @@ public class HttpHelper implements Serializable {
 
     public void setPostBody(String body) {
         httpRequestMaker.setEntity(new StringEntity(body, StandardCharsets.UTF_8));
+    }
+
+    public void setPostBody(HttpEntity httpEntity) {
+        httpRequestMaker.setEntity(httpEntity);
     }
 
     public void setPostBody(String body, ContentType contentType) {

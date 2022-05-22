@@ -79,7 +79,7 @@ public class TjHttpUtil {
         return response;
     }
 
-    public static TjResponse waitToGetChoice(long maxDelay, long afterDisappearDelay, TjPredictDto tjPredictDto) {
+    public static TjResponse waitToGetChoice(long maxDelay, Long afterDisappearDelay, TjPredictDto tjPredictDto) {
         int id = RANDOM.nextInt(100000);
         CACHER.set(id, TjResponse.buildWaitingResponse(), 1000L * 60);
         GlobalVariable.THREAD_POOL.execute(() -> {
@@ -97,7 +97,9 @@ public class TjHttpUtil {
         TjResponse response = TjResponse.buildEmptyResponse();
         long startTime = System.currentTimeMillis();
         while (true) {
-            CaptchaLogic.TIME_CACHER.set(CaptchaLogic.HAS_FOUND_KEY, System.currentTimeMillis(), afterDisappearDelay, ExpireWayEnum.AFTER_UPDATE);
+            if (afterDisappearDelay != null && afterDisappearDelay > 0) {
+                CaptchaLogic.TIME_CACHER.set(CaptchaLogic.HAS_FOUND_KEY, System.currentTimeMillis(), afterDisappearDelay, ExpireWayEnum.AFTER_UPDATE);
+            }
 
             if (System.currentTimeMillis() - startTime > maxDelay) {
                 log.warn("[{}] 验证码识别超时，超时时间：{} 毫秒", id, maxDelay);

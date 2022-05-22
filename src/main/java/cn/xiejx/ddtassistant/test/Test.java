@@ -1,15 +1,13 @@
 package cn.xiejx.ddtassistant.test;
 
-import cn.xiejx.ddtassistant.config.Ioc;
-import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.Captcha;
 import cn.xiejx.ddtassistant.utils.Util;
+import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
 import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
 import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.tj.TjResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -22,7 +20,16 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        c();
+        String filePath = "captcha/2022_05_20/264000-14_00_22.png";
+        uploadFile(filePath);
+    }
+
+    public static void uploadFile(String path) {
+        Util.uploadToServer(path, ChoiceEnum.C);
+    }
+
+    public static void deleteFile(String path) {
+        Util.deleteFileFromServer(path);
     }
 
     public static void toBmp() {
