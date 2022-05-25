@@ -37,7 +37,7 @@ function changeDefaultChoiceAnswer(answer) {
     let options = select.options;
     for (let i = 0; i < options.length; i++) {
         let item = options[i];
-        item.checked = item.value === answer;
+        item.selected = item.value === answer;
     }
 }
 
