@@ -23,7 +23,7 @@
         <label for="input-password">密码　</label><input id="input-password" type="password"><br/>
         <label for="input-softId">softId </label><input id="input-softId"><br/>
         <button onclick="testCaptcha()">测试验证码</button>
-        <button onclick="">查看余额</button>
+        <button onclick="showTjAccountInfo()">查看余额</button>
     </div>
 
     <ul>
@@ -34,18 +34,18 @@
         <li>
             <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
             <select id="select-defaultChoiceAnswer">
-                <option>A</option>
-                <option>B</option>
-                <option>C</option>
-                <option>D</option>
-                <option>无</option>
+                <option title="A">A</option>
+                <option title="B">B</option>
+                <option title="C">C</option>
+                <option title="D">D</option>
+                <option title="">无</option>
             </select>
             <label for="input-timeout">，识别超时时间(毫秒)</label>
             <input id="input-timeout" type="number" class="ms-input"><br/>
         </li>
         <li>
-            <label for="input-delayWhenCaptchaAppear">当出现验证码后经过</label>
-            <input id="input-delayWhenCaptchaAppear" type="number" class="ms-input">
+            <label for="input-captchaAppearDelay">当出现验证码后经过</label>
+            <input id="input-captchaAppearDelay" type="number" class="ms-input">
             <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
             <input id="input-keyPressAfterCaptchaShow" class="string-input">
             <br/>
@@ -55,15 +55,15 @@
             <input id="input-keyPressAfterCaptchaDisappear" class="string-input">
         </li>
         <li>
-            <label for="input-pveFlopBonus">当出现副本大翻牌后经过</label>
-            <input id="input-pveFlopBonus" type="number" class="ms-input">
+            <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
+            <input id="input-pveFlopBonusAppearDelay" type="number" class="ms-input">
             <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
             <input id="input-keyPressAfterPveFlopBonus" class="string-input">
-            <label for="checkbox-pveFlopBonusCapture">并且截屏</label><input id="checkbox-pveFlopBonusCapture"
-                                                                         type="checkbox">
+            <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
+            <input id="checkbox-pveFlopBonusCapture" type="checkbox">
             <br/>
-            <label for="input-pveFlopBonusDisappear">当副本大翻牌消失后经过</label>
-            <input id="input-pveFlopBonusDisappear" type="number" class="ms-input">
+            <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
+            <input id="input-pveFlopBonusDisappearDelay" type="number" class="ms-input">
             <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
             <input id="input-keyPressAfterPveFlopBonusDisappear" class="string-input">
         </li>

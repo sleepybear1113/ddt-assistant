@@ -1,16 +1,21 @@
-Date.prototype.Format = function (fmt) { //author: meizz
-    var o = {
-        "M+": this.getMonth() + 1, //月份
-        "d+": this.getDate(), //日
-        "h+": this.getHours(), //小时
-        "m+": this.getMinutes(), //分
-        "s+": this.getSeconds(), //秒
-        "q+": Math.floor((this.getMonth() + 3) / 3), //季度
-        "S": this.getMilliseconds() //毫秒
+Date.prototype.Format = function (fmt) {
+    let o = {
+        "M+": this.getMonth() + 1,
+        "d+": this.getDate(),
+        "h+": this.getHours(),
+        "m+": this.getMinutes(),
+        "s+": this.getSeconds(),
+        "q+": Math.floor((this.getMonth() + 3) / 3),
+        "S": this.getMilliseconds(),
     };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
-    for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+    if (/(y+)/.test(fmt)) {
+        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+    }
+    for (let k in o) {
+        if (new RegExp("(" + k + ")").test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+        }
+    }
     return fmt;
 }
 
@@ -21,10 +26,16 @@ function fillUserConfig(userConfig) {
     document.getElementById("input-username").value = userConfig.username;
     document.getElementById("input-password").value = userConfig.password;
     document.getElementById("input-softId").value = userConfig.softId;
+    document.getElementById("input-captchaAppearDelay").value = userConfig.captchaAppearDelay;
     document.getElementById("input-captureInterval").value = userConfig.captureInterval;
     document.getElementById("input-keyPressAfterCaptchaShow").value = userConfig.keyPressAfterCaptchaShow;
     document.getElementById("input-keyPressAfterCaptchaDisappear").value = userConfig.keyPressAfterCaptchaDisappear;
     document.getElementById("input-keyPressDelayAfterCaptchaDisappear").value = userConfig.keyPressDelayAfterCaptchaDisappear;
+    document.getElementById("input-pveFlopBonusAppearDelay").value = userConfig.pveFlopBonusAppearDelay;
+    document.getElementById("input-pveFlopBonusDisappearDelay").value = userConfig.pveFlopBonusDisappearDelay;
+    document.getElementById("input-keyPressAfterPveFlopBonus").value = userConfig.keyPressAfterPveFlopBonus;
+    document.getElementById("input-keyPressAfterPveFlopBonusDisappear").value = userConfig.keyPressAfterPveFlopBonusDisappear;
+    document.getElementById("checkbox-pveFlopBonusCapture").checked = userConfig.pveFlopBonusCapture === true;
     changeDefaultChoiceAnswer(userConfig.defaultChoiceAnswer);
     document.getElementById("input-timeout").value = userConfig.timeout;
     document.getElementById("input-logPrintInterval").value = userConfig.logPrintInterval;
@@ -33,11 +44,14 @@ function fillUserConfig(userConfig) {
 }
 
 function changeDefaultChoiceAnswer(answer) {
+    if (answer == null) {
+        answer = "";
+    }
     let select = document.getElementById("select-defaultChoiceAnswer");
     let options = select.options;
     for (let i = 0; i < options.length; i++) {
         let item = options[i];
-        item.selected = item.value === answer;
+        item.selected = item.title === answer;
     }
 }
 
@@ -79,15 +93,21 @@ function saveUserConfig() {
     userConfig.username = document.getElementById("input-username").value;
     userConfig.password = document.getElementById("input-password").value;
     userConfig.softId = document.getElementById("input-softId").value;
+    userConfig.captchaAppearDelay = document.getElementById("input-captchaAppearDelay").value;
     userConfig.captureInterval = document.getElementById("input-captureInterval").value;
     userConfig.keyPressAfterCaptchaShow = document.getElementById("input-keyPressAfterCaptchaShow").value;
     userConfig.keyPressAfterCaptchaDisappear = document.getElementById("input-keyPressAfterCaptchaDisappear").value;
     userConfig.keyPressDelayAfterCaptchaDisappear = document.getElementById("input-keyPressDelayAfterCaptchaDisappear").value;
-    userConfig.defaultChoiceAnswer = document.getElementById("select-defaultChoiceAnswer").value;
+    userConfig.pveFlopBonusAppearDelay = document.getElementById("input-pveFlopBonusAppearDelay").value;
+    userConfig.pveFlopBonusDisappearDelay = document.getElementById("input-pveFlopBonusDisappearDelay").value;
+    userConfig.keyPressAfterPveFlopBonus = document.getElementById("input-keyPressAfterPveFlopBonus").value;
+    userConfig.keyPressAfterPveFlopBonusDisappear = document.getElementById("input-keyPressAfterPveFlopBonusDisappear").value;
+    userConfig.defaultChoiceAnswer = document.getElementById("select-defaultChoiceAnswer").selectedOptions[0].title
     userConfig.timeout = document.getElementById("input-timeout").value;
     userConfig.logPrintInterval = document.getElementById("input-logPrintInterval").value;
     userConfig.detectNewWindowInterval = document.getElementById("input-detectNewWindowInterval").value;
     userConfig.extraPorts = document.getElementById("input-extraPorts").value;
+    userConfig.pveFlopBonusCapture = document.getElementById("checkbox-pveFlopBonusCapture").checked;
 
     let url = "config/update"
     console.log(userConfig);
@@ -120,6 +140,19 @@ function testCaptcha() {
         }
 
         showInfo(tjResponse.info());
+    });
+}
+
+function showTjAccountInfo() {
+    let url = "captcha/getTjAccountInfo";
+    axios.get(url).then((res) => {
+        let testRes = new TestRes(res.data.result);
+        if (testRes == null) {
+            showInfo("失败：接口返回内容为空");
+            return;
+        }
+
+        showInfo(testRes.msg);
     });
 }
 

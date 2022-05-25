@@ -47,10 +47,6 @@ public class Ioc {
                 continue;
             }
             String fileName = file.getName();
-            if (!fileName.startsWith(Captcha.TEMPLATE_PIC_PREFIX)) {
-                // 需要以 template- 前缀
-                continue;
-            }
             if (fileName.endsWith(".bmp")) {
                 bmpFileNameSet.add(fileName);
             } else {
@@ -71,10 +67,16 @@ public class Ioc {
         }
 
         for (String fileName : bmpFileNameSet) {
-            if (fileName.contains("dark")) {
-                Captcha.captchaTemplateNameDarkList.add(path + fileName);
-            } else {
-                Captcha.captchaTemplateNameList.add(path + fileName);
+            String fullPath = path + fileName;
+            if (fileName.startsWith(Captcha.TEMPLATE_PIC_PREFIX)) {
+                // 需要以 template- 前缀
+                if (fileName.contains("dark")) {
+                    Captcha.captchaTemplateNameDarkList.add(fullPath);
+                } else {
+                    Captcha.captchaTemplateNameList.add(fullPath);
+                }
+            } else if (fileName.startsWith(Captcha.TEMPLATE_FLOP_BONUS_PREFIX)) {
+                Captcha.flopBonusTemplateNameList.add(fullPath);
             }
         }
     }

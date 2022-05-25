@@ -22,6 +22,11 @@ public class CaptchaController {
         return captchaLogic.testCaptcha();
     }
 
+    @RequestMapping("/captcha/getTjAccountInfo")
+    public StringRet getTjAccountInfo() {
+        return captchaLogic.getTjAccountInfo();
+    }
+
     @RequestMapping("/captcha/addNewCaptcha")
     public Boolean addNewBind(Long delay) {
         return captchaLogic.addNewBind(delay);

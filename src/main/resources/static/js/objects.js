@@ -7,9 +7,15 @@ class UserConfig {
         this.password = props.password;
         this.softId = props.softId;
         this.captureInterval = props.captureInterval;
+        this.captchaAppearDelay = props.captchaAppearDelay;
         this.keyPressAfterCaptchaShow = props.keyPressAfterCaptchaShow;
         this.keyPressAfterCaptchaDisappear = props.keyPressAfterCaptchaDisappear;
         this.keyPressDelayAfterCaptchaDisappear = props.keyPressDelayAfterCaptchaDisappear;
+        this.pveFlopBonusAppearDelay = props.pveFlopBonusAppearDelay;
+        this.keyPressAfterPveFlopBonus = props.keyPressAfterPveFlopBonus;
+        this.pveFlopBonusDisappearDelay = props.pveFlopBonusDisappearDelay;
+        this.keyPressAfterPveFlopBonusDisappear = props.keyPressAfterPveFlopBonusDisappear;
+        this.pveFlopBonusCapture = props.pveFlopBonusCapture;
         this.defaultChoiceAnswer = props.defaultChoiceAnswer;
         this.timeout = props.timeout;
         this.logPrintInterval = props.logPrintInterval;

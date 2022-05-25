@@ -1,7 +1,6 @@
 package cn.xiejx.ddtassistant.type;
 
 import cn.xiejx.ddtassistant.config.UserConfig;
-import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.logic.CaptchaLogic;
@@ -26,7 +25,7 @@ public class Captcha {
 
     public static List<String> captchaTemplateNameList = new ArrayList<>();
     public static List<String> captchaTemplateNameDarkList = new ArrayList<>();
-
+    public static List<String> flopBonusTemplateNameList = new ArrayList<>();
 
     public final static int[] CAPTCHA_TITLE_REACT = {240, 110, 400, 180};
     /**
@@ -58,6 +57,14 @@ public class Captcha {
      */
     public final static int[] GAME_FULL_REACT = {0, 0, 1000, 600};
     /**
+     * 副本大翻牌检测区域
+     */
+    public static final int[] FLOP_BONUS_DETECT_RECT = {};
+    /**
+     * 副本大翻牌模板区域
+     */
+    public static final int[] FLOP_BONUS_SAMPLE_RECT = {};
+    /**
      * 验证码选项坐标
      */
     public final static int[] ANSWER_CHOICE_POINT = {350, 373, 568, 410};
@@ -70,9 +77,7 @@ public class Captcha {
 
     public static final String TEMPLATE_PIC_PREFIX = "captcha-template-";
 
-    public static final String TEMPLATE_PIC_BRIGHT = Constants.RESOURCE_DIR + "template-bright.bmp";
-    public static final String TEMPLATE_PIC_DARK = Constants.RESOURCE_DIR + "template-dark.bmp";
-    public static final String TEMPLATE_PIC_ALL = TEMPLATE_PIC_BRIGHT + "|" + TEMPLATE_PIC_DARK;
+    public static final String TEMPLATE_FLOP_BONUS_PREFIX = "flop-template-";
 
     public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.7;
     public static final double DEFAULT_DARK_PIC_THRESHOLD = 0.9;
@@ -125,10 +130,18 @@ public class Captcha {
     }
 
     public boolean findCaptcha(String templatePath, double threshold) {
+        return findPicture(templatePath, threshold, CAPTCHA_COUNTDOWN_FIND_REACT);
+    }
+
+    public boolean findFlopBonus(String templatePath, double threshold) {
+        return findPicture(templatePath, threshold, FLOP_BONUS_DETECT_RECT);
+    }
+
+    private boolean findPicture(String templatePath, double threshold, int[] rect) {
         if (StringUtils.isBlank(templatePath)) {
             return false;
         }
-        int[] pic = dm.findPic(CAPTCHA_COUNTDOWN_FIND_REACT[0], CAPTCHA_COUNTDOWN_FIND_REACT[1], CAPTCHA_COUNTDOWN_FIND_REACT[2], CAPTCHA_COUNTDOWN_FIND_REACT[3], templatePath, "010101", threshold, 0);
+        int[] pic = dm.findPic(rect[0], rect[1], rect[2], rect[3], templatePath, "010101", threshold, 0);
         return pic[0] > 0;
     }
 
@@ -161,7 +174,7 @@ public class Captcha {
         identifyCaptchaRunning = true;
         log.info("绑定 flash 窗口，句柄：{}", dm.getHwnd());
         long lastLogTime = System.currentTimeMillis();
-        do {
+        while (true) {
             // 输出日志
             long now = System.currentTimeMillis();
             Long logPrintInterval = userConfig.getLogPrintInterval();
@@ -172,24 +185,27 @@ public class Captcha {
                 }
             }
 
-            // 真正检测代码
-        } while (identifyCaptcha(userConfig));
+            // 每次识屏间隔
+            Util.sleep(userConfig.getCaptureInterval());
+            // 判断是否还是 flash
+            if (!dm.isWindowClassFlashPlayerActiveX()) {
+                log.info("[{}] 当前句柄不为 flash 窗口，解绑！", dm.getHwnd());
+                dm.unBindWindow();
+                break;
+            }
+
+            // 检测副本大翻牌
+            identifyPveFlopBonus(userConfig);
+            // 检测验证码的代码
+            identifyCaptcha(userConfig);
+        }
     }
 
-    public boolean identifyCaptcha(UserConfig userConfig) {
-        // 每次识屏间隔
-        Util.sleep(userConfig.getCaptureInterval());
-        // 判断是否还是 flash
-        if (!dm.isWindowClassFlashPlayerActiveX()) {
-            log.info("[{}] 当前句柄不为 flash 窗口，解绑！", dm.getHwnd());
-            dm.unBindWindow();
-            return false;
-        }
-
+    public void identifyCaptcha(UserConfig userConfig) {
         // 没找到
         if (!findCaptcha(getTemplateBmpNames(), DEFAULT_BRIGHT_PIC_THRESHOLD)) {
             if (!findCaptcha(getTemplateDarkBmpNames(), DEFAULT_DARK_PIC_THRESHOLD)) {
-                return true;
+                return;
             } else {
                 log.info("[{}] 发现验证码-暗！", dm.getHwnd());
             }
@@ -201,7 +217,7 @@ public class Captcha {
         reportErrorResult(this.lastRemoteCaptchaId, false);
 
         // 设置按钮缓存
-        CaptchaLogic.TIME_CACHER.set(CaptchaLogic.HAS_FOUND_KEY, System.currentTimeMillis(), CaptchaLogic.S, ExpireWayEnum.AFTER_UPDATE);
+        CaptchaLogic.TIME_CACHER.set(CaptchaLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), CaptchaLogic.S, ExpireWayEnum.AFTER_UPDATE);
 
         log.info("[{}] 点亮屏幕", dm.getHwnd());
         dm.leftClick(100, 100, 100);
@@ -239,9 +255,7 @@ public class Captcha {
         ChoiceEnum choiceEnum = response.getChoiceEnum();
         // 判断是否还是 flash
         if (!dm.isWindowClassFlashPlayerActiveX()) {
-            log.info("[{}] 当前句柄不为 flash 窗口，解绑！", dm.getHwnd());
-            dm.unBindWindow();
-            return false;
+            return;
         }
 
         if (ChoiceEnum.UNDEFINED.equals(choiceEnum)) {
@@ -253,7 +267,7 @@ public class Captcha {
             if (defaultChoiceAnswer == null || defaultChoiceAnswer.length() == 0) {
                 log.info("[{}] 用户没有设置默认选项，跳过选择，等待 5000 毫秒继续下一轮检测", dm.getHwnd());
                 Util.sleep(5000L);
-                return true;
+                return;
             }
             choiceEnum = ChoiceEnum.getChoice(defaultChoiceAnswer);
             if (ChoiceEnum.UNDEFINED.equals(choiceEnum)) {
@@ -280,7 +294,22 @@ public class Captcha {
 
         this.lastCaptchaTime = System.currentTimeMillis();
         Util.sleep(1000L);
-        return true;
+        return;
+    }
+
+    public void identifyPveFlopBonus(UserConfig userConfig) {
+        Long pveFlopBonusAppearDelay = userConfig.getPveFlopBonusAppearDelay();
+        if (pveFlopBonusAppearDelay == null || pveFlopBonusAppearDelay <= 0) {
+            return;
+        }
+        if (!findFlopBonus(getFlopBonusTemplateBmpNames(), DEFAULT_BRIGHT_PIC_THRESHOLD)) {
+            return;
+        }
+        if (CaptchaLogic.TIME_CACHER.get(CaptchaLogic.FLOP_BONUS_FOUND_KEY) == null) {
+            log.info("[] 发现副本大翻牌！");
+        }
+
+        CaptchaLogic.TIME_CACHER.set(CaptchaLogic.FLOP_BONUS_FOUND_KEY, pveFlopBonusAppearDelay, userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
     }
 
     public void reportErrorResult(String id, boolean force) {
@@ -324,6 +353,10 @@ public class Captcha {
         }
         GlobalVariable.THREAD_POOL.execute(() -> Captcha.createInstance(DmDdt.createInstance(hwnd)).identifyCaptchaLoop(userConfig));
         return true;
+    }
+
+    public static String getFlopBonusTemplateBmpNames() {
+        return StringUtils.join(Captcha.flopBonusTemplateNameList, "|");
     }
 
     public static String getTemplateBmpNames() {

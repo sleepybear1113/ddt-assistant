@@ -98,7 +98,7 @@ public class TjHttpUtil {
         long startTime = System.currentTimeMillis();
         while (true) {
             if (afterDisappearDelay != null && afterDisappearDelay > 0) {
-                CaptchaLogic.TIME_CACHER.set(CaptchaLogic.HAS_FOUND_KEY, System.currentTimeMillis(), afterDisappearDelay, ExpireWayEnum.AFTER_UPDATE);
+                CaptchaLogic.TIME_CACHER.set(CaptchaLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), afterDisappearDelay, ExpireWayEnum.AFTER_UPDATE);
             }
 
             if (System.currentTimeMillis() - startTime > maxDelay) {

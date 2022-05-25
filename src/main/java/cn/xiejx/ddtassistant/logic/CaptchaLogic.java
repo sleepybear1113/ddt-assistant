@@ -34,7 +34,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CaptchaLogic {
     public static final Cacher<String, Long> TIME_CACHER = new CacherBuilder<String, Long>().scheduleName("timeCacher").delay(30, TimeUnit.SECONDS).build();
-    public static final String HAS_FOUND_KEY = "hasFound";
+    public static final String CAPTCHA_FOUND_KEY = "key_captcha_found";
+    public static final String FLOP_BONUS_FOUND_KEY = "key_flop_bonus_found";
     public static final long S = 5000L;
     private static final Random RANDOM = new Random();
 
@@ -45,7 +46,7 @@ public class CaptchaLogic {
 
     @PostConstruct
     public void init() {
-        startMonitorCaptchaAppearActionLoopThread();
+        startMonitorActionLoopThread();
         startMonitorNewCaptchaLoopThread(userConfig);
     }
 
@@ -53,8 +54,8 @@ public class CaptchaLogic {
         GlobalVariable.THREAD_POOL.execute(() -> monitorNewCaptchaLoop(userConfig));
     }
 
-    public void startMonitorCaptchaAppearActionLoopThread() {
-        GlobalVariable.THREAD_POOL.execute(this::monitorCaptchaAppearActionLoop);
+    public void startMonitorActionLoopThread() {
+        GlobalVariable.THREAD_POOL.execute(this::monitorActionLoop);
     }
 
     public TjResponse testCaptcha() {
@@ -155,11 +156,12 @@ public class CaptchaLogic {
         }
     }
 
-    public void monitorCaptchaAppearActionLoop() {
+    public void monitorActionLoop() {
         log.info("监控线程启动！");
         while (true) {
             Util.sleep(100L);
             monitorCaptchaAppearAction();
+            monitorFlopBonusAction();
         }
     }
 
@@ -168,7 +170,7 @@ public class CaptchaLogic {
         if (StringUtils.isBlank(keyPress1)) {
             return;
         }
-        if (TIME_CACHER.get(HAS_FOUND_KEY) != null) {
+        if (TIME_CACHER.get(CAPTCHA_FOUND_KEY) != null) {
             log.info("[监控线程] 发现验证码");
             if (StringUtils.isBlank(keyPress1)) {
                 log.info("[监控线程] 按下按键 {}", keyPress1);
@@ -178,7 +180,7 @@ public class CaptchaLogic {
             while (true) {
                 Util.sleep(100L);
 
-                if (TIME_CACHER.get(HAS_FOUND_KEY) != null) {
+                if (TIME_CACHER.get(CAPTCHA_FOUND_KEY) != null) {
                     continue;
                 }
                 log.info("[监控线程] 验证码消失");
@@ -190,5 +192,59 @@ public class CaptchaLogic {
                 break;
             }
         }
+    }
+
+    public void monitorFlopBonusAction() {
+        String keyPress1 = userConfig.getKeyPressAfterPveFlopBonus();
+        if (StringUtils.isBlank(keyPress1)) {
+            return;
+        }
+        // 出现大翻牌等待按下按键的时间
+        Long t = TIME_CACHER.get(FLOP_BONUS_FOUND_KEY);
+        if (t != null) {
+            log.info("[监控线程] 发现副本大翻牌！");
+            long firstFoundTime = System.currentTimeMillis();
+            Long firstDisappear = null;
+
+            while (true) {
+                Util.sleep(100L);
+                if (System.currentTimeMillis() - firstFoundTime < t) {
+                    continue;
+                }
+                log.info("[监控线程] 按下按键 {}", keyPress1);
+                defaultDm.keyPressChar(keyPress1);
+                break;
+            }
+
+            // 大翻牌消失后的按键
+            Long pveFlopBonusDisappearDelay = userConfig.getPveFlopBonusDisappearDelay();
+            String keyPress2 = userConfig.getKeyPressAfterPveFlopBonusDisappear();
+            if (pveFlopBonusDisappearDelay != null && !StringUtils.isBlank(keyPress2)) {
+                while (true) {
+                    Util.sleep(100L);
+                    if (TIME_CACHER.get(FLOP_BONUS_FOUND_KEY) != null) {
+                        continue;
+                    } else {
+                        if (firstDisappear == null) {
+                            log.info("[监控线程] 副本大翻牌结束！");
+                            firstDisappear = System.currentTimeMillis();
+                        }
+                    }
+                    if (System.currentTimeMillis() - firstDisappear < pveFlopBonusDisappearDelay) {
+                        continue;
+                    }
+
+                    defaultDm.keyPressChar(keyPress2);
+                    log.info("[监控线程] 按下按键 {}", keyPress2);
+                    break;
+                }
+            }
+        }
+    }
+
+    public StringRet getTjAccountInfo() {
+        String username = userConfig.getUsername();
+        String password = userConfig.getPassword();
+        return StringRet.buildSuccess(TjHttpUtil.getAccountInfo(username, password));
     }
 }

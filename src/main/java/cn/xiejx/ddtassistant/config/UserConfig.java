@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.utils.Util;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.io.File;
 import java.io.Serializable;
@@ -23,6 +24,7 @@ public class UserConfig implements Serializable {
     public static final long DEFAULT_TIMEOUT = 20000L;
     public static final String DEFAULT_MOUSE_MODE = "windows";
     public static final String DEFAULT_KEY_PAD_MODE = "windows";
+    public static final String DEFAULT_SOFT_ID = "3b995690b1794ff08bad1abb88a3e451";
 
     private String username;
     private String password;
@@ -35,6 +37,10 @@ public class UserConfig implements Serializable {
      */
     private Long captureInterval;
     /**
+     * 验证码出现后等待的毫秒
+     */
+    private Long captchaAppearDelay;
+    /**
      * 出现验证码后按下的按键
      */
     private String keyPressAfterCaptchaShow;
@@ -46,6 +52,26 @@ public class UserConfig implements Serializable {
      * 验证码消失后按下的按键的延时
      */
     private Long keyPressDelayAfterCaptchaDisappear;
+    /**
+     * 副本大翻牌出现后的延迟毫秒
+     */
+    private Long pveFlopBonusAppearDelay;
+    /**
+     * 副本大翻牌出现后的键盘按键
+     */
+    private String keyPressAfterPveFlopBonus;
+    /**
+     * 副本大翻牌消失后延迟的毫秒
+     */
+    private Long pveFlopBonusDisappearDelay;
+    /**
+     * 副本大翻牌消失后的键盘按键
+     */
+    private String keyPressAfterPveFlopBonusDisappear;
+    /**
+     * 副本大翻牌是否截屏
+     */
+    private Boolean pveFlopBonusCapture;
     /**
      * 默认选项
      */
@@ -71,9 +97,15 @@ public class UserConfig implements Serializable {
     public static UserConfig defaultConfig() {
         UserConfig userConfig = new UserConfig();
         userConfig.setDefaultChoiceAnswer("A");
+        userConfig.setCaptchaAppearDelay(0L);
         userConfig.setKeyPressAfterCaptchaShow("F7");
         userConfig.setKeyPressAfterCaptchaDisappear("F7");
-        userConfig.setSoftId("3b995690b1794ff08bad1abb88a3e451");
+        userConfig.setPveFlopBonusAppearDelay(null);
+        userConfig.setPveFlopBonusDisappearDelay(null);
+        userConfig.setKeyPressAfterPveFlopBonus(null);
+        userConfig.setKeyPressAfterPveFlopBonusDisappear(null);
+        userConfig.setPveFlopBonusCapture(false);
+        userConfig.setSoftId(DEFAULT_SOFT_ID);
         userConfig.setCaptureInterval(DEFAULT_CAPTURE_INTERVAL);
         userConfig.setDetectNewWindowInterval(null);
         userConfig.setTimeout(DEFAULT_TIMEOUT);
@@ -86,20 +118,7 @@ public class UserConfig implements Serializable {
     }
 
     public void setUserConfig(UserConfig userConfig) {
-        this.username = userConfig.getUsername();
-        this.password = userConfig.getPassword();
-        this.softId = userConfig.getSoftId();
-        this.keyPressAfterCaptchaDisappear = userConfig.getKeyPressAfterCaptchaDisappear();
-        this.keyPressAfterCaptchaShow = userConfig.getKeyPressAfterCaptchaShow();
-        this.keyPressDelayAfterCaptchaDisappear = userConfig.getKeyPressDelayAfterCaptchaDisappear();
-        this.captureInterval = userConfig.getCaptureInterval();
-        this.detectNewWindowInterval = userConfig.getDetectNewWindowInterval();
-        this.logPrintInterval = userConfig.getLogPrintInterval();
-        this.timeout = userConfig.getTimeout();
-        this.defaultChoiceAnswer = userConfig.getDefaultChoiceAnswer();
-        this.mouseMode = userConfig.mouseMode;
-        this.keyPadMode = userConfig.keyPadMode;
-        this.extraPorts = userConfig.extraPorts;
+        BeanUtils.copyProperties(userConfig, this);
     }
 
     public static UserConfig readFromFile() {
