@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>DDT Assistant by sleepybear</title>
+    <title>DDT Assistant-By Sleepybear</title>
     <link rel="stylesheet" type="text/css" href="css.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
 </head>
@@ -15,94 +15,106 @@
 <span>版本号：</span><span id="appVersion"></span>　　<span>作者：sleepybear</span>　　<span>交流群：879596615</span>　　<span>设置完毕之后，本页面可以关闭，但不要关闭后台程序</span>
 <div class="area">
     <h3>副本验证码功能</h3>
-    <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
     <hr>
-    <a>修改完参数之后，记得点击保存，否则无效！</a><br/>
-    <label for="input-username">用户名</label><input id="input-username"><br/>
-    <label for="input-password">密码</label><input id="input-password" type="password"><br/>
-    <label for="input-softId">softId</label><input id="input-softId"><br/>
-    <button onclick="testCaptcha()">测试验证码</button>
-    <br/>
-    <label for="input-captureInterval">识屏间隔(毫秒)</label><input type="number" id="input-captureInterval"><br/>
-    <label for="input-keyPressAfterCaptchaShow">当出现验证码后按下的按键</label><input id="input-keyPressAfterCaptchaShow"><br/>
-    <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后按下按键等待的时间(毫秒)</label><input
-        id="input-keyPressDelayAfterCaptchaDisappear" type="number"><br/>
-    <label for="input-keyPressAfterCaptchaDisappear">当验证码消失后按下的按键</label><input
-        id="input-keyPressAfterCaptchaDisappear"><br/>
-    <label for="input-defaultChoiceAnswer">识别出现问题的默认选择</label><input id="input-defaultChoiceAnswer"><br/>
-    <label for="input-timeout">识别超时时间(毫秒)</label><input id="input-timeout" type="number"><br/>
-    <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label><input id="input-logPrintInterval" type="number"><br/>
-    <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label><input id="input-detectNewWindowInterval"
-                                                                             type="number"><br/>
-    <label for="input-extraPorts">开启额外端口(逗号分割端口号，需要保存重启)</label><input id="input-extraPorts"><br/>
+    <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
+    <div class="area">
+        <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
+        <label for="input-username">用户名</label><input id="input-username"><br/>
+        <label for="input-password">密码　</label><input id="input-password" type="password"><br/>
+        <label for="input-softId">softId </label><input id="input-softId"><br/>
+        <button onclick="testCaptcha()">测试验证码</button>
+        <button onclick="">查看余额</button>
+    </div>
+
+    <ul>
+        <li>
+            <label for="input-captureInterval">识屏间隔(毫秒)</label>
+            <input type="number" id="input-captureInterval" class="ms-input"><br/>
+        </li>
+        <li>
+            <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
+            <select id="select-defaultChoiceAnswer">
+                <option>A</option>
+                <option>B</option>
+                <option>C</option>
+                <option>D</option>
+                <option>无</option>
+            </select>
+            <label for="input-timeout">，识别超时时间(毫秒)</label>
+            <input id="input-timeout" type="number" class="ms-input"><br/>
+        </li>
+        <li>
+            <label for="input-delayWhenCaptchaAppear">当出现验证码后经过</label>
+            <input id="input-delayWhenCaptchaAppear" type="number" class="ms-input">
+            <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
+            <input id="input-keyPressAfterCaptchaShow" class="string-input">
+            <br/>
+            <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后经过</label>
+            <input id="input-keyPressDelayAfterCaptchaDisappear" type="number" class="ms-input">
+            <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
+            <input id="input-keyPressAfterCaptchaDisappear" class="string-input">
+        </li>
+        <li>
+            <label for="input-pveFlopBonus">当出现副本大翻牌后经过</label>
+            <input id="input-pveFlopBonus" type="number" class="ms-input">
+            <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
+            <input id="input-keyPressAfterPveFlopBonus" class="string-input">
+            <label for="checkbox-pveFlopBonusCapture">并且截屏</label><input id="checkbox-pveFlopBonusCapture"
+                                                                         type="checkbox">
+            <br/>
+            <label for="input-pveFlopBonusDisappear">当副本大翻牌消失后经过</label>
+            <input id="input-pveFlopBonusDisappear" type="number" class="ms-input">
+            <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
+            <input id="input-keyPressAfterPveFlopBonusDisappear" class="string-input">
+        </li>
+        <li>
+            <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label>
+            <input id="input-logPrintInterval" type="number" class="ms-input"><br/>
+        </li>
+        <li>
+            <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
+            <input id="input-detectNewWindowInterval" type="number" class="ms-input">
+        </li>
+        <li>
+            <label for="input-extraPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
+            <input id="input-extraPorts" class="string-input" placeholder="例：80,20400">
+        </li>
+    </ul>
+
     <label>其中 1000 毫秒 = 1 秒</label><br/>
     <button onclick="saveUserConfig()">保存</button>
     <button onclick="resetUserConfig()">重置</button>
     <hr>
     <div>
-        <button onclick="bindAll()">检测并添加所有窗口</button><br/>
+        <button onclick="bindAll()">检测并添加所有窗口</button>
+        <br/>
         <button onclick="captureCaptchaSampleRegion()">截图保存验证码模板区域图片</button>
         <label for="checkbox-capture-sample"></label><input id="checkbox-capture-sample" type="checkbox">勾选这个才能点击左边的按钮，防误触<br/>
         <span>“截图保存验证码模板区域图片”作用：如果你这里运行的时候，出现了验证码但是程序没有识别到，那么可能是自带的通用的样例图片与你的游戏画面匹配不上，比如糖果截图的图片可能在 36 无法识别。这时候需要两种解决方法：</span><br/>
-        <span>1. 自行参考程序 img 文件夹下面的 capture-template-xxx.bmp 的图片样例截图，保存为.png、.jpg、.bmp 其中一种格式，格式如 capture-template-123.png，中间数字不能与别的重复，程序启动的时候会自动将不是 .bmp 的转为 .bmp 加入识图样例中。</span><br/>
+        <span>1. 自行参考程序 img 文件夹下面的 captcha-template-xxx.bmp 的图片样例截图，保存为.png、.jpg、.bmp 其中一种格式，格式如 captcha-template-123.png，中间数字不能与别的重复，程序启动的时候会自动将不是 .bmp 的转为 .bmp 加入识图样例中。</span><br/>
         <span>2. 出现验证码区域，点击上述按截图保存，然后去对应文件夹查看，删除多截图的图片或者不正确的图片。</span>
     </div>
 </div>
-<hr>
-<label for="textarea-info">信息：</label><textarea id="textarea-info" style="width: 400px; height: 100px"
-                                                readonly></textarea>
-
-<hr>
-<div id="div-bind-way" style="display: none" class="area">
-    <h3>重新选择键鼠绑定模式</h3>
-    <span>红色字体的选项表示需要管理员启动程序才能使用</span><br/>
-    <span>选择鼠标的绑定模式：</span>
-    <label for="radio-mouseBindWindows" class="not-admin">windows</label><input id="radio-mouseBindWindows"
-                                                                                type="radio" name="radio-mouse-bind"
-                                                                                value="windows" checked>
-    丨<label for="radio-mouseBindWindows2" class="admin">windows2</label><input id="radio-mouseBindWindows2"
-                                                                               type="radio" name="radio-mouse-bind"
-                                                                               value="windows2">
-    丨<label for="radio-mouseBindWindows3" class="not-admin">windows3</label><input id="radio-mouseBindWindows3"
-                                                                                   type="radio"
-                                                                                   name="radio-mouse-bind"
-                                                                                   value="windows3">
-    丨<label for="radio-mouseBindDx" class="admin">dx</label><input id="radio-mouseBindDx" type="radio"
-                                                                   name="radio-mouse-bind" value="dx">
-    丨<label for="radio-mouseBindDx2" class="admin">dx2</label><input id="radio-mouseBindDx2" type="radio"
-                                                                     name="radio-mouse-bind" value="dx2">
-    <br/>
-    <span>选择键盘的绑定模式：</span>
-    <label for="radio-keyPadBindWindows" class="not-admin">windows</label><input id="radio-keyPadBindWindows"
-                                                                                 type="radio"
-                                                                                 name="radio-keyPad-bind"
-                                                                                 value="windows" checked>
-    丨<label for="radio-keyPadBindDx" class="admin">dx</label><input id="radio-keyPadBindDx" type="radio"
-                                                                    name="radio-keyPad-bind" value="dx">
-    <br/>
-    <span>上述鼠标键盘模式切换，会停止所有线程，解绑所有窗口，并重新绑定</span>
-    <br/>
-    <button onclick="saveUserConfig()">保存</button>
-    <button onclick="resetUserConfig()">重置</button>
-</div>
-<hr>
-
+<label for="textarea-info">信息：</label>
+<textarea id="textarea-info" style="width: 400px; height: 100px" readonly></textarea>
 
 <div id="div-test" class="area">
-    <h3>以下为测试</h3>
+    <h3>以下为用户第一次使用前的自行测试</h3>
     <span>若点击操作无反应，请启动 “运行-管理员权限.bat”，部分人的可能存在不提高权限不能点击的情况</span><br/>
-    <span>如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
-    <label for="input-testDelay">以下操作延迟时间(毫秒)</label><input id="input-testDelay" type="number" value="500">
+    <span class="red-font">如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
+    <label for="input-testDelay">以下操作延迟时间(毫秒)</label>
+    <input id="input-testDelay" type="number" value="500" class="ms-input">
     <div id="div-click">
-        <label for="input-clickX">X坐标</label><input id="input-clickX" type="number" maxlength="4" max="9999"
-                                                    value="530">
-        <label for="input-clickY">Y坐标</label><input id="input-clickY" type="number" maxlength="4" max="9999"
-                                                    value="585">
+        <label for="input-clickX">X坐标</label>
+        <input id="input-clickX" type="number" maxlength="4" max="9999" value="530" class="ms-input">
+        <label for="input-clickY">Y坐标</label>
+        <input id="input-clickY" type="number" maxlength="4" max="9999" value="585" class="ms-input">
         <button onclick="testClick()">测试点击该坐标</button>
         <span>(530,585)坐标正常为“充值”按钮，可以根据自己需要点击其他位置</span>
     </div>
     <div id="div-keyPress">
-        <label for="input-keyPress">按下键盘的按键(仅支持Fn)</label><input id="input-keyPress" value="F5">
+        <label for="input-keyPress">按下键盘的按键(仅支持Fn)</label>
+        <input id="input-keyPress" value="F5" class="string-input">
         <button onclick="testKeyPress()">测试按键</button>
         <span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
     </div>

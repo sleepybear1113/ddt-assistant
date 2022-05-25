@@ -25,11 +25,20 @@ function fillUserConfig(userConfig) {
     document.getElementById("input-keyPressAfterCaptchaShow").value = userConfig.keyPressAfterCaptchaShow;
     document.getElementById("input-keyPressAfterCaptchaDisappear").value = userConfig.keyPressAfterCaptchaDisappear;
     document.getElementById("input-keyPressDelayAfterCaptchaDisappear").value = userConfig.keyPressDelayAfterCaptchaDisappear;
-    document.getElementById("input-defaultChoiceAnswer").value = userConfig.defaultChoiceAnswer;
+    changeDefaultChoiceAnswer(userConfig.defaultChoiceAnswer);
     document.getElementById("input-timeout").value = userConfig.timeout;
     document.getElementById("input-logPrintInterval").value = userConfig.logPrintInterval;
     document.getElementById("input-detectNewWindowInterval").value = userConfig.detectNewWindowInterval;
     document.getElementById("input-extraPorts").value = userConfig.extraPorts;
+}
+
+function changeDefaultChoiceAnswer(answer) {
+    let select = document.getElementById("select-defaultChoiceAnswer");
+    let options = select.options;
+    for (let i = 0; i < options.length; i++) {
+        let item = options[i];
+        item.checked = item.value === answer;
+    }
 }
 
 function init() {
@@ -74,7 +83,7 @@ function saveUserConfig() {
     userConfig.keyPressAfterCaptchaShow = document.getElementById("input-keyPressAfterCaptchaShow").value;
     userConfig.keyPressAfterCaptchaDisappear = document.getElementById("input-keyPressAfterCaptchaDisappear").value;
     userConfig.keyPressDelayAfterCaptchaDisappear = document.getElementById("input-keyPressDelayAfterCaptchaDisappear").value;
-    userConfig.defaultChoiceAnswer = document.getElementById("input-defaultChoiceAnswer").value;
+    userConfig.defaultChoiceAnswer = document.getElementById("select-defaultChoiceAnswer").value;
     userConfig.timeout = document.getElementById("input-timeout").value;
     userConfig.logPrintInterval = document.getElementById("input-logPrintInterval").value;
     userConfig.detectNewWindowInterval = document.getElementById("input-detectNewWindowInterval").value;

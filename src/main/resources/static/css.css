@@ -1,4 +1,12 @@
+div {
+    margin: 5px;
+}
+
 .admin {
+    color: red;
+}
+
+.red-font {
     color: red;
 }
 
@@ -6,4 +14,12 @@
     border: black solid 1px;
     background-color: #eeeeee;
     margin-bottom: 20px;
+}
+
+.ms-input {
+    width: 60px;
+}
+
+.string-input {
+    width: 100px;
 }
