@@ -20,6 +20,11 @@ public class DmDdt extends Dm {
     private final Integer hwnd;
     private boolean bind;
 
+    /**
+     * 游戏的全屏区域
+     */
+    public final static int[] GAME_FULL_REACT = {0, 0, 1000, 600};
+
     public Integer getHwnd() {
         return hwnd;
     }
@@ -141,5 +146,9 @@ public class DmDdt extends Dm {
         } else {
             capturePng(region[0], region[1], region[2], region[3], path + ".jpg");
         }
+    }
+
+    public void captureFullGamePic(String path) {
+        capturePicByRegion(path, GAME_FULL_REACT);
     }
 }

@@ -10,6 +10,7 @@ import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
 import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
 import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.tj.TjResponse;
+import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -52,10 +53,6 @@ public class Captcha {
      * 验证码整个图片区域
      */
     public final static int[] CAPTCHA_FULL_REACT = {258, 132, 761, 498};
-    /**
-     * 游戏的全屏区域
-     */
-    public final static int[] GAME_FULL_REACT = {0, 0, 1000, 600};
     /**
      * 副本大翻牌检测区域
      */
@@ -304,11 +301,11 @@ public class Captcha {
         if (!findFlopBonus(getFlopBonusTemplateBmpNames(), DEFAULT_BRIGHT_PIC_THRESHOLD)) {
             return;
         }
-        if (CaptchaLogic.TIME_CACHER.get(CaptchaLogic.FLOP_BONUS_FOUND_KEY) == null) {
-            log.info("[] 发现副本大翻牌！");
+        if (CaptchaLogic.FLOP_BONUS_CACHER.get(CaptchaLogic.FLOP_BONUS_FOUND_KEY) == null) {
+            log.info("[{}] 发现副本大翻牌！", dm.getHwnd());
         }
 
-        CaptchaLogic.TIME_CACHER.set(CaptchaLogic.FLOP_BONUS_FOUND_KEY, pveFlopBonusAppearDelay, userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
+        CaptchaLogic.FLOP_BONUS_CACHER.set(CaptchaLogic.FLOP_BONUS_FOUND_KEY, new Pair<>(pveFlopBonusAppearDelay, this.dm), userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
     }
 
     public void reportErrorResult(String id, boolean force) {

@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.xiejx</groupId>
     <artifactId>ddt-assistant</artifactId>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
     <name>ddt-assistant</name>
     <description>ddt-assistant</description>
     <properties>
@@ -20,6 +20,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -47,6 +53,12 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>5.3.20</version>
         </dependency>
 
         <dependency>
