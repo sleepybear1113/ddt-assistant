@@ -34,7 +34,7 @@ public class Test {
         int hwnd = 329146;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
-        dm.capturePicByRegion("test/full-1.bmp", Captcha.GAME_FULL_REACT);
+        dm.capturePicByRegion("test/full-1.bmp", DmDdt.GAME_FULL_REACT);
     }
 
     public static void uploadFile(String path) {
