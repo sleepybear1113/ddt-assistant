@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -222,6 +223,10 @@ public class CaptchaLogic {
             defaultDm.keyPressChar(keyPress1);
             if (Boolean.TRUE.equals(userConfig.getPveFlopBonusCapture())) {
                 log.info("截图游戏，使用线程 [{}]", dmDdt.getHwnd());
+                File file = new File(Constants.FLOP_BONUS_DIR);
+                if (!file.exists() || !file.isDirectory()) {
+                    boolean mkdirs = file.mkdirs();
+                }
                 dmDdt.captureFullGamePic(Constants.FLOP_BONUS_DIR + Util.getTimeString(Util.TIME_ALL_FORMAT));
             }
             break;

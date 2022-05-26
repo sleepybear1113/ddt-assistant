@@ -13,7 +13,9 @@ public class Constants {
 
     public static final String RESOURCE_DIR = "img/";
 
-    public static final String FLOP_BONUS_DIR = "副本翻牌截图/";
+    public static final String PIC_DIR = "pictures/";
+
+    public static final String FLOP_BONUS_DIR = PIC_DIR + "副本翻牌截图/";
 
     public static final String BMP_SUFFIX = ".bmp";
     public static final String JPG_SUFFIX = ".jpg";
