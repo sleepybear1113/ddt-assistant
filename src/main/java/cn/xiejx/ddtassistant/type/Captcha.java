@@ -59,11 +59,11 @@ public class Captcha {
     /**
      * 副本大翻牌检测区域
      */
-    public static final int[] FLOP_BONUS_DETECT_RECT = {};
+    public static final int[] FLOP_BONUS_DETECT_RECT = {120, 0, 420, 120};
     /**
      * 副本大翻牌模板区域
      */
-    public static final int[] FLOP_BONUS_SAMPLE_RECT = {};
+    public static final int[] FLOP_BONUS_SAMPLE_RECT = {160, 10, 365, 75};
     /**
      * 验证码选项坐标
      */

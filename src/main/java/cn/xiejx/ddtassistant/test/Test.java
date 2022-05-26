@@ -24,10 +24,17 @@ public class Test {
     }
 
     public static void captureFlopBonus() {
-        int hwnd = 4264830;
+        int hwnd = 329146;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
         dm.capturePicByRegion("test/" + Captcha.TEMPLATE_FLOP_BONUS_PREFIX + "1.bmp", Captcha.FLOP_BONUS_SAMPLE_RECT);
+    }
+
+    public static void captureFull() {
+        int hwnd = 329146;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.capturePicByRegion("test/full-1.bmp", Captcha.GAME_FULL_REACT);
     }
 
     public static void uploadFile(String path) {
