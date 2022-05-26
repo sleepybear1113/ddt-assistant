@@ -20,8 +20,14 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        String filePath = "captcha/2022_05_20/264000-14_00_22.png";
-        uploadFile(filePath);
+        captureFlopBonus();
+    }
+
+    public static void captureFlopBonus() {
+        int hwnd = 4264830;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.capturePicByRegion("test/" + Captcha.TEMPLATE_FLOP_BONUS_PREFIX + "1.bmp", Captcha.FLOP_BONUS_SAMPLE_RECT);
     }
 
     public static void uploadFile(String path) {

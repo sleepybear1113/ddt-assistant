@@ -294,7 +294,6 @@ public class Captcha {
 
         this.lastCaptchaTime = System.currentTimeMillis();
         Util.sleep(1000L);
-        return;
     }
 
     public void identifyPveFlopBonus(UserConfig userConfig) {
