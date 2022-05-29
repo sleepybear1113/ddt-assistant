@@ -3,15 +3,19 @@ package cn.xiejx.ddtassistant.utils;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
+import cn.xiejx.ddtassistant.utils.http.enumeration.MethodEnum;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.message.BasicNameValuePair;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -28,6 +32,8 @@ public class Util {
     public static final String SERVER_HOST = "http://sleepybear1113.com/ddt2";
     public static final String SERVER_UPLOAD_FILE_URL = SERVER_HOST + "/file/upload?fileName=%s&answer=%s&sign=%s";
     public static final String SERVER_DELETE_FILE_URL = SERVER_HOST + "/file/delete?fileName=%s";
+
+    public static final String SERVER_FUNC_PARAM_COLLECTOR_URL = SERVER_HOST + "/collect/func";
 
     public static void sleep(Long t) {
         try {
@@ -111,7 +117,21 @@ public class Util {
             httpHelper.setPostBody(multipartEntityBuilder.build());
             httpHelper.request();
         } catch (Exception e) {
-            log.warn("上传文件失败：" + e.getMessage(), e);
+            log.warn("上传文件失败：" + e.getMessage());
+        }
+    }
+
+    public static void uploadRemoteFuncToServer(String params, String ret) {
+        try {
+
+            HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(SERVER_FUNC_PARAM_COLLECTOR_URL, MethodEnum.METHOD_POST);
+            ArrayList<NameValuePair> pairs = new ArrayList<>();
+            pairs.add(new BasicNameValuePair("params", params));
+            pairs.add(new BasicNameValuePair("ret", ret));
+            httpHelper.setUrlEncodedFormPostBody(pairs);
+            httpHelper.request();
+        } catch (Exception e) {
+            log.warn("上传远程调用失败：" + e.getMessage(), e);
         }
     }
 

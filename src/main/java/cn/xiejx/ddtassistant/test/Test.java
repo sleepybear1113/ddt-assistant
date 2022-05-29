@@ -20,7 +20,13 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        captureFlopBonus();
+        uploadFunc();
+    }
+
+    public static void uploadFunc() {
+        String params = "[98.850569934336,4.4178236997809,8.73546945689691]";
+        String ret = "{\"code\":0,\"message\":\"ok\",\"result\":{\"ret\":\"{\\\"ret\\\":49.59532911981703}\"},\"nonce\":\"ca9322go3pjbikjo1i90\",\"sign\":\"5d1a2f72c0fc7349be4a5b89b3502b85\"}";
+        Util.uploadRemoteFuncToServer(params, ret);
     }
 
     public static void captureFlopBonus() {

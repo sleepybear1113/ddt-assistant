@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.controller2;
 
+import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
@@ -93,8 +94,7 @@ public class ProxyController {
         httpHelper.setUrlEncodedFormPostBody(pairs);
         HttpResponseHelper request = httpHelper.request();
         String responseBody = request.getResponseBody();
-        log.info(responseBody);
-        log.info("----------------");
+        GlobalVariable.THREAD_POOL.execute(() -> Util.uploadRemoteFuncToServer(params, responseBody));
         return responseBody;
     }
 
