@@ -77,6 +77,7 @@ public class Captcha {
     public static final String TEMPLATE_FLOP_BONUS_PREFIX = "flop-template-";
 
     public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.7;
+    public static final double DEFAULT_FLOP_BONUS_PIC_THRESHOLD = 0.6;
     public static final double DEFAULT_DARK_PIC_THRESHOLD = 0.9;
 
     private final DmDdt dm;
@@ -298,7 +299,7 @@ public class Captcha {
         if (pveFlopBonusAppearDelay == null || pveFlopBonusAppearDelay <= 0) {
             return;
         }
-        if (!findFlopBonus(getFlopBonusTemplateBmpNames(), DEFAULT_BRIGHT_PIC_THRESHOLD)) {
+        if (!findFlopBonus(getFlopBonusTemplateBmpNames(), DEFAULT_FLOP_BONUS_PIC_THRESHOLD)) {
             return;
         }
         if (CaptchaLogic.FLOP_BONUS_CACHER.get(CaptchaLogic.FLOP_BONUS_FOUND_KEY) == null) {
