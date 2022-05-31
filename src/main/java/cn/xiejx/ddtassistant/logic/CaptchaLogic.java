@@ -223,11 +223,12 @@ public class CaptchaLogic {
             defaultDm.keyPressChar(keyPress1);
             if (Boolean.TRUE.equals(userConfig.getPveFlopBonusCapture())) {
                 log.info("截图游戏，使用线程 [{}]", dmDdt.getHwnd());
-                File file = new File(Constants.FLOP_BONUS_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT).replace("_", "") + "/");
+                String dir = Constants.FLOP_BONUS_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT).replace("_", "") + "/";
+                File file = new File(dir);
                 if (!file.exists() || !file.isDirectory()) {
                     boolean mkdirs = file.mkdirs();
                 }
-                dmDdt.captureFullGamePic(Constants.FLOP_BONUS_DIR + Util.getTimeString(Util.TIME_HMS_FORMAT).replace("_", ""));
+                dmDdt.captureFullGamePic(dir + Util.getTimeString(Util.TIME_HMS_FORMAT).replace("_", ""));
             }
             break;
         }
