@@ -67,6 +67,11 @@ public class Captcha {
     public final static int[] ANSWER_CHOICE_POINT = {350, 373, 568, 410};
 
     public static final int[] SUBMIT_BUTTON_POINT = {510, 457};
+
+    /**
+     * 倒计时秒数的区域
+     */
+    public static final int[] COUNT_DOWN_NUMBER_RECT = {708, 185, 745, 205};
     public final static int[] ANSWER_CHOICE_POINT_A = {ANSWER_CHOICE_POINT[0], ANSWER_CHOICE_POINT[1]};
     public final static int[] ANSWER_CHOICE_POINT_B = {ANSWER_CHOICE_POINT[2], ANSWER_CHOICE_POINT[1]};
     public final static int[] ANSWER_CHOICE_POINT_C = {ANSWER_CHOICE_POINT[0], ANSWER_CHOICE_POINT[3]};
@@ -153,6 +158,10 @@ public class Captcha {
 
     public void captureCountDownSampleRegion(String path) {
         dm.capturePicByRegion(path, CAPTCHA_COUNTDOWN_SAMPLE_REACT);
+    }
+
+    public void captureCountDownNumberRegion(String path) {
+        dm.capturePicByRegion(path, COUNT_DOWN_NUMBER_RECT);
     }
 
     public void identifyCaptchaLoop(UserConfig userConfig) {

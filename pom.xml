@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.xiejx</groupId>
     <artifactId>ddt-assistant</artifactId>
-    <version>1.6.1.1</version>
+    <version>1.6.2</version>
     <name>ddt-assistant</name>
     <description>ddt-assistant</description>
     <properties>

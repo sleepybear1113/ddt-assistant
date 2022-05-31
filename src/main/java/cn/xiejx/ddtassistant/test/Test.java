@@ -20,7 +20,19 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        uploadFunc();
+        captureCountDownNumber(111, false);
+    }
+
+    public static void captureCountDownNumber(int hwnd, boolean loop) {
+        int count = 0;
+        do {
+            count++;
+            Captcha captcha = Captcha.createInstance(DmDdt.createInstance(hwnd));
+            captcha.captureCountDownNumberRegion("test/cd/" + count + ".png");
+            if (count > 40) {
+                break;
+            }
+        } while (loop);
     }
 
     public static void uploadFunc() {
