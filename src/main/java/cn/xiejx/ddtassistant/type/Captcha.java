@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.config.UserConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.logic.CaptchaLogic;
+import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
@@ -241,10 +242,22 @@ public class Captcha {
         if (!file.isDirectory()) {
             boolean mkdirs = file.mkdirs();
         }
+        String countDownDir = "captcha/countDown/";
+        String countDownName = countDownDir + dm.getHwnd() + ".png";
+        file = new File(countDownDir);
+        if (!file.isDirectory()) {
+            boolean mkdirs = file.mkdirs();
+        }
 
         // 截屏
         captureCaptchaQuestionPic(captchaName);
+        //倒计时
+        captureCountDownNumberRegion(countDownName);
         log.info("[{}] 验证码保存到本地，文件名为：{}", dm.getHwnd(), captchaName);
+        Integer countDown = OcrUtil.ocrCountDownPic(countDownName);
+        if (countDown != null) {
+            log.info("[{}] 验证码倒计时剩下 {} 秒", dm.getHwnd(), countDown);
+        }
 
         // 提交平台识别
         TjResponse response = new TjResponse();
