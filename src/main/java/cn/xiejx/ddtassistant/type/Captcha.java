@@ -270,7 +270,7 @@ public class Captcha {
             long countDownTime = countDown == null ? userConfig.getTimeout() : (countDown - 2) * 1000L;
             response = TjHttpUtil.waitToGetChoice(countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
             if (ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
-                long leftTime = countDownTime * 1000 - (System.currentTimeMillis() - startCaptchaTime);
+                long leftTime = countDownTime - (System.currentTimeMillis() - startCaptchaTime);
                 if (leftTime > MIN_ANSWER_TIME * 1000) {
                     reportErrorResult(response.getResult().getId(), true);
                     log.info("[{}] 平台返回结果有误，但倒计时仍有 {} 毫秒，再次请求平台", dm.getHwnd(), leftTime);
