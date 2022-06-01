@@ -86,6 +86,8 @@ public class Captcha {
     public static final double DEFAULT_FLOP_BONUS_PIC_THRESHOLD = 0.6;
     public static final double DEFAULT_DARK_PIC_THRESHOLD = 0.9;
 
+    public static final int MIN_ANSWER_TIME = 8;
+
     private final DmDdt dm;
 
     private boolean identifyCaptchaRunning;
@@ -255,16 +257,26 @@ public class Captcha {
         captureCountDownNumberRegion(countDownName);
         log.info("[{}] 验证码保存到本地，文件名为：{}", dm.getHwnd(), captchaName);
         Integer countDown = OcrUtil.ocrCountDownPic(countDownName);
-        if (countDown != null) {
-            log.info("[{}] 验证码倒计时剩下 {} 秒", dm.getHwnd(), countDown);
-        }
+        long startCaptchaTime = System.currentTimeMillis();
 
         // 提交平台识别
         TjResponse response = new TjResponse();
-        if (userConfig.validUserInfo()) {
+        if (countDown != null && countDown <= MIN_ANSWER_TIME) {
+            response.setChoiceEnum(ChoiceEnum.UNDEFINED);
+            log.info("[{}] 验证码倒计时剩下 {} 秒，来不及提交打码，进行自定义选择", dm.getHwnd(), countDown);
+        } else if (userConfig.validUserInfo()) {
             TjPredictDto tjPredictDto = TjPredictDto.build(userConfig, captchaName);
-            log.info("[{}] 提交识别...", dm.getHwnd());
-            response = TjHttpUtil.waitToGetChoice(userConfig.getTimeout(), userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
+            log.info("[{}] 提交平台识别...倒计时还剩下 {} 秒", dm.getHwnd(), countDown);
+            long countDownTime = countDown == null ? userConfig.getTimeout() : (countDown - 2) * 1000L;
+            response = TjHttpUtil.waitToGetChoice(countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
+            if (ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
+                long leftTime = countDownTime * 1000 - (System.currentTimeMillis() - startCaptchaTime);
+                if (leftTime > MIN_ANSWER_TIME * 1000) {
+                    reportErrorResult(response.getResult().getId(), true);
+                    log.info("[{}] 平台返回结果有误，但倒计时仍有 {} 毫秒，再次请求平台", dm.getHwnd(), leftTime);
+                    response = TjHttpUtil.waitToGetChoice(leftTime - 2000, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
+                }
+            }
         } else {
             log.info("[{}] 用户名或密码为空，无法提交打码平台", dm.getHwnd());
             response.setChoiceEnum(ChoiceEnum.UNDEFINED);

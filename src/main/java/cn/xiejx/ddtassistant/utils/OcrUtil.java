@@ -3,7 +3,6 @@ package cn.xiejx.ddtassistant.utils;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
@@ -31,7 +30,7 @@ public class OcrUtil {
             if (StringUtils.isBlank(ocr)) {
                 return null;
             }
-            String res = ocr.replace("b", "6").replace("T", "7").replace("s", "");
+            String res = ocr.trim().replace("b", "6").replace("T", "7").replace("s", "");
             if (StringUtils.isNumeric(res)) {
                 return Integer.valueOf(res);
             }

@@ -81,7 +81,6 @@ public class ProxyController {
 
     @RequestMapping("/v1/af/call_remote_func2")
     public String func2(String action, String app_key, String func_name, String params, String nonce, String timestamp, String sign) {
-        log.info("{}, {}, {}, {}, {}, {}, {}", action, app_key, func_name, params, nonce, timestamp, sign);
         HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper("http://123.129.198.210/v1/af/call_remote_func2", MethodEnum.METHOD_POST);
         httpHelper.setHeader("Host", "api.paojiaoyun.com");
         ArrayList<NameValuePair> pairs = new ArrayList<>();

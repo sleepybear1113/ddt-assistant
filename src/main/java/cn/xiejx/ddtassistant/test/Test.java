@@ -2,6 +2,7 @@ package cn.xiejx.ddtassistant.test;
 
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.Captcha;
+import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
 import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
@@ -20,19 +21,14 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        captureCountDownNumber(111, false);
+        captureCountDownNumber(596778, true);
     }
 
     public static void captureCountDownNumber(int hwnd, boolean loop) {
-        int count = 0;
-        do {
-            count++;
-            Captcha captcha = Captcha.createInstance(DmDdt.createInstance(hwnd));
-            captcha.captureCountDownNumberRegion("test/cd/" + count + ".png");
-            if (count > 40) {
-                break;
-            }
-        } while (loop);
+        String countDownDir = "captcha/countDown/";
+        String countDownName = countDownDir + 662382 + ".png";
+        Integer countDown = OcrUtil.ocrCountDownPic(countDownName);
+        System.out.println(countDown);
     }
 
     public static void uploadFunc() {
