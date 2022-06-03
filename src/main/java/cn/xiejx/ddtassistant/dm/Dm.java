@@ -7,6 +7,7 @@ import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 
@@ -167,7 +168,7 @@ public class Dm {
     }
 
     private boolean validFindPicParam(int x1, int y1, int x2, int y2, String templatePath) {
-        if (templatePath == null) {
+        if (StringUtils.isBlank(templatePath)) {
             log.error("找图失败：没有样图！");
             return false;
         }
@@ -205,11 +206,33 @@ public class Dm {
     public void leftClick(int x, int y, long delay) {
         moveTo(x, y);
         Util.sleep(delay);
-        invoke("LeftClick");
+        leftClick();
     }
 
     public void leftClick() {
         invoke("LeftClick");
+    }
+
+    public void leftDoubleClick(int[] xy) {
+        leftDoubleClick(xy[0], xy[1]);
+    }
+
+    public void leftDoubleClick(int[] xy, long delay) {
+        leftDoubleClick(xy[0], xy[1], delay);
+    }
+
+    public void leftDoubleClick(int x, int y) {
+        leftDoubleClick(x, y, 0);
+    }
+
+    public void leftDoubleClick(int x, int y, long delay) {
+        moveTo(x, y);
+        Util.sleep(delay);
+        leftDoubleClick();
+    }
+
+    public void leftDoubleClick() {
+        invoke("LeftDoubleClick");
     }
 
     public void moveTo(int x, int y) {
@@ -231,6 +254,12 @@ public class Dm {
 
     public void keyPressChar(String key) {
         Variant variant = invoke("KeyPressChar", key);
+    }
+
+    public void pressKeyChars(String[] keys) {
+        for (String key : keys) {
+            keyPressChar(key);
+        }
     }
 
     public Variant invoke(String method, Object... params) {

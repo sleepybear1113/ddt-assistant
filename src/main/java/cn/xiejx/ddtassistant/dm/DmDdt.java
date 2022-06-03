@@ -2,6 +2,7 @@ package cn.xiejx.ddtassistant.dm;
 
 import cn.xiejx.ddtassistant.config.UserConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -137,6 +138,7 @@ public class DmDdt extends Dm {
             log.warn("图片路径未指定");
             return;
         }
+        Util.ensureParentDir(path);
         if (path.endsWith(BMP_SUFFIX)) {
             captureBmp(region[0], region[1], region[2], region[3], path);
         } else if (path.endsWith(PNG_SUFFIX)) {

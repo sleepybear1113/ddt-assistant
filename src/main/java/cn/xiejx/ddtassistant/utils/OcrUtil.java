@@ -19,10 +19,10 @@ import java.io.IOException;
  */
 @Slf4j
 public class OcrUtil {
-    public static ITesseract instance = new Tesseract();
 
     public static Integer ocrCountDownPic(String path) {
         try {
+            ITesseract instance = new Tesseract();
             BufferedImage bufferedImage = changeImgBgColor(path);
             instance.setDatapath("tessdata");
             instance.setLanguage("eng");
@@ -39,6 +39,67 @@ public class OcrUtil {
             return null;
         }
         return null;
+    }
+
+    public static String ocrAuctionItemName(String path) {
+        try {
+            ITesseract instance = new Tesseract();
+            BufferedImage bufferedImage = changeImgBgColor(path);
+            instance.setDatapath("tessdata");
+            instance.setLanguage("zh_ddt");
+            String ocr = instance.doOCR(bufferedImage);
+            if (StringUtils.isBlank(ocr)) {
+                return null;
+            }
+            return ocr.trim();
+        } catch (Exception e) {
+            log.warn("OCR 图像识别失败：{}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static Integer ocrAuctionItemNum(String path) {
+        try {
+            ITesseract instance = new Tesseract();
+            BufferedImage bufferedImage = changeImgBgColor(path);
+            instance.setDatapath("tessdata");
+            instance.setLanguage("eng");
+            String ocr = instance.doOCR(bufferedImage);
+            if (StringUtils.isBlank(ocr)) {
+                return null;
+            }
+            String trim = ocr.trim();
+            if (StringUtils.isNumeric(trim)) {
+                return Integer.valueOf(trim);
+            }
+            return null;
+        } catch (Exception e) {
+            log.warn("OCR 图像识别失败：{}", e.getMessage());
+            return null;
+        }
+    }
+
+    public static BufferedImage changeAuctionItemImg(String path) throws IOException {
+        BufferedImage img = ImageIO.read(new File(path));
+        WritableRaster raster = img.getRaster();
+        int width = img.getWidth();
+        int height = img.getHeight();
+
+        int[] delta = {40, 40, 40};
+        int[] black = {0, 0, 0};
+        int[] white = {240, 240, 240};
+        int[] t = {100, 100, 100};
+
+        for (int xx = 0; xx < width; xx++) {
+            for (int yy = 0; yy < height; yy++) {
+                int[] pixels = raster.getPixel(xx, yy, (int[]) null);
+                changePixels(pixels, white, t, delta, false);
+                changePixels(pixels, t, black, delta, false);
+                changePixels(pixels, black, white, delta, false);
+                raster.setPixel(xx, yy, pixels);
+            }
+        }
+        return img;
     }
 
     public static BufferedImage changeImgBgColor(String path) throws IOException {

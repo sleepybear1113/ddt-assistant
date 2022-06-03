@@ -209,6 +209,7 @@ public class Captcha {
             // 检测验证码的代码
             identifyCaptcha(userConfig);
         }
+        identifyCaptchaRunning = false;
     }
 
     public void identifyCaptcha(UserConfig userConfig) {

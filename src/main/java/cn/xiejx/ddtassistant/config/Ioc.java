@@ -25,6 +25,11 @@ public class Ioc {
     }
 
     @Bean
+    public AuctionList initAuctionList() {
+        return AuctionList.load();
+    }
+
+    @Bean
     public DmDdt initDmDdt() {
         DmDdt dmDdt = DmDdt.createInstance(null);
         captchaImgToBmpBatch(dmDdt, Constants.RESOURCE_DIR);

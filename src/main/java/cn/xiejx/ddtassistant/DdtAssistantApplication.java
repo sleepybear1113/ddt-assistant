@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant;
 
 import cn.xiejx.ddtassistant.config.AppProperties;
+import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -20,6 +21,8 @@ public class DdtAssistantApplication {
 
         SpringApplicationBuilder builder = new SpringApplicationBuilder(DdtAssistantApplication.class);
         ConfigurableApplicationContext context = builder.headless(false).run(args);
+
+        SpringContextUtil.setApplicationContext(context);
 
         Environment environment = context.getBean(Environment.class);
         AppProperties appProperties = context.getBean(AppProperties.class);

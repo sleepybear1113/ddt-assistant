@@ -158,4 +158,14 @@ public class Util {
         String data = fileName + answer + key;
         return DigestUtils.md5Hex(data);
     }
+
+    public static void ensureParentDir(String filename) {
+        File file = new File(filename);
+        File parentFile = file.getParentFile();
+        if (!parentFile.exists()) {
+            if (!parentFile.mkdirs()) {
+                log.info("创建文件夹 {} 失败", parentFile);
+            }
+        }
+    }
 }
