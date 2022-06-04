@@ -26,7 +26,7 @@ public class AuctionConstants {
     /**
      * 一口价坐标，偏右
      */
-    public static final int[] MOUTHFUL_PRICE_POINT = {160, 310};
+    public static final int[] MOUTHFUL_PRICE_POINT = {160, 320};
 
     /**
      * 物品数量输入框的数字框坐标
@@ -56,7 +56,7 @@ public class AuctionConstants {
     /**
      * 进行拍卖的按钮位置
      */
-    public static final int[] SOLD_POINT = {140, 490};
+    public static final int[] SELL_POINT = {140, 490};
 
     /**
      * 弹框输入物品数量的整个区域。如果一个物品有多于一个数量，那么会弹框
@@ -76,7 +76,7 @@ public class AuctionConstants {
     /**
      * 输入数量框的 ocr 范围
      */
-    public static final int[] NUM_INPUT_OCR_RECT = {458, 272, 510, 290};
+    public static final int[] NUM_INPUT_OCR_RECT = {458, 274, 510, 290};
 
     /**
      * 物品放置区域 ocr 范围

@@ -22,9 +22,6 @@ public class Auction {
 
     private boolean running;
 
-
-    public String previousName = null;
-
     private Auction(DmDdt dm) {
         this.dm = dm;
         this.running = false;
@@ -59,23 +56,35 @@ public class Auction {
     }
 
     public void go(int x, int y) {
+        dm.leftClick(10, 10);
+        Util.sleep(100L);
         // 点击背包第 x 个
         dm.leftClick(x, y);
-        Util.sleep(100L);
+        Util.sleep(1000L);
 
         // 点击拍卖的地方
         dm.leftClick(AuctionConstants.AUCTION_INPUT_POINT);
-        Util.sleep(100L);
+        Util.sleep(300L);
 
         // ocr 物品名称
         String itemName = ocrItemName();
         // 检测是否弹框输入数量，并且获取数量
-        int num = getNum();
+        Integer num = getNum();
+        log.info("物品：{}, 数量：{}", itemName, num);
 
         boolean putBack = false;
         Integer[] price = null;
         AuctionList auctionList = SpringContextUtil.getBean(AuctionList.class);
         AuctionItem auctionItem = null;
+
+        AuctionItem at = new AuctionItem();
+        at.setAuctionTime("48");
+        at.setArgueUnitPrice(2.307);
+        at.setMouthfulUnitPrice(3.409);
+        at.setEnable(true);
+        at.setOcrName("恢复圣石5级");
+        auctionList = AuctionList.load();
+        auctionList.getAuctionItemList().add(at);
         if (auctionList == null) {
             log.info("找不到");
             putBack = true;
@@ -86,7 +95,7 @@ public class Auction {
             log.info("找不到");
             putBack = true;
         } else {
-            if (auctionItem.getEnable()) {
+            if (!auctionItem.getEnable()) {
                 putBack = true;
             }
             price = auctionItem.getPrice(num);
@@ -103,8 +112,10 @@ public class Auction {
         } else {
             // 确认数量
             dm.leftClick(AuctionConstants.NUM_INPUT_BOX_CONFIRM_POINT);
-            Util.sleep(100L);
+            Util.sleep(500L);
         }
+
+        log.info("输入价格：竞拍价：{}*{}={}, 一口价：{}*{}={}, 时长：{}", auctionItem.getArgueUnitPrice(), num, price[0], auctionItem.getMouthfulUnitPrice(), num, price[1], auctionItem.getAuctionTime());
 
         // 双击竞拍价框
         dm.leftDoubleClick(AuctionConstants.ARGUE_PRICE_POINT);
@@ -113,32 +124,36 @@ public class Auction {
         // 删除数值
         dm.keyPressChar("back");
         if (price[0] != null) {
+            Util.sleep(200L);
             // 如果有值，那么填入
-            dm.pressKeyChars(AuctionItem.priceToStr(price[0]));
+            dm.pressKeyChars(AuctionItem.priceToStr(price[0]), 10L);
         }
 
+        Util.sleep(200L);
         // 双击一口价
         dm.leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
         dm.leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
-        Util.sleep(100L);
+        Util.sleep(200L);
         // 删除数值
         dm.keyPressChar("back");
         if (price[1] != null) {
             // 如果有值，那么填入
-            dm.pressKeyChars(AuctionItem.priceToStr(price[1]));
+            Util.sleep(100L);
+            dm.pressKeyChars(AuctionItem.priceToStr(price[1]), 10L);
         }
+        Util.sleep(200L);
 
         // 选择拍卖时间
         AuctionConstants.AuctionTimeEnum auctionTime = AuctionConstants.AuctionTimeEnum.getAuctionTime(auctionItem.getAuctionTime());
         dm.leftClick(auctionTime.getPosition());
-        Util.sleep(50L);
+        Util.sleep(100L);
 
         // 进行拍卖！
-        dm.leftClick(AuctionConstants.SOLD_POINT);
+        dm.leftClick(AuctionConstants.SELL_POINT);
     }
 
-    public int getNum() {
-        boolean inputNumBoxAppear = findInputNumBox("", 0.7);
+    public Integer getNum() {
+        boolean inputNumBoxAppear = findInputNumBox("img/auction-num-template-1.bmp", 0.7);
         if (!inputNumBoxAppear) {
             return 1;
         }

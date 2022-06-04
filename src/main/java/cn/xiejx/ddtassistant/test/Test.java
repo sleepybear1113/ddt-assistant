@@ -2,6 +2,7 @@ package cn.xiejx.ddtassistant.test;
 
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.Captcha;
+import cn.xiejx.ddtassistant.type.auction.Auction;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
@@ -21,13 +22,34 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        captureCountDownNumber(596778, true);
+        testAuction();
     }
 
-    public static void captureCountDownNumber(int hwnd, boolean loop) {
+    public static void testAuction() {
+        int hwnd = 4656088;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.leftClick(10, 10);
+        Util.sleep(100L);
+        Auction auction = Auction.createInstance(dm);
+        auction.go(330, 150);
+    }
+
+    public static void captureAuctionSample() {
+        int hwnd = 4656088;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.leftClick(10, 10);
+        Util.sleep(100L);
+        Auction auction = Auction.createInstance(dm);
+        auction.captureSellNumSamplePic("test/auction-1.bmp");
+
+    }
+
+    public static void captureCountDownNumber() {
         String countDownDir = "captcha/countDown/";
         String countDownName = countDownDir + 662382 + ".png";
-        Integer countDown = OcrUtil.ocrCountDownPic(countDownName);
+        Integer countDown = OcrUtil.ocrCountDownPic("test/113.png");
         System.out.println(countDown);
     }
 
@@ -42,6 +64,17 @@ public class Test {
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
         dm.capturePicByRegion("test/" + Captcha.TEMPLATE_FLOP_BONUS_PREFIX + "1.bmp", Captcha.FLOP_BONUS_SAMPLE_RECT);
+    }
+
+    public static void captureSome() {
+        int hwnd = 592822;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.leftClick(10, 10);
+        Util.sleep(100L);
+        dm.capturePicByRegion("test/114.png", DmDdt.GAME_FULL_REACT);
+//        dm.capturePicByRegion("test/full-a-1.png", DmDdt.GAME_FULL_REACT);
+        System.out.println("ok");
     }
 
     public static void captureFull() {

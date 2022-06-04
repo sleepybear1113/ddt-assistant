@@ -44,7 +44,7 @@ public class OcrUtil {
     public static String ocrAuctionItemName(String path) {
         try {
             ITesseract instance = new Tesseract();
-            BufferedImage bufferedImage = changeImgBgColor(path);
+            BufferedImage bufferedImage = changeAuctionItemImg(path);
             instance.setDatapath("tessdata");
             instance.setLanguage("zh_ddt");
             String ocr = instance.doOCR(bufferedImage);
@@ -61,10 +61,9 @@ public class OcrUtil {
     public static Integer ocrAuctionItemNum(String path) {
         try {
             ITesseract instance = new Tesseract();
-            BufferedImage bufferedImage = changeImgBgColor(path);
             instance.setDatapath("tessdata");
             instance.setLanguage("eng");
-            String ocr = instance.doOCR(bufferedImage);
+            String ocr = instance.doOCR(new File(path));
             if (StringUtils.isBlank(ocr)) {
                 return null;
             }
@@ -87,15 +86,16 @@ public class OcrUtil {
 
         int[] delta = {40, 40, 40};
         int[] black = {0, 0, 0};
-        int[] white = {240, 240, 240};
-        int[] t = {100, 100, 100};
+        int[] white1 = {150, 150, 150};
+        int[] white2 = {240, 240, 240};
+        int[] t = {70, 70, 70};
 
         for (int xx = 0; xx < width; xx++) {
             for (int yy = 0; yy < height; yy++) {
                 int[] pixels = raster.getPixel(xx, yy, (int[]) null);
-                changePixels(pixels, white, t, delta, false);
+                changePixels(pixels, white1, t, delta, false);
                 changePixels(pixels, t, black, delta, false);
-                changePixels(pixels, black, white, delta, false);
+                changePixels(pixels, black, white2, delta, false);
                 raster.setPixel(xx, yy, pixels);
             }
         }

@@ -257,8 +257,13 @@ public class Dm {
     }
 
     public void pressKeyChars(String[] keys) {
+        pressKeyChars(keys, null);
+    }
+
+    public void pressKeyChars(String[] keys, Long delay) {
         for (String key : keys) {
             keyPressChar(key);
+            Util.sleep(delay);
         }
     }
 

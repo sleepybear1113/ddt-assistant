@@ -24,8 +24,8 @@ public class AuctionItem implements Serializable {
     private Integer minNum;
     private String auctionTime;
 
-    public Integer[] getPrice(int num) {
-        if (!Boolean.TRUE.equals(enable)) {
+    public Integer[] getPrice(Integer num) {
+        if (!Boolean.TRUE.equals(enable) || num == null) {
             return null;
         }
 

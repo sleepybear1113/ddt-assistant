@@ -39,3 +39,4 @@ logs/
 application-dev.yml
 test/
 pictures/
+tmp/
