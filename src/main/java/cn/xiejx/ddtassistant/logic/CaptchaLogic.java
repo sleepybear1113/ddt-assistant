@@ -62,7 +62,7 @@ public class CaptchaLogic {
     }
 
     public TjResponse testCaptcha() {
-        TjPredictDto build = TjPredictDto.build(userConfig, "img/captcha-sample.jpg");
+        TjPredictDto build = TjPredictDto.build(userConfig, "img/captcha-sample.bmp");
         TjResponse response = TjHttpUtil.getTjResponse(build);
         log.info(String.valueOf(response));
         return response;

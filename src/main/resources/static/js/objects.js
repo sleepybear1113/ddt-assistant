@@ -97,3 +97,79 @@ class StringRet {
         this.msg = props.msg;
     }
 }
+
+class AuctionList {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+        let items = props.auctionItemList;
+        let list = [];
+        if (items != null) {
+            for (let i = 0; i < items.length; i++) {
+                let item = items[i];
+                let auctionItem = new AuctionItem(item);
+                if (auctionItem == null) {
+                    continue
+                }
+                list.push(auctionItem);
+            }
+        }
+
+        this.auctionItemList = list;
+    }
+}
+
+class AuctionItem {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.name = props.name;
+        this.ocrName = props.ocrName;
+        this.enabled = props.enabled;
+        this.argueUnitPrice = props.argueUnitPrice;
+        this.mouthfulUnitPrice = props.mouthfulUnitPrice;
+        this.minNum = props.minNum;
+        this.auctionTime = props.auctionTime;
+    }
+}
+
+class MemoryUseList {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+        this.memoryUserList = [];
+        this.currentMemoryUse = props[props.length - 1].memory;
+        this.maxMemoryUse = 0;
+        for (let i = 0; i < props.length; i++) {
+            let item = props[i];
+            let memoryUse = new MemoryUse(item);
+            this.memoryUserList.push(memoryUse);
+            this.maxMemoryUse = Math.max(this.maxMemoryUse, memoryUse.memory);
+        }
+    }
+
+    getData() {
+        let list = [];
+        for (let i = 0; i < this.memoryUserList.length; i++) {
+            let item = this.memoryUserList[i];
+            let memory = (item.memory / 1024 / 1024).toFixed(2);
+            list.push([item.time, memory]);
+        }
+        return list;
+    }
+}
+
+class MemoryUse {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.memory = props.memory;
+        this.time = props.time;
+    }
+}

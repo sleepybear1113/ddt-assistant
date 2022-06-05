@@ -1,123 +1,284 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>DDT Assistant-By Sleepybear</title>
-    <link rel="stylesheet" type="text/css" href="css.css">
+    <link rel="stylesheet" type="text/css" href="css/css.css">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
 </head>
+<script src="lib/js/vue.js"></script>
 <script src="lib/js/axios.min.js"></script>
+<script src="lib/js/echarts.min.js"></script>
 <script src="js/config/axios-config.js"></script>
 <script src="js/objects.js"></script>
-<script src="js/js.js"></script>
-<script src="js/http.js"></script>
-<body onload="init()">
-<span>版本号：</span><span id="appVersion"></span>　　<span>作者：sleepybear</span>　　<span>交流群：879596615</span>　　<span>设置完毕之后，本页面可以关闭，但不要关闭后台程序</span>
-<div class="area">
-    <h3>副本验证码功能</h3>
-    <hr>
-    <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
-    <div class="area">
-        <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
-        <label for="input-username">用户名</label><input id="input-username"><br/>
-        <label for="input-password">密码　</label><input id="input-password" type="password"><br/>
-        <label for="input-softId">softId </label><input id="input-softId"><br/>
-        <button onclick="testCaptcha()">测试验证码</button>
-        <button onclick="showTjAccountInfo()">查看余额</button>
-    </div>
-
-    <ul>
-        <li>
-            <label for="input-captureInterval">识屏间隔(毫秒)</label>
-            <input type="number" id="input-captureInterval" class="ms-input"><br/>
-        </li>
-        <li>
-            <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
-            <select id="select-defaultChoiceAnswer">
-                <option title="A">A</option>
-                <option title="B">B</option>
-                <option title="C">C</option>
-                <option title="D">D</option>
-                <option title="">无</option>
-            </select>
-            <label for="input-timeout">，识别超时时间(毫秒)</label>
-            <input id="input-timeout" type="number" class="ms-input"><br/>
-        </li>
-        <li>
-            <label for="input-captchaAppearDelay">当出现验证码后经过</label>
-            <input id="input-captchaAppearDelay" type="number" class="ms-input">
-            <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
-            <input id="input-keyPressAfterCaptchaShow" class="string-input">
-            <br/>
-            <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后经过</label>
-            <input id="input-keyPressDelayAfterCaptchaDisappear" type="number" class="ms-input">
-            <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
-            <input id="input-keyPressAfterCaptchaDisappear" class="string-input">
-        </li>
-        <li>
-            <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
-            <input id="input-pveFlopBonusAppearDelay" type="number" class="ms-input">
-            <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
-            <input id="input-keyPressAfterPveFlopBonus" class="string-input">
-            <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
-            <input id="checkbox-pveFlopBonusCapture" type="checkbox">
-            <br/>
-            <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
-            <input id="input-pveFlopBonusDisappearDelay" type="number" class="ms-input">
-            <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
-            <input id="input-keyPressAfterPveFlopBonusDisappear" class="string-input">
-        </li>
-        <li>
-            <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label>
-            <input id="input-logPrintInterval" type="number" class="ms-input"><br/>
-        </li>
-        <li>
-            <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
-            <input id="input-detectNewWindowInterval" type="number" class="ms-input">
-        </li>
-        <li>
-            <label for="input-extraPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
-            <input id="input-extraPorts" class="string-input" placeholder="例：80,20400">
-        </li>
-    </ul>
-
-    <label>其中 1000 毫秒 = 1 秒</label><br/>
-    <button onclick="saveUserConfig()">保存</button>
-    <button onclick="resetUserConfig()">重置</button>
-    <hr>
+<script src="js/utils.js"></script>
+<body>
+<div id="index">
     <div>
-        <button onclick="bindAll()">检测并添加所有窗口</button>
-        <br/>
-        <button onclick="captureCaptchaSampleRegion()">截图保存验证码模板区域图片</button>
-        <label for="checkbox-capture-sample"></label><input id="checkbox-capture-sample" type="checkbox">勾选这个才能点击左边的按钮，防误触<br/>
-        <span>“截图保存验证码模板区域图片”作用：如果你这里运行的时候，出现了验证码但是程序没有识别到，那么可能是自带的通用的样例图片与你的游戏画面匹配不上，比如糖果截图的图片可能在 36 无法识别。这时候需要两种解决方法：</span><br/>
-        <span>1. 自行参考程序 img 文件夹下面的 captcha-template-xxx.bmp 的图片样例截图，保存为.png、.jpg、.bmp 其中一种格式，格式如 captcha-template-123.png，中间数字不能与别的重复，程序启动的时候会自动将不是 .bmp 的转为 .bmp 加入识图样例中。</span><br/>
-        <span>2. 出现验证码区域，点击上述按截图保存，然后去对应文件夹查看，删除多截图的图片或者不正确的图片。</span>
+        <span>版本号：</span><u>{{appVersion}}</u>&nbsp;&nbsp;&nbsp;
+        <span>作者：sleepybear</span>&nbsp;&nbsp;&nbsp;
+        <span>交流群：879596615</span>
+        <a href="https://jq.qq.com/?_wv=1027&k=G5Ju4kBf" target="_blank">点击唤起QQ打开群</a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <span>设置完毕之后，本页面可以关闭，但不要关闭后台程序</span>
     </div>
+    <label for="textarea-info">信息：</label>
+    <textarea id="textarea-info" style="width: 400px; height: 100px" readonly></textarea>
 </div>
-<label for="textarea-info">信息：</label>
-<textarea id="textarea-info" style="width: 400px; height: 100px" readonly></textarea>
+<hr>
 
-<div id="div-test" class="area">
-    <h3>以下为用户第一次使用前的自行测试</h3>
-    <span>若点击操作无反应，请启动 “运行-管理员权限.bat”，部分人的可能存在不提高权限不能点击的情况</span><br/>
-    <span class="red-font">如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
-    <label for="input-testDelay">以下操作延迟时间(毫秒)</label>
-    <input id="input-testDelay" type="number" value="500" class="ms-input">
-    <div id="div-click">
-        <label for="input-clickX">X坐标</label>
-        <input id="input-clickX" type="number" maxlength="4" max="9999" value="530" class="ms-input">
-        <label for="input-clickY">Y坐标</label>
-        <input id="input-clickY" type="number" maxlength="4" max="9999" value="585" class="ms-input">
-        <button onclick="testClick()">测试点击该坐标</button>
-        <span>(530,585)坐标正常为“充值”按钮，可以根据自己需要点击其他位置</span>
+<div id="tab">
+    <a>功能</a>
+    <span v-for="tab in tabs">
+        <button v-on:click="changeTab(tab.tabId)">{{tab.name}}</button>
+    </span>
+</div>
+
+<div class="area">
+    <div class="tab" id="captcha">
+        <h3>副本验证码功能</h3>
+        <hr>
+        <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
+        <div class="area">
+            <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
+            <label for="input-username">用户名</label>
+            <input id="input-username" v-model="userConfig.username"><br/>
+            <label for="input-password">密码　</label>
+            <input id="input-password" v-model="userConfig.password" type="password"><br/>
+            <label for="input-softId">softId </label>
+            <input id="input-softId" v-model="userConfig.softId"><br/>
+            <button v-on:click="testCaptcha()">测试验证码</button>
+            <button v-on:click="showTjAccountInfo()">查看余额</button>
+        </div>
+
+        <ul>
+            <li>
+                <label for="input-captureInterval">识屏间隔(毫秒)</label>
+                <input type="number" id="input-captureInterval" v-model="userConfig.captureInterval"
+                       class="ms-input"><br/>
+            </li>
+            <li>
+                <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
+                <select id="select-defaultChoiceAnswer" v-model="userConfig.defaultChoiceAnswer">
+                    <option v-for="item in answerChoices" :value="item.title">{{item.option}}</option>
+                </select>
+                <label for="input-timeout">，识别超时时间(毫秒)</label>
+                <input id="input-timeout" v-model="userConfig.timeout" type="number" class="ms-input"><br/>
+            </li>
+            <li>
+                <label for="input-captchaAppearDelay">当出现验证码后经过</label>
+                <input id="input-captchaAppearDelay" v-model="userConfig.captchaAppearDelay" type="number"
+                       class="ms-input">
+                <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
+                <input id="input-keyPressAfterCaptchaShow" v-model="userConfig.keyPressAfterCaptchaShow"
+                       class="string-input">
+                <br/>
+                <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后经过</label>
+                <input id="input-keyPressDelayAfterCaptchaDisappear"
+                       v-model="userConfig.keyPressDelayAfterCaptchaDisappear"
+                       type="number" class="ms-input">
+                <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
+                <input id="input-keyPressAfterCaptchaDisappear" v-model="userConfig.keyPressAfterCaptchaDisappear"
+                       class="string-input">
+            </li>
+            <li>
+                <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
+                <input id="input-pveFlopBonusAppearDelay" v-model="userConfig.pveFlopBonusAppearDelay" type="number"
+                       class="ms-input">
+                <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
+                <input id="input-keyPressAfterPveFlopBonus" v-model="userConfig.keyPressAfterPveFlopBonus"
+                       class="string-input">
+                <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
+                <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture" type="checkbox">
+                <br/>
+                <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
+                <input id="input-pveFlopBonusDisappearDelay" v-model="userConfig.pveFlopBonusDisappearDelay"
+                       type="number"
+                       class="ms-input">
+                <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
+                <input id="input-keyPressAfterPveFlopBonusDisappear"
+                       v-model="userConfig.keyPressAfterPveFlopBonusDisappear"
+                       class="string-input">
+            </li>
+            <li>
+                <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label>
+                <input id="input-logPrintInterval" v-model="userConfig.logPrintInterval" type="number"
+                       class="ms-input"><br/>
+            </li>
+            <li>
+                <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
+                <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval" type="number"
+                       class="ms-input">
+            </li>
+            <li>
+                <label for="input-extraPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
+                <input id="input-extraPorts" v-model="userConfig.extraPorts" class="string-input"
+                       placeholder="例：80,20400">
+            </li>
+        </ul>
+
+        <label>其中 1000 毫秒 = 1 秒</label><br/>
+        <button v-on:click="saveUserConfig()">保存</button>
+        <button v-on:click="resetUserConfig()">重置</button>
+        <hr>
+        <div>
+            <button v-on:click="bindAll()">检测并添加所有窗口</button>
+            <br/>
+            <button v-on:click="captureCaptchaSampleRegion()">截图保存验证码模板区域图片</button>
+            <label for="checkbox-capture-sample"></label>
+            <input id="checkbox-capture-sample" v-model="captureSampleChecked"
+                   type="checkbox">勾选这个才能点击左边的按钮，防误触<br/>
+            <span>“截图保存验证码模板区域图片”作用：如果你这里运行的时候，出现了验证码但是程序没有识别到，那么可能是自带的通用的样例图片与你的游戏画面匹配不上，比如糖果截图的图片可能在 36 无法识别。这时候需要两种解决方法：</span><br/>
+            <span>1. 自行参考程序 img 文件夹下面的 captcha-template-xxx.bmp 的图片样例截图，保存为.png、.jpg、.bmp 其中一种格式，格式如 captcha-template-123.png，中间数字不能与别的重复，程序启动的时候会自动将不是 .bmp 的转为 .bmp 加入识图样例中。</span><br/>
+            <span>2. 出现验证码区域，点击上述按截图保存，然后去对应文件夹查看，删除多截图的图片或者不正确的图片。</span>
+        </div>
     </div>
-    <div id="div-keyPress">
-        <label for="input-keyPress">按下键盘的按键(仅支持Fn)</label>
-        <input id="input-keyPress" value="F5" class="string-input">
-        <button onclick="testKeyPress()">测试按键</button>
-        <span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
+
+
+    <div class="tab" id="auction">
+        <h3>拍卖场功能</h3>
+        <hr>
+        <button v-on:click="savaItems()">保存</button>
+        <button v-on:click="getItems()">重载</button>
+        <button v-on:click="addNewItem()">添加一行</button>
+        <ol>
+            <div v-for="(item, index) in auctionList.auctionItemList">
+                <li>
+                    <label :for="'checkbox-auction-item-enabled-'+index"></label>
+                    <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox" v-model="item.enabled">
+                    <label :for="'input-auction-item-name-'+index">物品名</label>
+                    <input :id="'input-auction-item-name-'+index" v-model="item.name" class="string-input">
+                    <label :for="'input-auction-item-ocr-name-'+index">OCR名</label>
+                    <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName" class="string-input">
+                    <label :for="'input-auction-item-argue-unit-price-'+index">竞拍单价</label>
+                    <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
+                           class="ms-input">
+                    <label :for="'input-auction-item-mouthful-unit-price-'+index">一口单价</label>
+                    <input :id="'input-auction-item-mouthful-unit-price-'+index" v-model="item.mouthfulUnitPrice"
+                           class="ms-input">
+                    <label :for="'input-auction-item-min-num-'+index">最小拍卖数量</label>
+                    <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum" type="number" min="-1"
+                           class="ms-input">
+                    <label :for="'radio-auction-time-8-'+index">8</label>
+                    <input :id="'radio-auction-time-8-'+index" v-model="item.auctionTime" value="8" type="radio"
+                           :name="'group'+index">|
+                    <label :for="'radio-auction-time-24-'+index">24</label>
+                    <input :id="'radio-auction-time-24-'+index" v-model="item.auctionTime" value="24" type="radio"
+                           :name="'group'+index">|
+                    <label :for="'radio-auction-time-48-'+index">48</label>
+                    <input :id="'radio-auction-time-48-'+index" v-model="item.auctionTime" value="48" type="radio"
+                           :name="'group'+index">
+                    <button v-on:click="deleteItem(index)">删除</button>
+                </li>
+            </div>
+        </ol>
+
+    </div>
+
+
+    <div class="tab" id="test">
+        <h3>以下为用户第一次使用前的自行测试</h3>
+        <hr>
+        <span>若点击操作无反应，请启动 “运行-管理员权限.bat”，部分人的可能存在不提高权限不能点击的情况</span><br/>
+        <span class="red-font">如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
+        <label for="input-testDelay">以下操作延迟时间(毫秒)</label>
+        <input id="input-testDelay" v-model="test.testDelay" type="number" value="500" class="ms-input">
+        <div id="div-click">
+            <label for="input-clickX">X坐标</label>
+            <input id="input-clickX" v-model="test.clickX" type="number" maxlength="4" max="9999" value="530"
+                   class="ms-input">
+            <label for="input-clickY">Y坐标</label>
+            <input id="input-clickY" v-model="test.clickY" type="number" maxlength="4" max="9999" value="585"
+                   class="ms-input">
+            <button v-on:click="testClick()">测试点击该坐标</button>
+            <span>(530,585)坐标正常为“充值”按钮，可以根据自己需要点击其他位置</span>
+        </div>
+        <div id="div-keyPress">
+            <label for="input-keyPress">按下键盘的按键(仅支持Fn)</label>
+            <input id="input-keyPress" v-model="test.keyPress" value="F5" class="string-input">
+            <button v-on:click="testKeyPress()">测试按键</button>
+            <span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
+        </div>
+    </div>
+
+    <div class="tab" id="introduction">
+        <span v-for="(tab, index) in tabs">
+             <button v-on:click="changeTab(index)">{{tab.name}}</button>
+        </span>
+
+        <div v-show="tabIndex === 0">
+            <h5>程序目录介绍</h5>
+            <ol>
+                <li>
+                    <a>“captcha”文件夹：验证码截图保存文件夹。</a>
+                </li>
+                <li>
+                    <a>“config”文件夹（重要）：个人配置文件数据的储存文件夹，请不要将此文件夹随意复制给他人。</a>
+                </li>
+                <li>
+                    <a>“img”文件夹：图片文件夹（关键），里面包含识别图片的样本。</a>
+                </li>
+                <li>
+                    <a>“jre”文件夹：Java 运行环境文件夹（关键），可以从 Oracle 官网自行下载 Java 8 x86 版本。</a>
+                </li>
+                <li>
+                    <a>“logs”文件夹：日志文件夹，每日形成一个 app.log 文件。</a>
+                </li>
+                <li>
+                    <a>“tessdata”文件夹：OCR 字库文件夹（关键），用来图片转文字、转数字的模型。</a>
+                </li>
+                <li>
+                    <a>“大漠插件注册”文件夹：如果大漠插件不起作用，那么进去双击注册到系统。</a>
+                </li>
+                <li>
+                    <a>“ddt-assistant.jar”文件：主 Java 程序包（关键）。所有功能都集中于此，其他文件夹、文件都是附属依赖，唯独它是主程序。</a>
+                </li>
+            </ol>
+            <h5>已知问题</h5>
+            <ol>
+                <li>
+                    <a>在无显示器的电脑（服务器）运行时，若远程桌面断开，可能会导致按键失效。</a>
+                </li>
+                <li>
+                    <a>内存泄漏。调用大漠插件这块代码，有内存使用无法释放的问题，会导致在运行中，内存缓慢升高，直至触发 Java 默认的最大内存，程序崩溃。建议每日重启程序。正在寻找改进方法。</a>
+                </li>
+            </ol>
+        </div>
+
+        <div v-show="tabIndex === 1">
+            <p>如果觉得有帮助，并且想要请我吃点东西，可以扫码，感谢！</p>
+            <img src="images/wx.jpg" alt="微信二维码" width="25%">
+            <img src="images/zfb.jpg" alt="支付宝二维码" width="25%">
+        </div>
+
+        <div v-show="tabIndex === 2">
+            <p>本项目后端使用 Spring Boot 2.6.7 基于 32 位 Java 8 开发。</p>
+            <p>本项目前端使用非 node 非 cli 的纯 vue.js 文件开发，不使用前端其他复杂框架。</p>
+            <p>
+                本项目已开源（开放全部源代码），地址：<a href="https://github.com/sleepybear1113/ddt-assistant" target="_blank">https://github.com/sleepybear1113/ddt-assistant</a>
+            </p>
+            <hr>
+            <p>本项目使用大漠插件作为后台操作游戏的插件，使用 tesseract 作为 OCR 工具。</p>
+            <p>不对游戏做任何入侵、修改、增加、删除，不对游戏进行任何破坏，仅模拟人工点击等操作。</p>
+            <p>非经允许，任何人不得将此程序用于商业用途，作者将保留一切该程序的权利。</p>
+        </div>
+
+        <div v-show="tabIndex === 3">
+            <p>以下性能监控后台默认每 2 分钟收集一次，或者点击刷新立即获取</p>
+            <p>内存占用会随时间缓慢上升，直到到达 Java 认为需要清理的时候，进行一次大清理，占用会下降</p>
+            <hr>
+            <button v-on:click="showMemoryUse()">刷新</button><br/>
+            <a>当前占用 {{currentMemoryUse}} KB</a>
+            <a>最大占用 {{maxMemoryUse}} KB</a>
+            <div id="memory-use" style="width: 600px;height:400px;"></div>
+        </div>
     </div>
 </div>
+
+<script src="js/index.js"></script>
+<script src="js/captcha.js"></script>
+<script src="js/auction.js"></script>
+<script src="js/test.js"></script>
+<script src="js/tab.js"></script>
+<script src="js/introduction.js"></script>
 </body>
 </html>

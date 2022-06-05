@@ -1,5 +1,7 @@
 package cn.xiejx.ddtassistant.type.auction;
 
+import cn.xiejx.ddtassistant.constant.Constants;
+
 /**
  * There is description
  *
@@ -7,6 +9,7 @@ package cn.xiejx.ddtassistant.type.auction;
  * @date 2022/06/03 22:48
  */
 public class AuctionConstants {
+    public static final String FILENAME = Constants.CONFIG_DIR + "action-list-config.json";
 
     /**
      * 拍卖物品 tab 横向
@@ -117,4 +120,35 @@ public class AuctionConstants {
             return HOUR_48;
         }
     }
+
+    public static class AuctionPosition {
+        public static final int[] FIRST_POINT = {345, 155};
+        public static final int GAP = 45;
+        public static final int N = 7;
+
+        public static int[] getPoint(int x, int y) {
+            if (x <= 0 || y <= 0) {
+                return null;
+            }
+            if (x > N || y > N) {
+                return null;
+            }
+
+            int xx = FIRST_POINT[1] + GAP * (x - 1);
+            int yy = FIRST_POINT[0] + GAP * (y - 1);
+            return new int[]{xx, yy};
+        }
+
+        public static int[] getPoint(int n) {
+            if (n <= 0 || n > N * N) {
+                return null;
+            }
+
+            int x = (n - 1) / N + 1;
+            int y = n % N;
+            y = y == 0 ? N : y;
+            return getPoint(x, y);
+        }
+    }
+
 }

@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.test;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.Captcha;
 import cn.xiejx.ddtassistant.type.auction.Auction;
+import cn.xiejx.ddtassistant.type.auction.AuctionConstants;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,7 +34,7 @@ public class Test {
         dm.leftClick(10, 10);
         Util.sleep(100L);
         Auction auction = Auction.createInstance(dm);
-        auction.go(330, 150);
+        auction.go(1);
     }
 
     public static void captureAuctionSample() {

@@ -16,16 +16,37 @@ import java.math.RoundingMode;
 public class AuctionItem implements Serializable {
     private static final long serialVersionUID = 3245791330843756688L;
 
+    /**
+     * 用户可见的自定义的名字
+     */
     private String name;
+    /**
+     * ocr 名字
+     */
     private String ocrName;
-    private Boolean enable;
+    /**
+     * 是否启用
+     */
+    private Boolean enabled;
+    /**
+     * 竞拍价单价
+     */
     private Double argueUnitPrice;
+    /**
+     * 一口价单价
+     */
     private Double mouthfulUnitPrice;
+    /**
+     * 最小挂的数量
+     */
     private Integer minNum;
+    /**
+     * 拍卖时限
+     */
     private String auctionTime;
 
     public Integer[] getPrice(Integer num) {
-        if (!Boolean.TRUE.equals(enable) || num == null) {
+        if (!Boolean.TRUE.equals(enabled) || num == null) {
             return null;
         }
 
@@ -48,11 +69,11 @@ public class AuctionItem implements Serializable {
         return s.split("");
     }
 
-    public boolean getEnable() {
-        return Boolean.TRUE.equals(enable);
+    public boolean getEnabled() {
+        return Boolean.TRUE.equals(enabled);
     }
 
-    public void setEnable(Boolean enable) {
-        this.enable = enable;
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 }

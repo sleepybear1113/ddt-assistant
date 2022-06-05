@@ -2,12 +2,10 @@ package cn.xiejx.ddtassistant.utils;
 
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
-import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
 import cn.xiejx.ddtassistant.utils.http.enumeration.MethodEnum;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
@@ -80,6 +78,7 @@ public class Util {
     }
 
     public static void writeFile(String s, String path) {
+        ensureParentDir(path);
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path))) {
             bufferedWriter.write(s);
         } catch (IOException e) {

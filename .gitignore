@@ -34,6 +34,7 @@ build/
 
 ### user ###
 captcha/
+config/
 user-config.json
 logs/
 application-dev.yml

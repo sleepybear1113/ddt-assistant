@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.config;
 
-import cn.xiejx.ddtassistant.constant.Constants;
+import cn.xiejx.ddtassistant.type.auction.AuctionConstants;
 import cn.xiejx.ddtassistant.utils.Util;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
@@ -9,7 +9,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +20,6 @@ import java.util.List;
 @Data
 @Slf4j
 public class AuctionList implements Serializable {
-    private static final String FILENAME = Constants.CONFIG_DIR + "action-list-config.json";
 
     private static final long serialVersionUID = -8918824441922553752L;
 
@@ -29,6 +27,13 @@ public class AuctionList implements Serializable {
 
     private AuctionList() {
 
+    }
+
+    public void update(AuctionList auctionList) {
+        if (auctionList == null) {
+            return;
+        }
+        auctionItemList = auctionList.getAuctionItemList();
     }
 
     public AuctionItem getItem(String name) {
@@ -46,19 +51,22 @@ public class AuctionList implements Serializable {
     }
 
     public static AuctionList load() {
+        String s = Util.readFile(AuctionConstants.FILENAME);
         AuctionList auctionList = new AuctionList();
-        String s = Util.readFile(FILENAME);
-        auctionList.setAuctionItemList(new ArrayList<>());
         if (StringUtils.isBlank(s)) {
             return auctionList;
         }
         try {
-            List<AuctionItem> list = JSON.parseArray(s, AuctionItem.class);
-            auctionList.setAuctionItemList(list);
+            AuctionList data = JSON.parseObject(s, AuctionList.class);
+            auctionList.setAuctionItemList(data.getAuctionItemList());
         } catch (Exception e) {
             log.warn("加载拍卖场自定义列表失败, {}", e.getMessage());
         }
         return auctionList;
     }
 
+    public void save() {
+        String s = JSON.toJSONString(this);
+        Util.writeFile(s, AuctionConstants.FILENAME);
+    }
 }

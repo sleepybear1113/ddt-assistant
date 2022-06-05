@@ -55,11 +55,15 @@ public class Auction {
 
     }
 
-    public void go(int x, int y) {
+    public void go(int n) {
         dm.leftClick(10, 10);
         Util.sleep(100L);
         // 点击背包第 x 个
-        dm.leftClick(x, y);
+        int[] point = AuctionConstants.AuctionPosition.getPoint(n);
+        if (point == null) {
+            return;
+        }
+        dm.leftClick(point);
         Util.sleep(1000L);
 
         // 点击拍卖的地方
@@ -77,14 +81,14 @@ public class Auction {
         AuctionList auctionList = SpringContextUtil.getBean(AuctionList.class);
         AuctionItem auctionItem = null;
 
-        AuctionItem at = new AuctionItem();
-        at.setAuctionTime("48");
-        at.setArgueUnitPrice(2.307);
-        at.setMouthfulUnitPrice(3.409);
-        at.setEnable(true);
-        at.setOcrName("恢复圣石5级");
+//        AuctionItem at = new AuctionItem();
+//        at.setAuctionTime("48");
+//        at.setArgueUnitPrice(2.307);
+//        at.setMouthfulUnitPrice(3.409);
+//        at.setEnabled(true);
+//        at.setOcrName("恢复圣石5级");
         auctionList = AuctionList.load();
-        auctionList.getAuctionItemList().add(at);
+//        auctionList.getAuctionItemList().add(at);
         if (auctionList == null) {
             log.info("找不到");
             putBack = true;
@@ -95,7 +99,7 @@ public class Auction {
             log.info("找不到");
             putBack = true;
         } else {
-            if (!auctionItem.getEnable()) {
+            if (!auctionItem.getEnabled()) {
                 putBack = true;
             }
             price = auctionItem.getPrice(num);
