@@ -48,6 +48,7 @@ public class OcrUtil {
             instance.setDatapath("tessdata");
             instance.setLanguage("zh_ddt");
             String ocr = instance.doOCR(bufferedImage);
+            ImageIO.write(bufferedImage, "png", new File("tmp/auction/10.png"));
             if (StringUtils.isBlank(ocr)) {
                 return null;
             }
@@ -85,20 +86,22 @@ public class OcrUtil {
         int height = img.getHeight();
 
         int[] delta = {40, 40, 40};
-        int[] black = {0, 0, 0};
+        int[] black = {30, 30, 30};
         int[] white1 = {150, 150, 150};
         int[] white2 = {240, 240, 240};
-        int[] t = {70, 70, 70};
+        int[] t = {150, 150, 150};
 
         for (int xx = 0; xx < width; xx++) {
             for (int yy = 0; yy < height; yy++) {
                 int[] pixels = raster.getPixel(xx, yy, (int[]) null);
-                changePixels(pixels, white1, t, delta, false);
+                changePixels(pixels, black, white2, delta, false);
+                changePixels(pixels, white2, t, delta, false);
                 changePixels(pixels, t, black, delta, false);
                 changePixels(pixels, black, white2, delta, false);
                 raster.setPixel(xx, yy, pixels);
             }
         }
+        ImageIO.write(img, "png", new File("tmp/auction/5.png"));
         return img;
     }
 

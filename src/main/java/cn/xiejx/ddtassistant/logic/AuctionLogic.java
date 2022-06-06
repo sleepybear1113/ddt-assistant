@@ -1,7 +1,10 @@
 package cn.xiejx.ddtassistant.logic;
 
 import cn.xiejx.ddtassistant.config.AuctionList;
+import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
+import cn.xiejx.ddtassistant.type.auction.Auction;
+import cn.xiejx.ddtassistant.utils.Util;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -28,5 +31,21 @@ public class AuctionLogic {
 
         this.auctionList.update(auctionList);
         this.auctionList.save();
+    }
+
+    public Boolean bindAndSell(int hwnd) {
+        boolean running = Auction.isRunning(hwnd);
+        if (running) {
+            return false;
+        }
+        return Auction.startSellThread(hwnd);
+    }
+
+    public Boolean stop(int hwnd) {
+        boolean running = Auction.isRunning(hwnd);
+        if (!running) {
+            return false;
+        }
+        return Auction.stopAuction(hwnd);
     }
 }

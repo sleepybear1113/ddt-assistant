@@ -134,8 +134,8 @@ public class AuctionConstants {
                 return null;
             }
 
-            int xx = FIRST_POINT[1] + GAP * (x - 1);
-            int yy = FIRST_POINT[0] + GAP * (y - 1);
+            int xx = FIRST_POINT[0] + GAP * (y - 1);
+            int yy = FIRST_POINT[1] + GAP * (x - 1);
             return new int[]{xx, yy};
         }
 

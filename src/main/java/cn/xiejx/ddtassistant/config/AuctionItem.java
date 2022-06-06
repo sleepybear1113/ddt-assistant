@@ -61,6 +61,11 @@ public class AuctionItem implements Serializable {
             int i = BigDecimal.valueOf(mouthfulPrice).setScale(0, RoundingMode.HALF_UP).intValue();
             res[1] = i;
         }
+        if (res[0] != null && res[1] != null) {
+            if (res[1] <= res[0]) {
+                res[1] = res[0] + 1;
+            }
+        }
         return res;
     }
 
@@ -69,11 +74,7 @@ public class AuctionItem implements Serializable {
         return s.split("");
     }
 
-    public boolean getEnabled() {
+    public boolean isEnabled() {
         return Boolean.TRUE.equals(enabled);
-    }
-
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
     }
 }

@@ -153,4 +153,8 @@ public class DmDdt extends Dm {
     public void captureFullGamePic(String path) {
         capturePicByRegion(path, GAME_FULL_REACT);
     }
+
+    public boolean isBind() {
+        return bind;
+    }
 }

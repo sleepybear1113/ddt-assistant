@@ -3,15 +3,7 @@ let auctionApp = new Vue({
     data: {
         auctionList: {
             auctionItemList: [],
-        },
-        itemSample: {
-            enabled: false,
-            name: "",
-            ocrName: "",
-            argueUnitPrice: 1.0,
-            mouthfulUnitPrice: 1.0,
-            minNum: 1,
-            auctionTime: "48",
+            hwnd: 0,
         },
     },
     created() {
@@ -19,7 +11,16 @@ let auctionApp = new Vue({
     },
     methods: {
         addNewItem: function () {
-            this.auctionList.auctionItemList.push(this.itemSample);
+            let itemSample = {
+                enabled: true,
+                name: "",
+                ocrName: "",
+                argueUnitPrice: 1.0,
+                mouthfulUnitPrice: 1.0,
+                minNum: 1,
+                auctionTime: "48",
+            };
+            this.auctionList.auctionItemList.push(itemSample);
         },
         deleteItem: function (index) {
             this.auctionList.auctionItemList.splice(index, 1);
@@ -34,6 +35,18 @@ let auctionApp = new Vue({
             let url = "auction/update";
             axios.post(url, this.auctionList).then(() => {
                 alert("ok");
+            });
+        },
+        sell: function () {
+            let url = "auction/bindAndSell";
+            axios.get(url, {params: {hwnd: this.hwnd}}).then((res) => {
+                alert(res.data.result);
+            });
+        },
+        stop: function () {
+            let url = "auction/stop";
+            axios.get(url, {params: {hwnd: this.hwnd}}).then((res) => {
+                alert(res.data.result);
             });
         },
     }

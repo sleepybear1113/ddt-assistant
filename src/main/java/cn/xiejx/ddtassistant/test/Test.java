@@ -24,11 +24,17 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        testAuction();
+        ocr();
+    }
+
+    public static void ocr() {
+        String filename = "tmp/auction/790348-item_name.png";
+        String s = OcrUtil.ocrAuctionItemName(filename);
+        System.out.println(s);
     }
 
     public static void testAuction() {
-        int hwnd = 4656088;
+        int hwnd = 790348;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
         dm.leftClick(10, 10);

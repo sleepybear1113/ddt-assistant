@@ -42,7 +42,7 @@ public class AuctionList implements Serializable {
         }
 
         for (AuctionItem auctionItem : auctionItemList) {
-            if (!auctionItem.getOcrName().equals(name)) {
+            if (!auctionItem.getOcrName().equals(name) && !auctionItem.getName().equals(name)) {
                 continue;
             }
             return auctionItem;

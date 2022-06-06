@@ -29,4 +29,14 @@ public class AuctionController {
         auctionLogic.updateAuctionList(auctionList);
         return true;
     }
+
+    @RequestMapping("/auction/bindAndSell")
+    public Boolean bindAndSell(int hwnd) {
+        return auctionLogic.bindAndSell(hwnd);
+    }
+
+    @RequestMapping("/auction/stop")
+    public Boolean stop(int hwnd) {
+        return auctionLogic.stop(hwnd);
+    }
 }

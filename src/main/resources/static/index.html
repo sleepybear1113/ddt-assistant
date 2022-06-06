@@ -137,6 +137,10 @@
     <div class="tab" id="auction">
         <h3>拍卖场功能</h3>
         <hr>
+        <label for="hwnd">hwnd</label><input id="hwnd" v-model="hwnd">
+        <button v-on:click="sell()">运行</button>
+        <button v-on:click="stop()">停止</button>
+        <br/>
         <button v-on:click="savaItems()">保存</button>
         <button v-on:click="getItems()">重载</button>
         <button v-on:click="addNewItem()">添加一行</button>
