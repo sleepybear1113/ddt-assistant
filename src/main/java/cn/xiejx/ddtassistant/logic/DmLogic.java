@@ -33,6 +33,6 @@ public class DmLogic {
 //        DmDdt dmDdt = GlobalVariable.DM_DDT_MAP.get(hwnd);
         DmDdt dmDdt = DmDdt.createInstance(hwnd);
         dmDdt.captureFullGamePic(path);
-        return path.replace(Constants.TEMP_GAME_SCREEN_SHOT_DIR, "file/");
+        return path.replace(path, "file/");
     }
 }
