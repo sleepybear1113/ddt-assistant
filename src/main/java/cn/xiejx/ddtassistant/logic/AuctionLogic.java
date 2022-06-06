@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.logic;
 
-import cn.xiejx.ddtassistant.config.AuctionList;
+import cn.xiejx.ddtassistant.type.auction.AuctionData;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.type.auction.Auction;
@@ -20,21 +20,21 @@ import java.util.List;
 @Component
 public class AuctionLogic {
     @Resource
-    private AuctionList auctionList;
+    private AuctionData auctionData;
     @Resource
     private DmDdt defaultDm;
 
-    public AuctionList getAuctionList() {
-        return auctionList;
+    public AuctionData getAuctionData() {
+        return auctionData;
     }
 
-    public void updateAuctionList(AuctionList auctionList) {
-        if (auctionList == null) {
+    public void updateAuctionData(AuctionData auctionData) {
+        if (auctionData == null) {
             throw new FrontException("数据为空");
         }
 
-        this.auctionList.update(auctionList);
-        this.auctionList.save();
+        this.auctionData.update(auctionData);
+        this.auctionData.save();
     }
 
     public Boolean bindAndSell(int hwnd) {

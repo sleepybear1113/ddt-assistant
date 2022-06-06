@@ -163,8 +163,10 @@
         <button v-on:click="savaItems()">保存</button>
         <button v-on:click="getItems()">重载</button>
         <button v-on:click="addNewItem()">添加一行</button>
+        <label for="checkbox-autoAddUnknown">是否自动添加未识别的OCR物品</label>
+        <input id="checkbox-autoAddUnknown" type="checkbox" v-model="auctionData.autoAddUnknown">
         <ol>
-            <div v-for="(item, index) in auctionList.auctionItemList">
+            <div v-for="(item, index) in auctionData.auctionItemList">
                 <li>
                     <label :for="'checkbox-auction-item-enabled-'+index"></label>
                     <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox" v-model="item.enabled">

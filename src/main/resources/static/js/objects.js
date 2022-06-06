@@ -98,7 +98,7 @@ class StringRet {
     }
 }
 
-class AuctionList {
+class AuctionData {
     constructor(props) {
         if (props == null) {
             return;
@@ -117,6 +117,7 @@ class AuctionList {
         }
 
         this.auctionItemList = list;
+        this.autoAddUnknown = props.autoAddUnknown;
     }
 }
 

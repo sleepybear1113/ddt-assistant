@@ -31,7 +31,7 @@ public class TestController {
             return TestRes.buildFail("没有输入内容！");
         }
         Util.sleep(delay);
-        KeyPadUtil.pressFn(key);
+        KeyPadUtil.press(key);
         return TestRes.buildSuccess("按下按键：" + key);
     }
 

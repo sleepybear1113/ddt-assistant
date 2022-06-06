@@ -1,8 +1,9 @@
 let auctionApp = new Vue({
     el: '#auction',
     data: {
-        auctionList: {
+        auctionData: {
             auctionItemList: [],
+            autoAddUnknown: true,
         },
         hwnds: [],
     },
@@ -20,20 +21,20 @@ let auctionApp = new Vue({
                 minNum: 1,
                 auctionTime: "48",
             };
-            this.auctionList.auctionItemList.push(itemSample);
+            this.auctionData.auctionItemList.push(itemSample);
         },
         deleteItem: function (index) {
-            this.auctionList.auctionItemList.splice(index, 1);
+            this.auctionData.auctionItemList.splice(index, 1);
         },
         getItems: function () {
             let url = "auction/getList";
             axios.get(url).then((res) => {
-                this.auctionList = new AuctionList(res.data.result);
+                this.auctionData = new AuctionData(res.data.result);
             });
         },
         savaItems: function () {
             let url = "auction/update";
-            axios.post(url, this.auctionList).then(() => {
+            axios.post(url, this.auctionData).then(() => {
                 alert("ok");
             });
         },

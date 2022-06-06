@@ -1,6 +1,5 @@
-package cn.xiejx.ddtassistant.config;
+package cn.xiejx.ddtassistant.type.auction;
 
-import cn.xiejx.ddtassistant.type.auction.AuctionConstants;
 import cn.xiejx.ddtassistant.utils.Util;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
@@ -19,21 +18,27 @@ import java.util.List;
  */
 @Data
 @Slf4j
-public class AuctionList implements Serializable {
+public class AuctionData implements Serializable {
 
     private static final long serialVersionUID = -8918824441922553752L;
 
     private List<AuctionItem> auctionItemList;
 
-    private AuctionList() {
+    /**
+     * OCR 不识别的加入列表
+     */
+    private Boolean autoAddUnknown;
+
+    private AuctionData() {
 
     }
 
-    public void update(AuctionList auctionList) {
-        if (auctionList == null) {
+    public void update(AuctionData auctionData) {
+        if (auctionData == null) {
             return;
         }
-        auctionItemList = auctionList.getAuctionItemList();
+        auctionItemList = auctionData.getAuctionItemList();
+        autoAddUnknown = auctionData.getAutoAddUnknown();
     }
 
     public AuctionItem getItem(String name) {
@@ -47,26 +52,40 @@ public class AuctionList implements Serializable {
             }
             return auctionItem;
         }
+
+        if (Boolean.TRUE.equals(autoAddUnknown)) {
+            addNewUnknownItem(name);
+            save();
+        }
         return null;
     }
 
-    public static AuctionList load() {
+    public static AuctionData load() {
         String s = Util.readFile(AuctionConstants.FILENAME);
-        AuctionList auctionList = new AuctionList();
+        AuctionData auctionData = new AuctionData();
         if (StringUtils.isBlank(s)) {
-            return auctionList;
+            return auctionData;
         }
         try {
-            AuctionList data = JSON.parseObject(s, AuctionList.class);
-            auctionList.setAuctionItemList(data.getAuctionItemList());
+            AuctionData data = JSON.parseObject(s, AuctionData.class);
+            auctionData.setAuctionItemList(data.getAuctionItemList());
         } catch (Exception e) {
             log.warn("加载拍卖场自定义列表失败, {}", e.getMessage());
         }
-        return auctionList;
+        return auctionData;
     }
 
     public void save() {
         String s = JSON.toJSONString(this);
         Util.writeFile(s, AuctionConstants.FILENAME);
+    }
+
+    public void addNewUnknownItem(String name) {
+        AuctionItem auctionItem = new AuctionItem();
+        auctionItem.setOcrName(name);
+        auctionItem.setEnabled(false);
+        auctionItem.setAuctionTime("48");
+        auctionItem.setMinNum(1);
+        auctionItemList.add(auctionItem);
     }
 }

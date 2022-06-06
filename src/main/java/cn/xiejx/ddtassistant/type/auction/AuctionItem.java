@@ -1,4 +1,4 @@
-package cn.xiejx.ddtassistant.config;
+package cn.xiejx.ddtassistant.type.auction;
 
 import lombok.Data;
 

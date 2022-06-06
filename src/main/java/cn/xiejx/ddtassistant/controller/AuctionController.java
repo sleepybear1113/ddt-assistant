@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.controller;
 
-import cn.xiejx.ddtassistant.config.AuctionList;
+import cn.xiejx.ddtassistant.type.auction.AuctionData;
 import cn.xiejx.ddtassistant.logic.AuctionLogic;
 import cn.xiejx.ddtassistant.vo.MyString;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * There is description
@@ -22,13 +21,13 @@ public class AuctionController {
     private AuctionLogic auctionLogic;
 
     @RequestMapping("/auction/getList")
-    public AuctionList getAuctionList() {
-        return auctionLogic.getAuctionList();
+    public AuctionData getAuctionData() {
+        return auctionLogic.getAuctionData();
     }
 
     @RequestMapping("/auction/update")
-    public Boolean update(@RequestBody AuctionList auctionList) {
-        auctionLogic.updateAuctionList(auctionList);
+    public Boolean update(@RequestBody AuctionData auctionData) {
+        auctionLogic.updateAuctionData(auctionData);
         return true;
     }
 

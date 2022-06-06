@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.Dm;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.Captcha;
+import cn.xiejx.ddtassistant.type.auction.AuctionData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,8 +26,8 @@ public class Ioc {
     }
 
     @Bean
-    public AuctionList initAuctionList() {
-        return AuctionList.load();
+    public AuctionData initAuctionData() {
+        return AuctionData.load();
     }
 
     @Bean

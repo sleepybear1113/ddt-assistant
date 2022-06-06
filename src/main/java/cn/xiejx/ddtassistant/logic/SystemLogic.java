@@ -3,9 +3,13 @@ package cn.xiejx.ddtassistant.logic;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.vo.MemoryUseVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,14 +20,16 @@ import java.util.List;
  * @date 2022/06/05 21:13
  */
 @Component
+@Slf4j
 public class SystemLogic {
     private List<MemoryUseVo> memoryUseVoList;
-    private Runtime runtime;
+    private MemoryMXBean memoryMXBean;
 
     @PostConstruct
     public void init() {
         memoryUseVoList = new ArrayList<>();
-        runtime = Runtime.getRuntime();
+        memoryMXBean = ManagementFactory.getMemoryMXBean();
+
         addMemory();
 
         GlobalVariable.THREAD_POOL.execute(this::monitor);
@@ -43,8 +49,12 @@ public class SystemLogic {
     }
 
     private void addMemory() {
-        long totalMemory = runtime.totalMemory();
+        MemoryUsage heapMemoryUsage = memoryMXBean.getHeapMemoryUsage();
+        MemoryUsage nonHeapMemoryUsage = memoryMXBean.getNonHeapMemoryUsage();
+        long nonHeapMemoryUsageUsed = nonHeapMemoryUsage.getUsed();
+        long heapMemoryUsageUsed = heapMemoryUsage.getUsed();
+        long totalUse = nonHeapMemoryUsageUsed + heapMemoryUsageUsed;
         long now = System.currentTimeMillis();
-        memoryUseVoList.add(new MemoryUseVo(totalMemory, now));
+        memoryUseVoList.add(new MemoryUseVo(totalUse, now));
     }
 }

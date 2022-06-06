@@ -1,7 +1,5 @@
 package cn.xiejx.ddtassistant.type.auction;
 
-import cn.xiejx.ddtassistant.config.AuctionItem;
-import cn.xiejx.ddtassistant.config.AuctionList;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
@@ -10,7 +8,6 @@ import cn.xiejx.ddtassistant.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
-import java.util.Arrays;
 
 /**
  * There is description
@@ -140,14 +137,14 @@ public class Auction {
 
         boolean putBack = false;
         Integer[] price = null;
-        AuctionList auctionList = SpringContextUtil.getBean(AuctionList.class);
+        AuctionData auctionData = SpringContextUtil.getBean(AuctionData.class);
         AuctionItem auctionItem = null;
 
-        if (auctionList == null) {
-            log.info("auctionList 为空，找不到");
+        if (auctionData == null) {
+            log.info("auctionData 为空，找不到");
             putBack = true;
         } else {
-            auctionItem = auctionList.getItem(itemName);
+            auctionItem = auctionData.getItem(itemName);
         }
         if (auctionItem == null) {
             log.info("找不到");
