@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.logic;
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
+import cn.xiejx.ddtassistant.utils.Util;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,9 @@ public class DmLogic {
         String path = Constants.TEMP_GAME_SCREEN_SHOT_DIR + hwnd + "-" + System.currentTimeMillis() + ".png";
 //        DmDdt dmDdt = GlobalVariable.DM_DDT_MAP.get(hwnd);
         DmDdt dmDdt = DmDdt.createInstance(hwnd);
+        dmDdt.bind();
         dmDdt.captureFullGamePic(path);
-        return path.replace(path, "file/");
+        Util.delayDeleteFile(path, 5000L);
+        return path.replace(Constants.TEMP_DIR, "file/");
     }
 }

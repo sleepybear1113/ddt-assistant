@@ -148,8 +148,8 @@
         <button v-on:click="getDdtHwnds()">获取全部句柄</button>
         <div>
             <span v-for="hwnd in hwnds">
-                <label for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
-                <input id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                <label :for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
+                <input :id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
                 <button v-on:click="showImg(hwnd.hwnd)">查看游戏截图</button>
                 <button v-on:click="sell(hwnd.hwnd)">运行</button>
                 <button v-on:click="stop(hwnd.hwnd)">停止</button>

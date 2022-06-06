@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.utils;
 
+import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import cn.xiejx.ddtassistant.utils.http.enumeration.MethodEnum;
@@ -161,10 +162,22 @@ public class Util {
     public static void ensureParentDir(String filename) {
         File file = new File(filename);
         File parentFile = file.getParentFile();
+        if (parentFile == null) {
+            return;
+        }
         if (!parentFile.exists()) {
             if (!parentFile.mkdirs()) {
                 log.info("创建文件夹 {} 失败", parentFile);
             }
         }
+    }
+
+    public static void delayDeleteFile(String path, Long delay) {
+        GlobalVariable.THREAD_POOL.execute(() -> {
+            sleep(delay);
+            if (!new File(path).delete()) {
+                log.info("删除文件失败 {} 失败", path);
+            }
+        });
     }
 }
