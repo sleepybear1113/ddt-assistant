@@ -4,10 +4,12 @@ import cn.xiejx.ddtassistant.config.AuctionList;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.type.auction.Auction;
-import cn.xiejx.ddtassistant.utils.Util;
+import cn.xiejx.ddtassistant.vo.BindResultVo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * There is description
@@ -19,6 +21,8 @@ import javax.annotation.Resource;
 public class AuctionLogic {
     @Resource
     private AuctionList auctionList;
+    @Resource
+    private DmDdt defaultDm;
 
     public AuctionList getAuctionList() {
         return auctionList;
@@ -41,11 +45,45 @@ public class AuctionLogic {
         return Auction.startSellThread(hwnd);
     }
 
+    public String bindAndSellAll(Integer[] hwnds) {
+        if (hwnds == null || hwnds.length == 0) {
+            throw new FrontException("未选择任何句柄！");
+        }
+        BindResultVo bindResultVo = new BindResultVo();
+        for (Integer hwnd : hwnds) {
+            boolean running = Auction.isRunning(hwnd);
+            if (running) {
+                bindResultVo.increaseRunningCount();
+            } else {
+                Auction.startSellThread(hwnd);
+                bindResultVo.increaseNewAddCount();
+            }
+        }
+        return bindResultVo.buildInfo();
+    }
+
     public Boolean stop(int hwnd) {
         boolean running = Auction.isRunning(hwnd);
         if (!running) {
             return false;
         }
         return Auction.stopAuction(hwnd);
+    }
+
+    public Integer stopAll() {
+        List<Integer> ddtWindowHwnd = getAllHwnds();
+        int count = 0;
+        for (Integer hwnd : ddtWindowHwnd) {
+            count += stop(hwnd) ? 1 : 0;
+        }
+        return count;
+    }
+
+    public List<Integer> getAllHwnds() {
+        List<Integer> ddtWindowHwnd = defaultDm.enumDdtWindowHwnd();
+        if (CollectionUtils.isEmpty(ddtWindowHwnd)) {
+            throw new FrontException("没有 flash 窗口");
+        }
+        return ddtWindowHwnd;
     }
 }

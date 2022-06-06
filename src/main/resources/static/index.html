@@ -23,6 +23,10 @@
     </div>
     <label for="textarea-info">信息：</label>
     <textarea id="textarea-info" style="width: 400px; height: 100px" readonly></textarea>
+    <div id="large-pic-div" style="display: none">
+        <img id="cover-img" src="" width="80%" alt="1">
+    </div>
+    <div id="cover" onclick="hideImg()" style="display: none"></div>
 </div>
 <hr>
 
@@ -136,11 +140,26 @@
 
     <div class="tab" id="auction">
         <h3>拍卖场功能</h3>
-        <hr>
-        <label for="hwnd">hwnd</label><input id="hwnd" v-model="hwnd">
-        <button v-on:click="sell()">运行</button>
-        <button v-on:click="stop()">停止</button>
+        <span>用来自动化挂物品到拍卖场。自动识别数量和物品名称，计算价格和是否拍卖，然后根据条件挂拍卖场。</span>
         <br/>
+        <span>需要账号位于拍卖场，并且处于打开背包的状态下使用，切记不可拖动背包，否则定位会有偏差（否则重进拍卖场）！</span>
+        <hr>
+
+        <button v-on:click="getDdtHwnds()">获取全部句柄</button>
+        <div>
+            <span v-for="hwnd in hwnds">
+                <label for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
+                <input id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                <button v-on:click="showImg(hwnd.hwnd)">查看游戏截图</button>
+                <button v-on:click="sell(hwnd.hwnd)">运行</button>
+                <button v-on:click="stop(hwnd.hwnd)">停止</button>
+                <br/>
+            </span>
+            <button v-on:click="sellAll()">运行以上勾选句柄</button>
+            <button v-on:click="stopAll()">停止所有句柄运行</button>
+        </div>
+
+        <hr>
         <button v-on:click="savaItems()">保存</button>
         <button v-on:click="getItems()">重载</button>
         <button v-on:click="addNewItem()">添加一行</button>
@@ -270,7 +289,8 @@
             <p>以下性能监控后台默认每 2 分钟收集一次，或者点击刷新立即获取</p>
             <p>内存占用会随时间缓慢上升，直到到达 Java 认为需要清理的时候，进行一次大清理，占用会下降</p>
             <hr>
-            <button v-on:click="showMemoryUse()">刷新</button><br/>
+            <button v-on:click="showMemoryUse()">刷新</button>
+            <br/>
             <a>当前占用 {{currentMemoryUse}} KB</a>
             <a>最大占用 {{maxMemoryUse}} KB</a>
             <div id="memory-use" style="width: 600px;height:400px;"></div>

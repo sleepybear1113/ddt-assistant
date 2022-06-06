@@ -2,11 +2,13 @@ package cn.xiejx.ddtassistant.controller;
 
 import cn.xiejx.ddtassistant.config.AuctionList;
 import cn.xiejx.ddtassistant.logic.AuctionLogic;
+import cn.xiejx.ddtassistant.vo.MyString;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * There is description
@@ -35,8 +37,18 @@ public class AuctionController {
         return auctionLogic.bindAndSell(hwnd);
     }
 
+    @RequestMapping("/auction/bindAndSellAll")
+    public MyString bindAndSell(Integer[] hwnds) {
+        return new MyString(auctionLogic.bindAndSellAll(hwnds));
+    }
+
     @RequestMapping("/auction/stop")
     public Boolean stop(int hwnd) {
         return auctionLogic.stop(hwnd);
+    }
+
+    @RequestMapping("/auction/stopAll")
+    public Integer stopAll() {
+        return auctionLogic.stopAll();
     }
 }

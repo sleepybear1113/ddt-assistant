@@ -3,8 +3,8 @@ let auctionApp = new Vue({
     data: {
         auctionList: {
             auctionItemList: [],
-            hwnd: 0,
         },
+        hwnds: [],
     },
     created() {
         this.getItems();
@@ -37,16 +37,61 @@ let auctionApp = new Vue({
                 alert("ok");
             });
         },
-        sell: function () {
+        sell: function (hwnd) {
             let url = "auction/bindAndSell";
-            axios.get(url, {params: {hwnd: this.hwnd}}).then((res) => {
+            axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
                 alert(res.data.result);
             });
         },
-        stop: function () {
+        sellAll: function () {
+            if (this.hwnds.length === 0) {
+                alert("未有有效句柄");
+                return;
+            }
+            let list = [];
+            for (let i = 0; i < this.hwnds.length; i++) {
+                let item = this.hwnds[i];
+                if (item.enabled) {
+                    list.push(item.hwnd);
+                }
+            }
+            if (list.length === 0) {
+                alert("未选择任何句柄！");
+                return;
+            }
+            let url = "auction/bindAndSellAll";
+            axios.get(url, {params: {"hwnds": list.map(t => t).join(',')}}).then((res) => {
+                showInfo(res.data.result.string);
+            });
+        },
+        stop: function (hwnd) {
             let url = "auction/stop";
-            axios.get(url, {params: {hwnd: this.hwnd}}).then((res) => {
+            axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
                 alert(res.data.result);
+            });
+        },
+        stopAll: function () {
+            let url = "auction/stopAll";
+            axios.get(url).then((res) => {
+                alert(res.data.result);
+            });
+        },
+        showImg: function (hwnd) {
+            let url = "dm/getGameScreenPath";
+            axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
+                let src = res.data.result.string;
+                showImg(src);
+            });
+        },
+        getDdtHwnds: function () {
+            this.hwnds = [];
+            let url = "dm/getDdtHwnds";
+            axios.get(url).then((res) => {
+                let list = res.data.result;
+                for (let i = 0; i < list.length; i++) {
+                    let item = list[i];
+                    this.hwnds.push({enabled: false, hwnd: item});
+                }
             });
         },
     }

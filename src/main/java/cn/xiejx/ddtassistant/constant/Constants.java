@@ -13,11 +13,15 @@ public class Constants {
 
     public static final String RESOURCE_DIR = "img/";
 
+    public static final String TEMP_DIR = "tmp/";
+
     public static final String PIC_DIR = "pictures/";
 
     public static final String CONFIG_DIR = "config/";
 
     public static final String FLOP_BONUS_DIR = PIC_DIR + "副本翻牌截图/";
+
+    public static final String TEMP_GAME_SCREEN_SHOT_DIR = TEMP_DIR + "gameScreen/";
 
     public static final String BMP_SUFFIX = ".bmp";
     public static final String JPG_SUFFIX = ".jpg";

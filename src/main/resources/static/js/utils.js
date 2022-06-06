@@ -27,6 +27,14 @@ function showInfo(msg) {
     }, 100);
 }
 
-function adjustSize(iframe) {
-    iframe.height = document.documentElement.clientHeight;
+function hideImg() {
+    document.getElementById("large-pic-div").style.display = "none";
+    document.getElementById("cover").style.display = "none";
 }
+
+function showImg(src) {
+    document.getElementById("cover-img").setAttribute("src", src);
+    document.getElementById("large-pic-div").style.display = "";
+    document.getElementById("cover").style.display = "";
+}
+

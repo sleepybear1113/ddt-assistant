@@ -70,6 +70,18 @@ public class DmDdt extends Dm {
         GlobalVariable.DM_DDT_MAP.remove(this.hwnd);
     }
 
+    public boolean isBind() {
+        return bind;
+    }
+
+    public static boolean isBind(Integer hwnd) {
+        DmDdt dmDdt = GlobalVariable.DM_DDT_MAP.get(hwnd);
+        if (dmDdt == null) {
+            return false;
+        }
+        return dmDdt.isBind();
+    }
+
     public String getWindowClass() {
         return this.getWindowClass(this.hwnd);
     }
@@ -152,9 +164,5 @@ public class DmDdt extends Dm {
 
     public void captureFullGamePic(String path) {
         capturePicByRegion(path, GAME_FULL_REACT);
-    }
-
-    public boolean isBind() {
-        return bind;
     }
 }

@@ -51,13 +51,13 @@ public class Auction {
         return auction;
     }
 
-    public void end() {
+    public void stop() {
         this.running = false;
         GlobalVariable.AUCTION_MAP.remove(dm.getHwnd());
     }
 
-    public void stop() {
-        end();
+    public void stopAndUnbind() {
+        stop();
         dm.unbind();
     }
 
@@ -114,7 +114,7 @@ public class Auction {
             Util.sleep(500L);
         }
 
-        end();
+        stop();
     }
 
     public void go(int n) {
