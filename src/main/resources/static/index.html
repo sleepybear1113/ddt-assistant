@@ -171,9 +171,9 @@
                     <label :for="'checkbox-auction-item-enabled-'+index"></label>
                     <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox" v-model="item.enabled">
                     <label :for="'input-auction-item-name-'+index">物品名</label>
-                    <input :id="'input-auction-item-name-'+index" v-model="item.name" class="string-input">
+                    <input :id="'input-auction-item-name-'+index" v-model="item.name">
                     <label :for="'input-auction-item-ocr-name-'+index">OCR名</label>
-                    <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName" class="string-input">
+                    <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName">
                     <label :for="'input-auction-item-argue-unit-price-'+index">竞拍单价</label>
                     <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
                            class="ms-input">
@@ -193,6 +193,8 @@
                     <input :id="'radio-auction-time-48-'+index" v-model="item.auctionTime" value="48" type="radio"
                            :name="'group'+index">
                     <button v-on:click="deleteItem(index)">删除</button>
+                    <button v-on:click="moveIndex(index, -1)">上移</button>
+                    <button v-on:click="moveIndex(index, 1)">下移</button>
                 </li>
             </div>
         </ol>

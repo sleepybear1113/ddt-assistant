@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * There is description
@@ -42,18 +43,23 @@ public class AuctionData implements Serializable {
     }
 
     public AuctionItem getItem(String name) {
+        if (StringUtils.isBlank(name)) {
+            return null;
+        }
+        name = name.replaceAll("\\s+", "");
         if (CollectionUtils.isEmpty(auctionItemList)) {
             return null;
         }
 
         for (AuctionItem auctionItem : auctionItemList) {
-            if (!auctionItem.getOcrName().equals(name) && !auctionItem.getName().equals(name)) {
+            if (!Objects.equals(auctionItem.getOcrName(), name) && !Objects.equals(auctionItem.getName(), name)) {
                 continue;
             }
             return auctionItem;
         }
 
         if (Boolean.TRUE.equals(autoAddUnknown)) {
+            log.info("添加[{}]到列表", name);
             addNewUnknownItem(name);
             save();
         }
@@ -67,8 +73,7 @@ public class AuctionData implements Serializable {
             return auctionData;
         }
         try {
-            AuctionData data = JSON.parseObject(s, AuctionData.class);
-            auctionData.setAuctionItemList(data.getAuctionItemList());
+            return JSON.parseObject(s, AuctionData.class);
         } catch (Exception e) {
             log.warn("加载拍卖场自定义列表失败, {}", e.getMessage());
         }

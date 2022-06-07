@@ -32,6 +32,21 @@ let auctionApp = new Vue({
                 this.auctionData = new AuctionData(res.data.result);
             });
         },
+        moveIndex: function (index, flag) {
+            if (index === 0 && flag < 0) {
+                return;
+            }
+            if (index === this.auctionData.auctionItemList.length - 1 && flag > 0) {
+                return;
+            }
+            console.log(index, flag);
+            let tmp = this.auctionData.auctionItemList[index];
+            this.auctionData.auctionItemList[index] = this.auctionData.auctionItemList[index + flag];
+            this.auctionData.auctionItemList[index + flag] = tmp;
+            let tmpList = this.auctionData.auctionItemList;
+            this.auctionData.auctionItemList = [];
+            this.auctionData.auctionItemList = tmpList;
+        },
         savaItems: function () {
             let url = "auction/update";
             axios.post(url, this.auctionData).then(() => {
@@ -40,6 +55,13 @@ let auctionApp = new Vue({
         },
         sell: function (hwnd) {
             let url = "auction/bindAndSell";
+            for (let i = 0; i < this.hwnds.length; i++) {
+                let item = this.hwnds[i];
+                if (item.hwnd === hwnd) {
+                    item.enabled = true;
+                    break;
+                }
+            }
             axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
                 alert(res.data.result);
             });

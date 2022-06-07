@@ -211,7 +211,7 @@ public class Auction {
         Util.sleep(100L);
 
         // 进行拍卖！
-//        dm.leftClick(AuctionConstants.SELL_POINT);
+        dm.leftClick(AuctionConstants.SELL_POINT);
     }
 
     public Integer getNum() {
