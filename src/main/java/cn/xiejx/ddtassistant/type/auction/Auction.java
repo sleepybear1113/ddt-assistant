@@ -108,7 +108,7 @@ public class Auction {
             }
             go(n);
             n++;
-            Util.sleep(500L);
+            Util.sleep(300L);
         }
 
         stop();
@@ -123,11 +123,11 @@ public class Auction {
             return;
         }
         dm.leftClick(point);
-        Util.sleep(600L);
+        Util.sleep(500L);
 
         // 点击拍卖的地方
         dm.leftClick(AuctionConstants.AUCTION_INPUT_POINT);
-        Util.sleep(300L);
+        Util.sleep(200L);
 
         // ocr 物品名称
         String itemName = ocrItemName();
@@ -141,43 +141,53 @@ public class Auction {
         AuctionItem auctionItem = null;
 
         if (auctionData == null) {
-            log.info("auctionData 为空，找不到");
+            log.info("auctionData 为空！");
             putBack = true;
         } else {
             auctionItem = auctionData.getItem(itemName);
         }
         if (auctionItem == null) {
-            log.info("找不到");
+            log.info("列表中找不到名为[{}]的配置，放回背包", itemName);
             putBack = true;
         } else {
             if (!auctionItem.isEnabled()) {
+                log.info("物品[{}]未启用拍卖，放回背包", itemName);
                 putBack = true;
             }
-            price = auctionItem.getPrice(num);
-            if (price == null) {
-                log.info("价格无");
-                putBack = true;
+            if (!auctionItem.isDrop()) {
+                // 不丢弃卖金币，那么获取价格
+                price = auctionItem.getPrice(num);
+                if (price == null) {
+                    log.info("列表中获取不到[{}]的价格，放回背包", itemName);
+                    putBack = true;
+                }
+            } else {
+                // 丢弃卖金币
+                log.info("物品[{}]丢弃换卖金币了", auctionItem.getSuitableName());
+                dropItem();
+                return;
             }
         }
 
         if (putBack) {
+            // 放回原来背包位置
             if (num != null && num > 1) {
                 // 取消拍卖
                 dm.leftClick(AuctionConstants.NUM_INPUT_BOX_CANCEL_POINT);
             } else {
                 // 数量为 1 的放回原来位置
                 dm.leftClick(AuctionConstants.AUCTION_INPUT_POINT);
-                Util.sleep(750L);
+                Util.sleep(500L);
                 dm.leftClick(point);
             }
             return;
         } else if (num > 1) {
             // 确认数量
             dm.leftClick(AuctionConstants.NUM_INPUT_BOX_CONFIRM_POINT);
-            Util.sleep(500L);
+            Util.sleep(300L);
         }
 
-        log.info("输入价格：竞拍价：{}*{}={}, 一口价：{}*{}={}, 时长：{}", auctionItem.getArgueUnitPrice(), num, price[0], auctionItem.getMouthfulUnitPrice(), num, price[1], auctionItem.getAuctionTime());
+        log.info("[{}]：竞拍价：{}*{}={}, 一口价：{}*{}={}, 时长：{}", auctionItem.getSuitableName(), auctionItem.getArgueUnitPrice(), num, price[0], auctionItem.getMouthfulUnitPrice(), num, price[1], auctionItem.getAuctionTime());
 
         // 双击竞拍价框
         dm.leftDoubleClick(AuctionConstants.ARGUE_PRICE_POINT);
@@ -253,6 +263,10 @@ public class Auction {
             log.info("文件{}无法删除", filename);
         }
         return i;
+    }
+
+    public void dropItem() {
+
     }
 
     public void closeNumInputBox() {

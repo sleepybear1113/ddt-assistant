@@ -1,6 +1,8 @@
 package cn.xiejx.ddtassistant.type.auction;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -44,6 +46,14 @@ public class AuctionItem implements Serializable {
      * 拍卖时限
      */
     private String auctionTime;
+    /**
+     * 丢掉卖金币
+     */
+    private Boolean drop;
+    /**
+     * 每组数量，需要大于等于 minNum
+     */
+    private Integer batchNum;
 
     public Integer[] getPrice(Integer num) {
         if (!Boolean.TRUE.equals(enabled) || num == null) {
@@ -69,6 +79,11 @@ public class AuctionItem implements Serializable {
         return res;
     }
 
+    @JSONField(serialize = false)
+    public String getSuitableName() {
+        return StringUtils.isNotBlank(this.name) ? this.name : this.ocrName;
+    }
+
     public static String[] priceToStr(int price) {
         String s = String.valueOf(price);
         return s.split("");
@@ -76,5 +91,9 @@ public class AuctionItem implements Serializable {
 
     public boolean isEnabled() {
         return Boolean.TRUE.equals(enabled);
+    }
+
+    public boolean isDrop() {
+        return Boolean.TRUE.equals(this.drop);
     }
 }

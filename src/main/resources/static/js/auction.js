@@ -39,7 +39,6 @@ let auctionApp = new Vue({
             if (index === this.auctionData.auctionItemList.length - 1 && flag > 0) {
                 return;
             }
-            console.log(index, flag);
             let tmp = this.auctionData.auctionItemList[index];
             this.auctionData.auctionItemList[index] = this.auctionData.auctionItemList[index + flag];
             this.auctionData.auctionItemList[index + flag] = tmp;
@@ -50,7 +49,7 @@ let auctionApp = new Vue({
         savaItems: function () {
             let url = "auction/update";
             axios.post(url, this.auctionData).then(() => {
-                alert("ok");
+                showInfo("成功！")
             });
         },
         sell: function (hwnd) {
@@ -63,7 +62,7 @@ let auctionApp = new Vue({
                 }
             }
             axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
-                alert(res.data.result);
+                showInfo(res.data.result);
             });
         },
         sellAll: function () {
@@ -90,13 +89,13 @@ let auctionApp = new Vue({
         stop: function (hwnd) {
             let url = "auction/stop";
             axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
-                alert(res.data.result);
+                showInfo(res.data.result);
             });
         },
         stopAll: function () {
             let url = "auction/stopAll";
             axios.get(url).then((res) => {
-                alert(res.data.result);
+                showInfo(res.data.result);
             });
         },
         showImg: function (hwnd) {

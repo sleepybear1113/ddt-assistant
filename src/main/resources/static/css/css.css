@@ -19,9 +19,20 @@ div {
 .ms-input {
     width: 60px;
 }
+.ms-input-middle {
+    width: 40px;
+}
+
+.ms-input-small {
+    width: 38px;
+}
 
 .string-input {
     width: 100px;
+}
+
+.string-input-large {
+    width: 130px;
 }
 
 #large-pic-div {

@@ -134,6 +134,7 @@ class AuctionItem {
         this.mouthfulUnitPrice = props.mouthfulUnitPrice;
         this.minNum = props.minNum;
         this.auctionTime = props.auctionTime;
+        this.drop = props.drop;
     }
 }
 
