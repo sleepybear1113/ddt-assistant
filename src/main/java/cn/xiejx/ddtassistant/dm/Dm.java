@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.dm;
 
-import cn.xiejx.ddtassistant.config.UserConfig;
+import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.utils.Util;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.ComThread;
@@ -29,35 +29,47 @@ public class Dm {
     }
 
     public String getVersion() {
-        return Dispatch.call(dmDispatch, "Ver").getString();
+        Variant variant = Dispatch.call(dmDispatch, "Ver");
+        variant.safeRelease();
+        return variant.getString();
     }
 
     public int getId() {
-        return Dispatch.call(dmDispatch, "GetID").getInt();
+        Variant variant = Dispatch.call(dmDispatch, "GetID");
+        variant.safeRelease();
+        return variant.getInt();
     }
 
     public void bindWindow(int hwnd, String display, String mouse, String keypad, int mode) {
-        invoke("BindWindow", hwnd, display, mouse, keypad, mode);
+        invoke("BindWindow", hwnd, display, mouse, keypad, mode).safeRelease();
     }
 
     public int getWindow(int hwnd, int flag) {
         Variant variant = invoke("GetWindow", hwnd, flag);
-        return variant.getInt();
+        int i = variant.getInt();
+        variant.safeRelease();
+        return i;
     }
 
     public String getWindowClass(int hwnd) {
         Variant variant = invoke("GetWindowClass", hwnd);
-        return variant.getString();
+        String string = variant.getString();
+        variant.safeRelease();
+        return string;
     }
 
     public String getWindowTitle(int hwnd) {
         Variant variant = invoke("GetWindowTitle", hwnd);
-        return variant.getString();
+        String string = variant.getString();
+        variant.safeRelease();
+        return string;
     }
 
     public int setWindowState(int hwnd, int flag) {
         Variant variant = invoke("SetWindowState", hwnd, flag);
-        return variant.getInt();
+        int i = variant.getInt();
+        variant.safeRelease();
+        return i;
     }
 
     public int[] getWindowRect(int hwnd) {
@@ -66,12 +78,19 @@ public class Dm {
         Variant x2 = new Variant(0, true);
         Variant y2 = new Variant(0, true);
         Variant variant = invoke("GetWindowRect", hwnd, x1, y1, x2, y2);
-        return new int[]{x1.getInt(), y1.getInt(), x2.getInt(), y2.getInt()};
+        variant.safeRelease();
+        int[] ints = {x1.getInt(), y1.getInt(), x2.getInt(), y2.getInt()};
+        x1.safeRelease();
+        y1.safeRelease();
+        x2.safeRelease();
+        y2.safeRelease();
+        return ints;
     }
 
     public int[] enumWindow(int parent, String title, String className, int filter) {
         Variant variant = invoke("EnumWindow", parent, title, className, filter);
         String hwndStrings = variant.getString();
+        variant.safeRelease();
         if (hwndStrings == null || hwndStrings.length() == 0) {
             return null;
         }
@@ -92,19 +111,25 @@ public class Dm {
     }
 
     public void unBindWindow() {
-        invoke("UnBindWindow");
+        invoke("UnBindWindow").safeRelease();
     }
 
     public int[] getCursorPos() {
         Variant x = new Variant(0, true);
         Variant y = new Variant(0, true);
-        invoke("GetCursorPos", x, y);
-        return new int[]{x.getInt(), y.getInt()};
+        invoke("GetCursorPos", x, y).safeRelease();
+        int xx = x.getInt();
+        int yy = y.getInt();
+        x.safeRelease();
+        y.safeRelease();
+        return new int[]{xx, yy};
     }
 
     public int getPointWindowHwnd() {
         Variant variant = invoke("GetMousePointWindow");
-        return variant.getInt();
+        int i = variant.getInt();
+        variant.safeRelease();
+        return i;
     }
 
     public void captureBmp(int x1, int y1, int x2, int y2, String path) {
@@ -117,7 +142,7 @@ public class Dm {
             return;
         }
         Variant variant = invoke("Capture", x1, y1, x2, y2, path);
-        System.out.println(variant);
+        variant.safeRelease();
     }
 
     public void capturePng(int x1, int y1, int x2, int y2, String path) {
@@ -125,7 +150,7 @@ public class Dm {
             log.error("截图失败：坐标越界！({}, {}), ({}, {})", x1, y1, x2, y2);
             return;
         }
-        invoke("CapturePng", x1, y1, x2, y2, path);
+        invoke("CapturePng", x1, y1, x2, y2, path).safeRelease();
     }
 
     public void captureJpg(int x1, int y1, int x2, int y2, String path) {
@@ -134,7 +159,7 @@ public class Dm {
             return;
         }
         Variant variant = invoke("CaptureJpg", x1, y1, x2, y2, path);
-        System.out.println(variant);
+        variant.safeRelease();
     }
 
     public int[] findPic(int x1, int y1, int x2, int y2, String templatePath, String deltaColor, double threshold, int i) {
@@ -144,8 +169,12 @@ public class Dm {
 
         Variant x = new Variant(0, true);
         Variant y = new Variant(0, true);
-        invoke("FindPic", x1, y1, x2, y2, templatePath, deltaColor, threshold, i, x, y);
-        return new int[]{x.getInt(), y.getInt()};
+        invoke("FindPic", x1, y1, x2, y2, templatePath, deltaColor, threshold, i, x, y).safeRelease();
+        int xx = x.getInt();
+        int yy = y.getInt();
+        x.safeRelease();
+        y.safeRelease();
+        return new int[]{xx, yy};
     }
 
     public React findPicS(int x1, int y1, int x2, int y2, String templatePath, String deltaColor, double threshold, int i) {
@@ -155,12 +184,18 @@ public class Dm {
         Variant x = new Variant(0, true);
         Variant y = new Variant(0, true);
         Variant variant = invoke("FindPicS", x1, y1, x2, y2, templatePath, deltaColor, threshold, i, x, y);
-        return new React(x.getInt(), y.getInt(), variant.getString());
+        React react = new React(x.getInt(), y.getInt(), variant.getString());
+        variant.safeRelease();
+        x.safeRelease();
+        y.safeRelease();
+        return react;
     }
 
     public int imageToBmp(String fromPicName, String toBmpName) {
         Variant variant = invoke("ImageToBmp", fromPicName, toBmpName);
-        return variant.getInt();
+        int i = variant.getInt();
+        variant.safeRelease();
+        return i;
     }
 
     private boolean invalidFindPicParam(int x1, int y1, int x2, int y2, String templatePath) {
@@ -232,11 +267,11 @@ public class Dm {
     }
 
     public void leftDoubleClick() {
-        invoke("LeftDoubleClick");
+        invoke("LeftDoubleClick").safeRelease();
     }
 
     public void moveTo(int x, int y) {
-        invoke("MoveTo", x, y);
+        invoke("MoveTo", x, y).safeRelease();
     }
 
     public String ocr(int x1, int y1, int x2, int y2, String colorFormat, double threshold) {
@@ -249,11 +284,14 @@ public class Dm {
             return null;
         }
         Variant variant = invoke("OCR", x1, y1, x2, y2, colorFormat, threshold);
-        return variant.getString();
+        String string = variant.getString();
+        variant.safeRelease();
+        return string;
     }
 
     public void keyPressChar(String key) {
         Variant variant = invoke("KeyPressChar", key);
+        variant.safeRelease();
     }
 
     public void pressKeyChars(String[] keys) {

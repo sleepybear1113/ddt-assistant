@@ -5,6 +5,7 @@ let tabApp = new Vue({
             {tabId: "captcha", name: "验证码功能"},
             {tabId: "auction", name: "拍卖场功能"},
             {tabId: "test", name: "测试功能正常"},
+            {tabId: "setting", name: "设置"},
             {tabId: "introduction", name: "其他"},
         ]
     },

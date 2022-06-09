@@ -21,13 +21,13 @@ public class KeyPadUtil {
         }
     }
 
-    public static void press(String fn) {
-        if (StringUtils.isBlank(fn)) {
+    public static void press(String key) {
+        if (StringUtils.isBlank(key)) {
             return;
         }
-        Integer code = getCode(fn.toLowerCase());
+        Integer code = getCode(key.toLowerCase());
         if (code == null) {
-            throw new FrontException("暂不支持按下 " + fn);
+            throw new FrontException("暂不支持按下 " + key);
         }
         keyPress(code);
     }

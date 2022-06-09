@@ -1,8 +1,10 @@
-package cn.xiejx.ddtassistant.config;
+package cn.xiejx.ddtassistant.base;
 
+import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.utils.Util;
 import com.alibaba.fastjson2.JSON;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
@@ -15,10 +17,12 @@ import java.util.List;
  * @author sleepybear
  */
 @Data
+@Slf4j
 public class UserConfig implements Serializable {
     private static final long serialVersionUID = 4172087034701104358L;
 
-    public static final String PATH = "user-config.json";
+    public static final String OLD_PATH = "user-config.json";
+    private static final String PATH = Constants.CONFIG_DIR + OLD_PATH;
 
     public static final long DEFAULT_CAPTURE_INTERVAL = 500L;
     public static final long DEFAULT_TIMEOUT = 20000L;
@@ -97,9 +101,10 @@ public class UserConfig implements Serializable {
     public static UserConfig defaultConfig() {
         UserConfig userConfig = new UserConfig();
         userConfig.setDefaultChoiceAnswer("A");
-        userConfig.setCaptchaAppearDelay(0L);
-        userConfig.setKeyPressAfterCaptchaShow("F7");
-        userConfig.setKeyPressAfterCaptchaDisappear("F7");
+        userConfig.setCaptchaAppearDelay(null);
+        userConfig.setKeyPressAfterCaptchaShow(null);
+        userConfig.setKeyPressAfterCaptchaDisappear(null);
+        userConfig.setKeyPressDelayAfterCaptchaDisappear(null);
         userConfig.setPveFlopBonusAppearDelay(null);
         userConfig.setPveFlopBonusDisappearDelay(null);
         userConfig.setKeyPressAfterPveFlopBonus(null);
@@ -109,8 +114,7 @@ public class UserConfig implements Serializable {
         userConfig.setCaptureInterval(DEFAULT_CAPTURE_INTERVAL);
         userConfig.setDetectNewWindowInterval(null);
         userConfig.setTimeout(DEFAULT_TIMEOUT);
-        userConfig.setLogPrintInterval(15000L);
-        userConfig.setKeyPressDelayAfterCaptchaDisappear(5000L);
+        userConfig.setLogPrintInterval(30000L);
         userConfig.setMouseMode(DEFAULT_MOUSE_MODE);
         userConfig.setKeyPadMode(DEFAULT_KEY_PAD_MODE);
         userConfig.setExtraPorts(null);
@@ -121,11 +125,23 @@ public class UserConfig implements Serializable {
         BeanUtils.copyProperties(userConfig, this);
     }
 
-    public static UserConfig readFromFile() {
+    public static UserConfig load() {
         UserConfig defaultConfig = UserConfig.defaultConfig();
-        if (!new File(PATH).exists()) {
-            return defaultConfig;
+        File file = new File(PATH);
+        if (!file.exists()) {
+            // 如果新路径没有配置文件
+            File oldFile = new File(OLD_PATH);
+            if (!oldFile.exists()) {
+                // 如果旧路径也没有配置文件，那么是第一次使用，返回默认
+                return defaultConfig;
+            }
+            // 旧路径有配置文件，那么迁移
+            if (!oldFile.renameTo(file)) {
+                log.warn("移动配置文件[{}]失败", OLD_PATH);
+                return defaultConfig;
+            }
         }
+
         String s = Util.readFile(PATH);
         if (s == null || s.length() == 0) {
             return defaultConfig;

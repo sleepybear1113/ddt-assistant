@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.utils.tj;
 
-import cn.xiejx.ddtassistant.config.UserConfig;
+import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

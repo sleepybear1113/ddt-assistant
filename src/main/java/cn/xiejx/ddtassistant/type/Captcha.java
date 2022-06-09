@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.type;
 
-import cn.xiejx.ddtassistant.config.UserConfig;
+import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.logic.CaptchaLogic;

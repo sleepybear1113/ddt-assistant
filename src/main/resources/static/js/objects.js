@@ -175,3 +175,13 @@ class MemoryUse {
         this.time = props.time;
     }
 }
+
+class SettingConfig {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.keyPadPressWay = props.keyPadPressWay;
+    }
+}

@@ -1,5 +1,7 @@
 package cn.xiejx.ddtassistant.config;
 
+import cn.xiejx.ddtassistant.base.SettingConfig;
+import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.Dm;
 import cn.xiejx.ddtassistant.dm.DmDdt;
@@ -21,13 +23,18 @@ import java.util.Set;
 public class Ioc {
 
     @Bean
-    public UserConfig init() {
-        return UserConfig.readFromFile();
+    public UserConfig initUserConfig() {
+        return UserConfig.load();
     }
 
     @Bean
     public AuctionData initAuctionData() {
         return AuctionData.load();
+    }
+
+    @Bean
+    public SettingConfig initSettingConfig() {
+        return SettingConfig.load();
     }
 
     @Bean

@@ -1,8 +1,12 @@
 package cn.xiejx.ddtassistant.dm;
 
-import cn.xiejx.ddtassistant.config.UserConfig;
+import cn.xiejx.ddtassistant.base.SettingConfig;
+import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.utils.KeyPadUtil;
+import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
+import com.jacob.com.Variant;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -80,6 +84,21 @@ public class DmDdt extends Dm {
             return false;
         }
         return dmDdt.isBind();
+    }
+
+    @Override
+    public void keyPressChar(String key) {
+        SettingConfig settingConfig = SpringContextUtil.getBean(SettingConfig.class);
+        if (settingConfig == null) {
+            super.keyPressChar(key);
+            return;
+        }
+        SettingConfig.KeyPressWayEnum keyPadPressWayEnum = settingConfig.getKeyPadPressWayEnum();
+        if (SettingConfig.KeyPressWayEnum.DM.equals(keyPadPressWayEnum)) {
+            super.keyPressChar(key);
+        } else {
+            KeyPadUtil.press(key);
+        }
     }
 
     public String getWindowClass() {

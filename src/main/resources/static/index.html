@@ -200,7 +200,6 @@
                 </li>
             </div>
         </ol>
-
     </div>
 
 
@@ -228,6 +227,21 @@
             <span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
         </div>
     </div>
+
+
+    <div class="tab" id="setting">
+        <h3>设置相关</h3>
+        <hr>
+        <h5>按键设置</h5>
+        <span>全局按键使用：</span><br/>
+        <label for="keyPadPressWay-dm">大漠</label>
+        <input id="keyPadPressWay-dm" type="radio" name="keyPadPressGroup" value="dm" v-model="settingConfig.keyPadPressWay">
+        <label for="keyPadPressWay-robot">| Java Robot</label>
+        <input id="keyPadPressWay-robot" type="radio" name="keyPadPressGroup" value="robot" v-model="settingConfig.keyPadPressWay">
+        <br/>
+        <button v-on:click="update()">确定</button>
+    </div>
+
 
     <div class="tab" id="introduction">
         <span v-for="(tab, index) in tabs">
@@ -271,6 +285,22 @@
                     <a>内存泄漏。调用大漠插件这块代码，有内存使用无法释放的问题，会导致在运行中，内存缓慢升高，直至触发 Java 默认的最大内存，程序崩溃。建议每日重启程序。正在寻找改进方法。</a>
                 </li>
             </ol>
+
+            <h5>软件更新相关</h5>
+            <ol>
+                <li>
+                    <a>小更新：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，替换旧文件并且重命名为“ddt-assistant.jar”（不要版本号）。</a>
+                </li>
+                <li>
+                    <a>中等更新：在“小更新”的替换 jar 的基础上，可能会有一些资源文件的替换，比如在“img”文件夹添加几个文件，从群文件下载复制进去即可。</a>
+                </li>
+                <li>
+                    <a>大更新：需要全量下载完整包，在整个项目存在实质性底层架构改变才会使用，一般不会涉及。</a>
+                </li>
+                <li>
+                    <a>无脑更新：直接下载全量包，使用即可。不用考虑资源文件的额外下载。由于个人配置文件在脚本文件夹，所以可以把上一个版本的“config”文件夹复制过来，就能保持配置复用。</a>
+                </li>
+            </ol>
         </div>
 
         <div v-show="tabIndex === 1">
@@ -309,6 +339,7 @@
 <script src="js/auction.js"></script>
 <script src="js/test.js"></script>
 <script src="js/tab.js"></script>
+<script src="js/setting.js"></script>
 <script src="js/introduction.js"></script>
 </body>
 </html>
