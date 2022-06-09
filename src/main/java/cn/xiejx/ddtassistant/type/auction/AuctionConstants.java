@@ -19,7 +19,7 @@ public class AuctionConstants {
     /**
      * 拍卖场物品框坐标
      */
-    public static final int[] AUCTION_INPUT_POINT = {140, 170};
+    public static final int[] AUCTION_INPUT_POINT = {70, 190};
 
     /**
      * 竞拍价坐标，偏右
@@ -60,6 +60,10 @@ public class AuctionConstants {
      * 进行拍卖的按钮位置
      */
     public static final int[] SELL_POINT = {140, 490};
+    /**
+     * 放回物品的坐标
+     */
+    public static final int[] PUT_BACK_POINT = {100, 130};
 
     /**
      * 弹框输入物品数量的整个区域。如果一个物品有多于一个数量，那么会弹框
