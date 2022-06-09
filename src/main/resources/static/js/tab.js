@@ -6,7 +6,7 @@ let tabApp = new Vue({
             {tabId: "auction", name: "拍卖场功能"},
             {tabId: "test", name: "测试功能正常"},
             {tabId: "setting", name: "设置"},
-            {tabId: "introduction", name: "其他"},
+            {tabId: "introduction", name: "相关介绍"},
         ]
     },
     created() {

@@ -14,6 +14,9 @@ import org.apache.http.message.BasicNameValuePair;
 
 import java.io.*;
 import java.net.ServerSocket;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
@@ -64,7 +67,7 @@ public class Util {
 
     public static String readFile(String path) {
         StringBuilder s = new StringBuilder();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(path))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(path)), StandardCharsets.UTF_8))) {
             while (true) {
                 String line = bufferedReader.readLine();
                 if (line == null) {
@@ -80,7 +83,7 @@ public class Util {
 
     public static void writeFile(String s, String path) {
         ensureParentDir(path);
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(path)), StandardCharsets.UTF_8))) {
             bufferedWriter.write(s);
         } catch (IOException e) {
             throw new RuntimeException(e);
