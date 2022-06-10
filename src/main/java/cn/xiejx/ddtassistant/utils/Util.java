@@ -183,4 +183,18 @@ public class Util {
             }
         });
     }
+
+    public static byte[] fileToBytes(String path) {
+        File file = new File(path);
+        byte[] bytes;
+        try (FileInputStream inputStream = new FileInputStream(file)) {
+            bytes = new byte[inputStream.available()];
+            int read = inputStream.read(bytes, 0, inputStream.available());
+        } catch (IOException e) {
+            return null;
+        }
+
+        Util.delayDeleteFile(path, 3000L);
+        return bytes;
+    }
 }

@@ -2,6 +2,8 @@ package cn.xiejx.ddtassistant.type.auction;
 
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
+import cn.xiejx.ddtassistant.exception.MyInterruptException;
+import cn.xiejx.ddtassistant.type.common.Common;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
@@ -91,14 +93,15 @@ public class Auction {
 
         dm.bind();
         running = true;
+
+        // 打开拍卖场，转到拍卖栏
+//        ensureInAuction();
+
+
         int n = 1;
         while (n <= AuctionConstants.AuctionPosition.N * AuctionConstants.AuctionPosition.N) {
             if (!dm.isBind()) {
                 log.info("[{}] 绑定丢失，终止！", dm.getHwnd());
-                break;
-            }
-            if (!running) {
-                log.info("[{}] 运行结束！", dm.getHwnd());
                 break;
             }
             if (stop || !dm.isWindowClassFlashPlayerActiveX()) {
@@ -106,7 +109,13 @@ public class Auction {
                 stop();
                 break;
             }
-            go(n);
+            try {
+                go(n);
+            } catch (MyInterruptException e) {
+                log.info("[{}] 中止", dm.getHwnd());
+                stop();
+                break;
+            }
             n++;
             Util.sleep(300L);
         }
@@ -117,6 +126,8 @@ public class Auction {
     public void go(int n) {
         dm.leftClick(10, 10);
         Util.sleep(100L);
+
+        testRunningWithException();
 
         // 获取第 n 个物品的坐标
         int[] point = AuctionConstants.AuctionPosition.getPoint(n);
@@ -131,6 +142,8 @@ public class Auction {
         // 点击拍卖的地方
         dm.leftClick(AuctionConstants.AUCTION_INPUT_POINT, 200L);
         Util.sleep(300L);
+
+        testRunningWithException();
 
         // ocr 物品名称
         String itemName = ocrItemName();
@@ -216,12 +229,18 @@ public class Auction {
         AuctionConstants.AuctionTimeEnum auctionTime = AuctionConstants.AuctionTimeEnum.getAuctionTime(auctionItem.getAuctionTime());
         dm.leftClick(auctionTime.getPosition());
         Util.sleep(100L);
-        if (!running) {
-            return;
-        }
+        testRunningWithException();
 
         // 进行拍卖！
         dm.leftClick(AuctionConstants.SELL_POINT);
+    }
+
+    public boolean ensureInAuction() {
+        if (!findAuctionTitlePic(null, 0.6)) {
+
+        }
+
+        return true;
     }
 
     public Integer getNum() {
@@ -234,9 +253,32 @@ public class Auction {
         return num == null ? 1 : num;
     }
 
+    /**
+     * 是否在拍卖场
+     *
+     * @param templatePath templatePath
+     * @param threshold    threshold
+     * @return boolean
+     */
+    public boolean findAuctionTitlePic(String templatePath, double threshold) {
+        int[] pic = dm.findPic(AuctionConstants.AUCTION_TITLE_FIND_RECT, templatePath, "010101", threshold, 0);
+        if (pic == null) {
+            return false;
+        }
+        return pic[0] > 0;
+    }
+
+    public boolean gotoAuction() {
+        if (!Common.findMorePic(dm, "", 0.6)) {
+            log.info("[{}] 未找到 更多 按钮", dm.getHwnd());
+            return false;
+        }
+        Common.clickMore(dm);
+        return true;
+    }
+
     public boolean findInputNumBox(String templatePath, double threshold) {
-        int[] rect = AuctionConstants.NUM_INPUT_BOX_FIND_SELL_RECT;
-        int[] pic = dm.findPic(rect[0], rect[1], rect[2], rect[3], templatePath, "010101", threshold, 0);
+        int[] pic = dm.findPic(AuctionConstants.NUM_INPUT_BOX_FIND_SELL_RECT, templatePath, "010101", threshold, 0);
         if (pic == null) {
             return false;
         }
@@ -270,6 +312,7 @@ public class Auction {
     }
 
     public void putItemBack(Integer num) {
+        testRunningWithException();
         // 放回原来背包位置
         if (num != null && num > 1) {
             // 取消拍卖
@@ -289,5 +332,11 @@ public class Auction {
 
     public void captureSellNumSamplePic(String path) {
         dm.capturePicByRegion(path, AuctionConstants.NUM_INPUT_BOX_SELL_NUM_SAMPLE_RECT);
+    }
+
+    public void testRunningWithException() {
+        if (!this.running) {
+            throw new MyInterruptException("中止运行");
+        }
     }
 }

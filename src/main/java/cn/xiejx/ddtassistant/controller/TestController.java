@@ -5,7 +5,6 @@ import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.Dm;
 import cn.xiejx.ddtassistant.dm.DmDdt;
-import cn.xiejx.ddtassistant.utils.KeyPadUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -23,6 +23,8 @@ import java.util.Collection;
 @RestController
 @Slf4j
 public class TestController {
+    @Resource
+    private DmDdt defaultDm;
 
     @LogAppInfo("键盘按键")
     @RequestMapping("/test/keyPress")
@@ -31,7 +33,7 @@ public class TestController {
             return TestRes.buildFail("没有输入内容！");
         }
         Util.sleep(delay);
-        KeyPadUtil.press(key);
+        defaultDm.keyPressChar(key);
         return TestRes.buildSuccess("按下按键：" + key);
     }
 

@@ -234,11 +234,16 @@
         <hr>
         <h5>按键设置</h5>
         <span>全局按键使用：</span><br/>
+        <span>全局按键：比如 F5、F7 这种，不单独对游戏某个窗口生效，对全部生效的按键。</span>
+        <br/>
+        <span>这里有两种调用方式。一种是“大漠”：用大漠插件内置的，一种是“Java Robot”，用 Java 内置的方式调用。如果一种方法存在问题，可以切换另一种。</span>
+        <br/>
         <label for="keyPadPressWay-dm">大漠</label>
         <input id="keyPadPressWay-dm" type="radio" name="keyPadPressGroup" value="dm" v-model="settingConfig.keyPadPressWay">
         <label for="keyPadPressWay-robot">| Java Robot</label>
         <input id="keyPadPressWay-robot" type="radio" name="keyPadPressGroup" value="robot" v-model="settingConfig.keyPadPressWay">
         <br/>
+        <hr>
         <button v-on:click="update()">确定</button>
     </div>
 

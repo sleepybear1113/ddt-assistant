@@ -162,6 +162,10 @@ public class Dm {
         variant.safeRelease();
     }
 
+    public int[] findPic(int[] xxyy, String templatePath, String deltaColor, double threshold, int i) {
+        return findPic(xxyy[0], xxyy[1], xxyy[2], xxyy[3], templatePath, deltaColor, threshold, i);
+    }
+
     public int[] findPic(int x1, int y1, int x2, int y2, String templatePath, String deltaColor, double threshold, int i) {
         if (invalidFindPicParam(x1, y1, x2, y2, templatePath)) {
             return null;

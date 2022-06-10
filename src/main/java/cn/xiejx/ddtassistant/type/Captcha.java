@@ -147,7 +147,7 @@ public class Captcha {
         if (StringUtils.isBlank(templatePath)) {
             return false;
         }
-        int[] pic = dm.findPic(rect[0], rect[1], rect[2], rect[3], templatePath, "010101", threshold, 0);
+        int[] pic = dm.findPic(rect, templatePath, "010101", threshold, 0);
         return pic[0] > 0;
     }
 

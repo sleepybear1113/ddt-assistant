@@ -90,6 +90,16 @@ public class AuctionConstants {
      */
     public static final int[] ITEM_INPUT_NAME_OCR_RECT = {92, 165, 238, 192};
 
+    /**
+     * 拍卖场标题三个字的区域模板
+     */
+    public static final int[] AUCTION_TITLE_SAMPLE_RECT = {};
+
+    /**
+     * 拍卖场标题三个字的区域的寻找范围
+     */
+    public static final int[] AUCTION_TITLE_FIND_RECT = {};
+
     public enum AuctionTimeEnum {
         /**
          * 8 24 48 小时的拍卖时限坐标
