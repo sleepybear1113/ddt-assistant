@@ -5,7 +5,6 @@ import cn.xiejx.ddtassistant.utils.Util;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.io.File;
@@ -23,21 +22,10 @@ public class SettingConfig implements Serializable {
     private static final long serialVersionUID = 6838662886328568339L;
     public static final String PATH = Constants.CONFIG_DIR + "setting.json";
 
-    public static final String DEFAULT_API_PAO_JIAO_HOST = "47.96.169.151";
-
     private String keyPadPressWay;
-
-    private String apiPaoJiaoHost;
 
     public void update(SettingConfig settingConfig) {
         BeanUtils.copyProperties(settingConfig, this);
-    }
-
-    public String getApiPaoJiaoHost() {
-        if (StringUtils.isBlank(this.apiPaoJiaoHost)) {
-            return DEFAULT_API_PAO_JIAO_HOST;
-        }
-        return apiPaoJiaoHost;
     }
 
     public static SettingConfig load() {
@@ -65,7 +53,6 @@ public class SettingConfig implements Serializable {
     private static SettingConfig defaultConfig() {
         SettingConfig settingConfig = new SettingConfig();
         settingConfig.setKeyPadPressWay("dm");
-        settingConfig.setApiPaoJiaoHost(DEFAULT_API_PAO_JIAO_HOST);
         return settingConfig;
     }
 
