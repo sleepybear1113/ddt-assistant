@@ -183,5 +183,6 @@ class SettingConfig {
         }
 
         this.keyPadPressWay = props.keyPadPressWay;
+        this.apiPaoJiaoHost = props.apiPaoJiaoHost;
     }
 }

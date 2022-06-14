@@ -3,9 +3,11 @@ let settingApp = new Vue({
     data: {
         settingConfig: {
             keyPadPressWay: "dm",
+            apiPaoJiaoHost: ""
         }
     },
     created() {
+        this.get();
     },
     methods: {
         update: function () {

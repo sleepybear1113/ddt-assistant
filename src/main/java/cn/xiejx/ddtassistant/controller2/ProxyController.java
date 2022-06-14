@@ -1,6 +1,8 @@
 package cn.xiejx.ddtassistant.controller2;
 
+import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
@@ -80,8 +82,13 @@ public class ProxyController {
     }
 
     @RequestMapping("/v1/af/call_remote_func2")
-    public String func2(String action, String app_key, String func_name, String params, String nonce, String timestamp, String sign) {
-        HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper("http://123.129.198.210/v1/af/call_remote_func2", MethodEnum.METHOD_POST);
+    public String func2(String app_key, String func_name, String params, String nonce, String timestamp, String sign) {
+        SettingConfig settingConfig = SpringContextUtil.getBean(SettingConfig.class);
+        if (settingConfig == null) {
+            return null;
+        }
+        String ip = settingConfig.getApiPaoJiaoHost();
+        HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(String.format("http://%s/v1/af/call_remote_func2", ip), MethodEnum.METHOD_POST);
         httpHelper.setHeader("Host", "api.paojiaoyun.com");
         ArrayList<NameValuePair> pairs = new ArrayList<>();
         pairs.add(new BasicNameValuePair("app_key", app_key));

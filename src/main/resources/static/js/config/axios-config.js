@@ -30,3 +30,16 @@ axios.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+axios.interceptors.request.use(
+    config => {
+        if (config.method === 'get') {
+            config.params = {
+                _t: new Date().getTime(),
+                ...config.params
+            }
+        }
+        return config
+    }, function (error) {
+        return Promise.reject(error)
+    },
+)

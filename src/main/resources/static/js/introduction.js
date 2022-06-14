@@ -6,7 +6,7 @@ let introductionApp = new Vue({
             {name: "简介"},
             {name: "请我吃点东西"},
             {name: "工程介绍"},
-            {name: "性能"},
+            // {name: "性能"},
         ],
         initEchart: false,
         maxMemoryUse: 0,
