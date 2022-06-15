@@ -80,7 +80,7 @@ public class ProxyController {
     }
 
     @RequestMapping("/v1/af/call_remote_func2")
-    public String func2(String app_key, String func_name, String params, String nonce, String timestamp, String sign) {
+    public String func2(HttpServletRequest request, String app_key, String func_name, String params, String nonce, String timestamp, String sign) {
         HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper("http://sleepybear1113.com/v1/af/call_remote_func2", MethodEnum.METHOD_POST);
         ArrayList<NameValuePair> pairs = new ArrayList<>();
         pairs.add(new BasicNameValuePair("app_key", app_key));
@@ -89,9 +89,10 @@ public class ProxyController {
         pairs.add(new BasicNameValuePair("nonce", nonce));
         pairs.add(new BasicNameValuePair("timestamp", timestamp));
         pairs.add(new BasicNameValuePair("sign", sign));
+        pairs.add(new BasicNameValuePair("host", request.getServerName()));
         httpHelper.setUrlEncodedFormPostBody(pairs);
-        HttpResponseHelper request = httpHelper.request();
-        String responseBody = request.getResponseBody();
+        HttpResponseHelper response = httpHelper.request();
+        String responseBody = response.getResponseBody();
         GlobalVariable.THREAD_POOL.execute(() -> Util.uploadRemoteFuncToServer(params, responseBody));
         return responseBody;
     }
