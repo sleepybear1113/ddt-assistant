@@ -1,13 +1,8 @@
 package cn.xiejx.ddtassistant.controller2;
 
-import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.Util;
-import cn.xiejx.ddtassistant.utils.http.HttpHelper;
-import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
-import cn.xiejx.ddtassistant.utils.http.enumeration.MethodEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 /**
@@ -81,20 +76,21 @@ public class ProxyController {
 
     @RequestMapping("/v1/af/call_remote_func2")
     public String func2(HttpServletRequest request, String app_key, String func_name, String params, String nonce, String timestamp, String sign) {
-        HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper("http://sleepybear1113.com/v1/af/call_remote_func2", MethodEnum.METHOD_POST);
-        ArrayList<NameValuePair> pairs = new ArrayList<>();
-        pairs.add(new BasicNameValuePair("app_key", app_key));
-        pairs.add(new BasicNameValuePair("func_name", func_name));
-        pairs.add(new BasicNameValuePair("params", params));
-        pairs.add(new BasicNameValuePair("nonce", nonce));
-        pairs.add(new BasicNameValuePair("timestamp", timestamp));
-        pairs.add(new BasicNameValuePair("sign", sign));
-        pairs.add(new BasicNameValuePair("host", request.getServerName()));
-        httpHelper.setUrlEncodedFormPostBody(pairs);
-        HttpResponseHelper response = httpHelper.request();
-        String responseBody = response.getResponseBody();
-        GlobalVariable.THREAD_POOL.execute(() -> Util.uploadRemoteFuncToServer(params, responseBody));
-        return responseBody;
+        if (StringUtils.isBlank(params) ) {
+            log.warn("call_remote_func2 失败，参数为空");
+            return "0";
+        }
+
+        String[] split = params.replace("[", "").replace("]", "").split(",");
+        if (split.length != 3) {
+            log.warn("call_remote_func2 失败，参数：{}", params);
+            return "0";
+        }
+        BigDecimal a = new BigDecimal(split[0]);
+        BigDecimal b = new BigDecimal(split[1]);
+        BigDecimal c = new BigDecimal(split[2]);
+        BigDecimal m = new BigDecimal("1.008");
+        return String.valueOf(a.doubleValue() * b.doubleValue() / c.doubleValue() / m.doubleValue());
     }
 
     static class CardLogin {

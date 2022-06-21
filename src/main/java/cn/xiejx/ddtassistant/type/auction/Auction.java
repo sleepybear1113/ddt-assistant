@@ -235,6 +235,10 @@ public class Auction {
         dm.leftClick(AuctionConstants.SELL_POINT);
     }
 
+    public void inputPrice() {
+
+    }
+
     public boolean ensureInAuction() {
         if (!findAuctionTitlePic(null, 0.6)) {
 
