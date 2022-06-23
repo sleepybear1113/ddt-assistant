@@ -26,7 +26,6 @@ public class MailUtil {
 
         Properties props = new Properties();
         props.put("mail.smtp.host", "smtp." + split[1]);
-        props.put("mail.debug", "true");
         props.put("mail.smtp.auth", "true");
 
         Session session = Session.getInstance(props, new Authenticator() {
