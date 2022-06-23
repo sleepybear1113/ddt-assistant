@@ -1,9 +1,9 @@
 package cn.xiejx.ddtassistant.base;
 
 import cn.xiejx.ddtassistant.constant.Constants;
-import cn.xiejx.ddtassistant.utils.Util;
-import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -17,8 +17,9 @@ import java.util.List;
  * @author sleepybear
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
-public class UserConfig implements Serializable {
+public class UserConfig extends BaseConfig implements Serializable {
     private static final long serialVersionUID = 4172087034701104358L;
 
     public static final String OLD_PATH = "user-config.json";
@@ -98,7 +99,14 @@ public class UserConfig implements Serializable {
 
     private String extraPorts;
 
-    public static UserConfig defaultConfig() {
+    @Override
+    @JSONField(serialize = false)
+    public String getFileName() {
+        return "user-config.json";
+    }
+
+    @Override
+    public UserConfig defaultConfig() {
         UserConfig userConfig = new UserConfig();
         userConfig.setDefaultChoiceAnswer("A");
         userConfig.setCaptchaAppearDelay(null);
@@ -125,37 +133,23 @@ public class UserConfig implements Serializable {
         BeanUtils.copyProperties(userConfig, this);
     }
 
-    public static UserConfig load() {
-        UserConfig defaultConfig = UserConfig.defaultConfig();
-        File file = new File(PATH);
+    @Override
+    @SuppressWarnings("unchecked")
+    public UserConfig load() {
+        // 新路径
+        File file = new File(getFilePath());
         if (!file.exists()) {
             // 如果新路径没有配置文件
-            File oldFile = new File(OLD_PATH);
-            if (!oldFile.exists()) {
-                // 如果旧路径也没有配置文件，那么是第一次使用，返回默认
-                return defaultConfig;
-            }
-            // 旧路径有配置文件，那么迁移
-            if (!oldFile.renameTo(file)) {
-                log.warn("移动配置文件[{}]失败", OLD_PATH);
-                return defaultConfig;
+            File oldFile = new File(getFileName());
+            if (oldFile.exists()) {
+                // 旧路径有配置文件，那么迁移
+                if (!oldFile.renameTo(file)) {
+                    log.warn("移动配置文件[{}]失败", getFileName());
+                }
             }
         }
 
-        String s = Util.readFile(PATH);
-        if (s == null || s.length() == 0) {
-            return defaultConfig;
-        }
-
-        try {
-            return JSON.parseObject(s, UserConfig.class);
-        } catch (Exception e) {
-            return defaultConfig;
-        }
-    }
-
-    public void writeFile() {
-        Util.writeFile(JSON.toJSONString(this), PATH);
+        return super.load();
     }
 
     public boolean validUserInfo() {

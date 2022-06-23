@@ -19,12 +19,12 @@ Date.prototype.Format = function (fmt) {
     return fmt;
 }
 
-function showInfo(msg) {
+function showInfo(msg, timeout = 100) {
     let textareaInfo = window.top.document.getElementById("textarea-info");
     textareaInfo.value = "";
     setTimeout(() => {
         textareaInfo.value = `${new Date().Format("yyyy-MM-dd hh:mm:ss")}\n${msg}`;
-    }, 100);
+    }, timeout);
 }
 
 function hideImg() {

@@ -2,8 +2,8 @@ package cn.xiejx.ddtassistant.type;
 
 import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.logic.MonitorLogic;
 import cn.xiejx.ddtassistant.dm.DmDdt;
-import cn.xiejx.ddtassistant.logic.CaptchaLogic;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
@@ -228,7 +228,7 @@ public class Captcha {
         reportErrorResult(this.lastRemoteCaptchaId, false);
 
         // 设置按钮缓存
-        CaptchaLogic.TIME_CACHER.set(CaptchaLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), CaptchaLogic.S, ExpireWayEnum.AFTER_UPDATE);
+        MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), MonitorLogic.CAPTCHA_DELAY, ExpireWayEnum.AFTER_UPDATE);
 
         log.info("[{}] 点亮屏幕", dm.getHwnd());
         dm.leftClick(100, 100, 100);
@@ -337,11 +337,11 @@ public class Captcha {
         if (!findFlopBonus(getFlopBonusTemplateBmpNames(), DEFAULT_FLOP_BONUS_PIC_THRESHOLD)) {
             return;
         }
-        if (CaptchaLogic.FLOP_BONUS_CACHER.get(CaptchaLogic.FLOP_BONUS_FOUND_KEY) == null) {
+        if (MonitorLogic.FLOP_BONUS_CACHER.get(MonitorLogic.FLOP_BONUS_FOUND_KEY) == null) {
             log.info("[{}] 发现副本大翻牌！", dm.getHwnd());
         }
 
-        CaptchaLogic.FLOP_BONUS_CACHER.set(CaptchaLogic.FLOP_BONUS_FOUND_KEY, new Pair<>(pveFlopBonusAppearDelay, this.dm), userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
+        MonitorLogic.FLOP_BONUS_CACHER.set(MonitorLogic.FLOP_BONUS_FOUND_KEY, new Pair<>(pveFlopBonusAppearDelay, this.dm), userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
     }
 
     public void reportErrorResult(String id, boolean force) {

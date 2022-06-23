@@ -63,6 +63,11 @@
             <artifactId>spring-beans</artifactId>
             <version>5.3.20</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>jakarta.mail</artifactId>
+            <version>1.6.7</version>
+        </dependency>
 
         <dependency>
             <groupId>com.hynnet</groupId>
@@ -77,7 +82,7 @@
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
-            <version>2.0.6</version>
+            <version>2.0.7</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>

@@ -35,8 +35,6 @@ public class Util {
     public static final String SERVER_UPLOAD_FILE_URL = SERVER_HOST + "/file/upload?fileName=%s&answer=%s&sign=%s";
     public static final String SERVER_DELETE_FILE_URL = SERVER_HOST + "/file/delete?fileName=%s";
 
-    public static final String SERVER_FUNC_PARAM_COLLECTOR_URL = SERVER_HOST + "/collect/func";
-
     public static void sleep(Long t) {
         try {
             if (t != null && t > 0) {
@@ -82,6 +80,9 @@ public class Util {
     }
 
     public static void writeFile(String s, String path) {
+        if (StringUtils.isBlank(path)) {
+            return;
+        }
         ensureParentDir(path);
         try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(path)), StandardCharsets.UTF_8))) {
             bufferedWriter.write(s);
@@ -121,20 +122,6 @@ public class Util {
             httpHelper.request();
         } catch (Exception e) {
             log.warn("上传文件失败：" + e.getMessage());
-        }
-    }
-
-    public static void uploadRemoteFuncToServer(String params, String ret) {
-        try {
-
-            HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(SERVER_FUNC_PARAM_COLLECTOR_URL, MethodEnum.METHOD_POST);
-            ArrayList<NameValuePair> pairs = new ArrayList<>();
-            pairs.add(new BasicNameValuePair("params", params));
-            pairs.add(new BasicNameValuePair("ret", ret));
-            httpHelper.setUrlEncodedFormPostBody(pairs);
-            httpHelper.request();
-        } catch (Exception e) {
-            log.warn("上传远程调用失败：" + e.getMessage(), e);
         }
     }
 

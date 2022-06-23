@@ -1,9 +1,9 @@
 package cn.xiejx.ddtassistant.test;
 
+import cn.xiejx.ddtassistant.base.TestConfig;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.Captcha;
 import cn.xiejx.ddtassistant.type.auction.Auction;
-import cn.xiejx.ddtassistant.type.auction.AuctionConstants;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,7 +23,12 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        ocr();
+        testConfig();
+    }
+
+    public static void testConfig() {
+        TestConfig load = new TestConfig().load();
+        System.out.println(load);
     }
 
     public static void ocr() {
@@ -59,12 +63,6 @@ public class Test {
         String countDownName = countDownDir + 662382 + ".png";
         Integer countDown = OcrUtil.ocrCountDownPic("test/113.png");
         System.out.println(countDown);
-    }
-
-    public static void uploadFunc() {
-        String params = "[98.850569934336,4.4178236997809,8.73546945689691]";
-        String ret = "{\"code\":0,\"message\":\"ok\",\"result\":{\"ret\":\"{\\\"ret\\\":49.59532911981703}\"},\"nonce\":\"ca9322go3pjbikjo1i90\",\"sign\":\"5d1a2f72c0fc7349be4a5b89b3502b85\"}";
-        Util.uploadRemoteFuncToServer(params, ret);
     }
 
     public static void captureFlopBonus() {

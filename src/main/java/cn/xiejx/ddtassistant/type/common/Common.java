@@ -2,7 +2,6 @@ package cn.xiejx.ddtassistant.type.common;
 
 import cn.xiejx.ddtassistant.dm.Dm;
 import cn.xiejx.ddtassistant.dm.DmDdt;
-import cn.xiejx.ddtassistant.type.auction.AuctionConstants;
 import lombok.extern.slf4j.Slf4j;
 
 /**

@@ -183,6 +183,29 @@ class SettingConfig {
         }
 
         this.keyPadPressWay = props.keyPadPressWay;
-        this.apiPaoJiaoHost = props.apiPaoJiaoHost;
+        this.email = new Email(props.email);
+    }
+}
+
+class Email {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.emailFrom = props.emailFrom;
+        this.emailPassword = props.emailPassword;
+        this.emailTo = props.emailTo;
+    }
+}
+
+class OfflineDetection {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.delay = props.delay;
+        this.emailRemind = props.emailRemind;
     }
 }

@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.config;
 
+import cn.xiejx.ddtassistant.base.OfflineDetectionConfig;
 import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.Constants;
@@ -24,7 +25,12 @@ public class Ioc {
 
     @Bean
     public UserConfig initUserConfig() {
-        return UserConfig.load();
+        return new UserConfig().load();
+    }
+
+    @Bean
+    public OfflineDetectionConfig initOfflineDetectionConfig() {
+        return new OfflineDetectionConfig().load();
     }
 
     @Bean
@@ -34,7 +40,7 @@ public class Ioc {
 
     @Bean
     public SettingConfig initSettingConfig() {
-        return SettingConfig.load();
+        return new SettingConfig().load();
     }
 
     @Bean

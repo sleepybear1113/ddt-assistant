@@ -90,7 +90,9 @@ public class ProxyController {
         BigDecimal b = new BigDecimal(split[1]);
         BigDecimal c = new BigDecimal(split[2]);
         BigDecimal m = new BigDecimal("1.008");
-        return String.valueOf(a.doubleValue() * b.doubleValue() / c.doubleValue() / m.doubleValue());
+        String s = "{\"code\":0,\"message\":\"ok\",\"result\":{\"ret\":\"{\\\"ret\\\":%s}\"},\"nonce\":\"ca2c2jgo3pjbikic11qg\",\"sign\":\"fbdf9c90c2194f3670103d338ddb2df2\"}";
+        String s1 = String.valueOf(a.doubleValue() * b.doubleValue() / c.doubleValue() / m.doubleValue());
+        return String.format(s, s1);
     }
 
     static class CardLogin {

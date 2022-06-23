@@ -1,13 +1,9 @@
 package cn.xiejx.ddtassistant.base;
 
-import cn.xiejx.ddtassistant.constant.Constants;
-import cn.xiejx.ddtassistant.utils.Util;
-import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.annotation.JSONField;
 import lombok.Data;
-import org.springframework.beans.BeanUtils;
+import lombok.EqualsAndHashCode;
 
-import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -17,40 +13,23 @@ import java.io.Serializable;
  * @date 2022/06/09 19:10
  */
 @Data
-public class SettingConfig implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class SettingConfig extends BaseConfig implements Serializable {
 
     private static final long serialVersionUID = 6838662886328568339L;
-    public static final String PATH = Constants.CONFIG_DIR + "setting.json";
 
     private String keyPadPressWay;
 
-    public void update(SettingConfig settingConfig) {
-        BeanUtils.copyProperties(settingConfig, this);
+    private EmailConfig email;
+
+    @Override
+    @JSONField(serialize = false)
+    public String getFileName() {
+        return "setting.json";
     }
 
-    public static SettingConfig load() {
-        SettingConfig defaultConfig = SettingConfig.defaultConfig();
-        if (!new File(PATH).exists()) {
-            return defaultConfig;
-        }
-        String s = Util.readFile(PATH);
-        if (s == null || s.length() == 0) {
-            return defaultConfig;
-        }
-
-        try {
-            return JSON.parseObject(s, SettingConfig.class);
-        } catch (Exception e) {
-            return defaultConfig;
-        }
-    }
-
-    public void save() {
-        String s = JSON.toJSONString(this);
-        Util.writeFile(s, PATH);
-    }
-
-    private static SettingConfig defaultConfig() {
+    @Override
+    public SettingConfig defaultConfig() {
         SettingConfig settingConfig = new SettingConfig();
         settingConfig.setKeyPadPressWay("dm");
         return settingConfig;

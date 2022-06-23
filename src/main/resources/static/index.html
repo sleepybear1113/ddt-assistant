@@ -138,8 +138,21 @@
     </div>
 
 
+    <div class="tab" id="offlineDetection">
+        <h3>{{tabName}}</h3>
+        <hr>
+
+        <label for="input-detectOfflineDelay">检测时间间隔</label>
+        <input id="input-detectOfflineDelay" class="ms-input-middle" v-model="offlineDetection.delay">
+        <label for="checkbox-detectOfflineCheckbox">毫秒，并且邮件提醒</label>
+        <input id="checkbox-detectOfflineCheckbox" type="checkbox" v-model="offlineDetection.emailRemind">
+        <hr>
+        <button v-on:click="update()">保存</button>
+    </div>
+
+
     <div class="tab" id="auction">
-        <h3>拍卖场功能</h3>
+        <h3>{{tabName}}</h3>
         <span>用来自动化挂物品到拍卖场。自动识别数量和物品名称，计算价格和是否拍卖，然后根据条件挂拍卖场。</span>
         <br/>
         <span>需要账号位于拍卖场，并且处于打开背包的状态下使用，切记不可拖动背包，否则定位会有偏差（否则重进拍卖场）！</span>
@@ -232,31 +245,57 @@
     <div class="tab" id="setting">
         <h3>设置相关</h3>
         <hr>
-        <h5>按键设置</h5>
-        <span>全局按键使用：</span><br/>
-        <span>全局按键：比如 F5、F7 这种，不单独对游戏某个窗口生效，对全部生效的按键。</span>
-        <br/>
-        <span>这里有两种调用方式。一种是“大漠”：用大漠插件内置的，一种是“Java Robot”，用 Java 内置的方式调用。如果一种方法存在问题，可以切换另一种。</span>
-        <br/>
-        <label for="keyPadPressWay-dm">大漠</label>
-        <input id="keyPadPressWay-dm" type="radio" name="keyPadPressGroup" value="dm"
-               v-model="settingConfig.keyPadPressWay">
-        <label for="keyPadPressWay-robot">| Java Robot</label>
-        <input id="keyPadPressWay-robot" type="radio" name="keyPadPressGroup" value="robot"
-               v-model="settingConfig.keyPadPressWay">
+        <button v-on:click="update()">保存设置</button>
         <hr>
-        <button v-on:click="update()">确定</button>
+
+        <span v-for="tab in tabs">
+             <button v-on:click="changeTab(tab)">{{tab.name}}</button>
+        </span>
+        <hr>
+
+        <div v-show="selectedTab === '按键设置'">
+            <h5>按键设置</h5>
+            <span>全局按键使用：</span><br/>
+            <span>全局按键：比如 F5、F7 这种，不单独对游戏某个窗口生效，对全部生效的按键。</span>
+            <br/>
+            <span>这里有两种调用方式。一种是“大漠”：用大漠插件内置的，一种是“Java Robot”，用 Java 内置的方式调用。如果一种方法存在问题，可以切换另一种。</span>
+            <br/>
+            <label for="keyPadPressWay-dm">大漠</label>
+            <input id="keyPadPressWay-dm" type="radio" name="keyPadPressGroup" value="dm"
+                   v-model="settingConfig.keyPadPressWay">
+            <label for="keyPadPressWay-robot">| Java Robot</label>
+            <input id="keyPadPressWay-robot" type="radio" name="keyPadPressGroup" value="robot"
+                   v-model="settingConfig.keyPadPressWay">
+        </div>
+
+        <div v-show="selectedTab === '邮箱设置'">
+            <h5>邮箱设置</h5>
+            <span>通过邮箱功能，可以进行相关功能的提醒</span><br/>
+            <br/>
+            <label for="input-emailFrom">发件人邮箱</label>
+            <input id="input-emailFrom" v-model="settingConfig.email.emailFrom">
+            <br/>
+            <label for="input-emailPassword">发件人授权码/密码</label>
+            <input id="input-emailPassword" v-model="settingConfig.email.emailPassword" type="password">
+            <br/>
+            <label for="input-emailTo">收件人邮箱列表</label>
+            <input id="input-emailTo" v-model="settingConfig.email.emailTo" placeholder="若多邮箱 请逗号分隔">
+            <hr>
+            <span>保存相关内容后，测试邮箱功能是否可用</span><br/>
+            <button v-on:click="testEmailSend()">测试邮箱发送</button>
+        </div>
     </div>
 
 
     <div class="tab" id="introduction">
         <h3>相关介绍</h3>
         <hr>
-        <span v-for="(tab, index) in tabs">
-             <button v-on:click="changeTab(index)">{{tab.name}}</button>
+        <span v-for="tab in tabs">
+             <button v-on:click="changeTab(tab)">{{tab.name}}</button>
         </span>
+        <hr>
 
-        <div v-show="tabIndex === 0">
+        <div v-show="selectedTab === '简介'">
             <h5>程序目录介绍</h5>
             <ol>
                 <li>
@@ -314,13 +353,13 @@
             </ol>
         </div>
 
-        <div v-show="tabIndex === 1">
+        <div v-show="selectedTab === '请我吃点东西'">
             <p>如果觉得有帮助，并且想要请我吃点东西，可以扫码，感谢！</p>
             <img src="images/wx.jpg" alt="微信二维码" width="25%">
             <img src="images/zfb.jpg" alt="支付宝二维码" width="25%">
         </div>
 
-        <div v-show="tabIndex === 2">
+        <div v-show="selectedTab === '工程介绍'">
             <p>本项目后端使用 Spring Boot 2.6.7 基于 32 位 Java 8 开发。</p>
             <p>本项目前端使用非 node 非 cli 的纯 vue.js 文件开发，不使用前端其他复杂框架。</p>
             <p>
@@ -332,7 +371,7 @@
             <p>非经允许，任何人不得将此程序用于商业用途，作者将保留一切该程序的权利。</p>
         </div>
 
-        <div v-show="tabIndex === 3">
+        <div v-show="selectedTab === '性能'">
             <p>以下性能监控后台默认每 2 分钟收集一次，或者点击刷新立即获取</p>
             <p>内存占用会随时间缓慢上升，直到到达 Java 认为需要清理的时候，进行一次大清理，占用会下降</p>
             <hr>
@@ -346,6 +385,7 @@
 </div>
 
 <script src="js/index.js"></script>
+<script src="js/offlineDetection.js"></script>
 <script src="js/captcha.js"></script>
 <script src="js/auction.js"></script>
 <script src="js/test.js"></script>

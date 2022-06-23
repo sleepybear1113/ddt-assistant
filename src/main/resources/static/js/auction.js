@@ -1,6 +1,7 @@
 let auctionApp = new Vue({
     el: '#auction',
     data: {
+        tabName:"拍卖场功能",
         auctionData: {
             auctionItemList: [],
             autoAddUnknown: true,

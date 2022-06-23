@@ -14,6 +14,8 @@ import org.springframework.core.env.Environment;
 public class DdtAssistantApplication {
 
     public static void main(String[] args) {
+        System.setProperty("com.jacob.autogc", "true");
+
         System.out.println("==========================================");
         System.out.println("应用启动中............");
         System.out.println("如果启动后最后没有显示中文的输出，显示一串英文代码，那么可能是大漠插件没有注册，请打开“大漠插件注册”文件夹进行注册。");

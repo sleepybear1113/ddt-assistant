@@ -6,7 +6,6 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.KeyPadUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
-import com.jacob.com.Variant;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;

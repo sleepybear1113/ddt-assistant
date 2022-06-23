@@ -21,11 +21,21 @@ public class Dm {
 
     private final Dispatch dmDispatch;
 
+    private int count = 0;
+
     public Dm() {
         ComThread.InitSTA();
         ComThread.doCoInitialize(0);
         ActiveXComponent dmComponent = new ActiveXComponent(PROGRAM_ID_DM);
         dmDispatch = dmComponent.getObject();
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void clearCount() {
+        this.count = 0;
     }
 
     public String getVersion() {
@@ -310,6 +320,7 @@ public class Dm {
     }
 
     public Variant invoke(String method, Object... params) {
+        count++;
         return Dispatch.call(dmDispatch, method, params);
     }
 

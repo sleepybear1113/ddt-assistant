@@ -1,7 +1,7 @@
 package cn.xiejx.ddtassistant.utils.tj;
 
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
-import cn.xiejx.ddtassistant.logic.CaptchaLogic;
+import cn.xiejx.ddtassistant.logic.MonitorLogic;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.Cacher;
 import cn.xiejx.ddtassistant.utils.cacher.CacherBuilder;
@@ -98,7 +98,7 @@ public class TjHttpUtil {
         long startTime = System.currentTimeMillis();
         while (true) {
             if (afterDisappearDelay != null && afterDisappearDelay > 0) {
-                CaptchaLogic.TIME_CACHER.set(CaptchaLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), afterDisappearDelay, ExpireWayEnum.AFTER_UPDATE);
+                MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), afterDisappearDelay, ExpireWayEnum.AFTER_UPDATE);
             }
 
             if (System.currentTimeMillis() - startTime > maxDelay) {

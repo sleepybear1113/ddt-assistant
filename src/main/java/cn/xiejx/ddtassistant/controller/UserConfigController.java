@@ -25,7 +25,7 @@ public class UserConfigController {
         }
 
         this.userConfig.setUserConfig(userConfig);
-        userConfig.writeFile();
+        userConfig.save();
     }
 
     @RequestMapping("/config/get")
@@ -35,8 +35,8 @@ public class UserConfigController {
 
     @RequestMapping("/config/reset")
     public UserConfig reset() {
-        this.userConfig.setUserConfig(UserConfig.defaultConfig());
-        this.userConfig.writeFile();
+        this.userConfig.setUserConfig(new UserConfig().defaultConfig());
+        this.userConfig.save();
         return this.userConfig;
     }
 }

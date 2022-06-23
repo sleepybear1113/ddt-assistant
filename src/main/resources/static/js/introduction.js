@@ -1,7 +1,7 @@
 let introductionApp = new Vue({
     el: '#introduction',
     data: {
-        tabIndex: 0,
+        selectedTab: "简介",
         tabs: [
             {name: "简介"},
             {name: "请我吃点东西"},
@@ -15,9 +15,9 @@ let introductionApp = new Vue({
     created() {
     },
     methods: {
-        changeTab: function (index) {
-            this.tabIndex = index;
-            if (index === 3 && !this.initEchart) {
+        changeTab: function (tab) {
+            this.selectedTab = tab.name;
+            if (tab.name === "性能" && !this.initEchart) {
                 this.showMemoryUse();
                 this.initEchart = true;
             }
