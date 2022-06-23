@@ -40,6 +40,9 @@ public class EmailLogic {
 
     public Boolean sendOfflineRemindEmail(Integer offlineNum, Integer offsiteNum) {
         EmailConfig email = settingConfig.getEmail();
+        if (email == null) {
+            throw new FrontException("邮箱未设置！");
+        }
         if (!email.valid()) {
             throw new FrontException("邮箱设置错误！");
         }
