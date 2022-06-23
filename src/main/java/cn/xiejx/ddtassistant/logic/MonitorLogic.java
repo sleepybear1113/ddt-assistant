@@ -199,7 +199,6 @@ public class MonitorLogic {
         if (!monitorVariable.refreshTime(interval)) {
             return;
         }
-        log.info("monitorNewCaptchaBind");
         GlobalVariable.THREAD_POOL.execute(() -> {
             try {
                 captchaLogic.bindAll();
@@ -215,7 +214,6 @@ public class MonitorLogic {
         if (!monitorVariable.refreshTime(interval)) {
             return;
         }
-        log.info("monitorOfflineDetect");
 
         GlobalVariable.THREAD_POOL.execute(() -> {
             int offlineHwndSetBeforeSize = offlineHwndSet.size();
