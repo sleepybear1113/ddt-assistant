@@ -17,6 +17,9 @@ let captureApp = new Vue({
                 this.msg = "屏幕截图";
             });
         },
+        getAllGamePicPath: function () {
+            showInfo("功能未完待续...");
+        },
         getDdtHwnds: function () {
             this.hwnds = [];
             let url = "dm/getDdtHwnds";
