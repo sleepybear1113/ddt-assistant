@@ -32,8 +32,10 @@ let captureApp = new Vue({
         },
         showImg: function (hwnd) {
             let url = "dm/getGameScreenPath";
+            this.msg = "";
             axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
                 this.src = res.data.result.string;
+                this.msg = hwnd;
             });
         },
     }
