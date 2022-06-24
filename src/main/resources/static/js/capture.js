@@ -3,6 +3,7 @@ let captureApp = new Vue({
     data: {
         msg: "",
         src: "",
+        width: "50%",
         hwnds: [],
     },
     created() {
@@ -37,6 +38,9 @@ let captureApp = new Vue({
                 this.src = res.data.result.string;
                 this.msg = hwnd;
             });
+        },
+        changeImgSize: function (width) {
+            this.width = width + "%";
         },
     }
 });

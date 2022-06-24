@@ -233,7 +233,12 @@
         <hr>
         <span>{{msg}}</span>
         <br/>
-        <img :src="src" alt="" width="50%">
+        <button v-on:click="changeImgSize(25)">25%</button>
+        <button v-on:click="changeImgSize(50)">50%</button>
+        <button v-on:click="changeImgSize(75)">75%</button>
+        <button v-on:click="changeImgSize(100)">100%</button>
+        <br/>
+        <img :src="src" alt="" :width="width">
     </div>
 
 
