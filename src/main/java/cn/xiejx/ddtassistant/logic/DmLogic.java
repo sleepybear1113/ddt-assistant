@@ -31,11 +31,19 @@ public class DmLogic {
 
     public String getGameScreenPath(int hwnd) {
         String path = Constants.TEMP_GAME_SCREEN_SHOT_DIR + hwnd + "-" + System.currentTimeMillis() + ".png";
-//        DmDdt dmDdt = GlobalVariable.DM_DDT_MAP.get(hwnd);
         DmDdt dmDdt = DmDdt.createInstance(hwnd);
         dmDdt.bind();
         dmDdt.captureFullGamePic(path);
         Util.delayDeleteFile(path, 5000L);
         return path.replace(Constants.TEMP_DIR, "file/");
+    }
+
+    public String captureScreen() {
+        long now = System.currentTimeMillis();
+        String path = Constants.DESKTOP_SCREEN_SHOT_DIR + now + ".png";
+        int[] region = {0, 0, 5000, 5000};
+        defaultDm.capturePicByRegion(path, region);
+        Util.delayDeleteFile(path, 3000L);
+        return path.replace("tmp", "file");
     }
 }

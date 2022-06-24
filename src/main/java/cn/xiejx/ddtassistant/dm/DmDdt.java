@@ -38,6 +38,15 @@ public class DmDdt extends Dm {
         this.hwnd = hwnd;
     }
 
+    @Override
+    public void renewInstance() {
+        release();
+        newInstance();
+        if (bind) {
+            bind();
+        }
+    }
+
     public static DmDdt createInstance(Integer hwnd) {
         if (hwnd == null) {
             return new DmDdt(hwnd);

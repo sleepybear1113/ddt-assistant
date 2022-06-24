@@ -22,7 +22,7 @@
         <span>设置完毕之后，本页面可以关闭，但不要关闭后台程序</span>
     </div>
     <label for="textarea-info">信息：</label>
-    <textarea id="textarea-info" style="width: 400px; height: 100px" readonly></textarea>
+    <textarea id="textarea-info" style="width: 400px; height: 70px" readonly></textarea>
     <div id="large-pic-div" style="display: none">
         <img id="cover-img" src="" width="80%" alt="1">
     </div>
@@ -126,7 +126,7 @@
         <hr>
         <div>
             <button v-on:click="bindAll()">检测并添加所有窗口</button>
-            <br/>
+            <hr>
             <button v-on:click="captureCaptchaSampleRegion()">截图保存验证码模板区域图片</button>
             <label for="checkbox-capture-sample"></label>
             <input id="checkbox-capture-sample" v-model="captureSampleChecked"
@@ -146,6 +146,7 @@
         <input id="input-detectOfflineDelay" class="ms-input-middle" v-model="offlineDetection.delay">
         <label for="checkbox-detectOfflineCheckbox">毫秒，并且邮件提醒</label>
         <input id="checkbox-detectOfflineCheckbox" type="checkbox" v-model="offlineDetection.emailRemind">
+        <button onclick="jumpToMailSettingPage()">转到邮箱设置页</button>
         <hr>
         <button v-on:click="update()">保存</button>
     </div>
@@ -216,6 +217,26 @@
     </div>
 
 
+    <div class="tab" id="capture">
+        <h3>截屏查看</h3>
+        <hr>
+        <button v-on:click="getScreenshotPath()">查看屏幕截图</button>
+        <button>查看所有句柄截图</button>
+        <br/>
+        <button v-on:click="getDdtHwnds()">刷新获取句柄</button>
+        <br/>
+        <div>
+            <span v-for="hwnd in hwnds">
+                <button v-on:click="showImg(hwnd)">{{hwnd}}</button>
+            </span>
+        </div>
+        <hr>
+        <span>{{msg}}</span>
+        <br/>
+        <img :src="src" alt="" width="50%">
+    </div>
+
+
     <div class="tab" id="test">
         <h3>以下为用户第一次使用前的自行测试</h3>
         <hr>
@@ -275,7 +296,7 @@
             <label for="input-emailFrom">发件人邮箱</label>
             <input id="input-emailFrom" v-model="settingConfig.email.emailFrom">
             <br/>
-            <label for="input-emailPassword">发件人授权码/密码</label>
+            <label for="input-emailPassword">发件人授权码</label>
             <input id="input-emailPassword" v-model="settingConfig.email.emailPassword" type="password">
             <br/>
             <label for="input-emailTo">收件人邮箱列表</label>
@@ -283,6 +304,18 @@
             <hr>
             <span>保存相关内容后，测试邮箱功能是否可用</span><br/>
             <button v-on:click="testEmailSend()">测试邮箱发送</button>
+            <hr>
+            <strong>如何获取邮箱授权码？</strong>
+            <br/>
+            <span>首先授权码类似于密码，有了授权码就能发邮件。但是密码只有一个，授权码有多个。</span>
+            <br/>
+            <span>各大邮箱为了安全，不把邮箱密码作为发件密码，只用授权码，这样子即使泄漏也不会危害到自身邮箱。</span>
+            <br/>
+            <a href="https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256" target="_blank">点击此处查看 QQ
+                邮箱如何获取授权码</a>
+            <br/>
+            <a href="https://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac21b8ba4d48ed49ebc"
+               target="_blank">点击此处查看网易邮箱如何获取授权码</a>
         </div>
     </div>
 
@@ -326,10 +359,7 @@
             <h5>已知问题</h5>
             <ol>
                 <li>
-                    <a>在无显示器的电脑（服务器）运行时，若远程桌面断开，可能会导致按键失效。</a>
-                </li>
-                <li>
-                    <a>内存泄漏。调用大漠插件这块代码，有内存使用无法释放的问题，会导致在运行中，内存缓慢升高，直至触发 Java 默认的最大内存，程序崩溃。建议每日重启程序。正在寻找改进方法。</a>
+                    <a>在无显示器的电脑（服务器）运行时，若远程桌面断开，那么没有画面情况下，模拟按键会失效。需要特定断开连接方式才可用。</a>
                 </li>
             </ol>
 
@@ -387,6 +417,7 @@
 <script src="js/index.js"></script>
 <script src="js/offlineDetection.js"></script>
 <script src="js/captcha.js"></script>
+<script src="js/capture.js"></script>
 <script src="js/auction.js"></script>
 <script src="js/test.js"></script>
 <script src="js/tab.js"></script>

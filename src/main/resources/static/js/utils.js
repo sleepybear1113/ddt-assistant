@@ -38,3 +38,7 @@ function showImg(src) {
     document.getElementById("cover").style.display = "";
 }
 
+function jumpToMailSettingPage() {
+    tabApp.changeTab("setting");
+    settingApp.selectedTab = '邮箱设置';
+}

@@ -19,15 +19,27 @@ public class Dm {
 
     public static final String PROGRAM_ID_DM = "dm.dmsoft";
 
-    private final Dispatch dmDispatch;
+    private Dispatch dmDispatch;
 
     private int count = 0;
 
     public Dm() {
+        newInstance();
+    }
+
+    public void newInstance() {
         ComThread.InitSTA();
-        ComThread.doCoInitialize(0);
         ActiveXComponent dmComponent = new ActiveXComponent(PROGRAM_ID_DM);
         dmDispatch = dmComponent.getObject();
+    }
+
+    public void release() {
+        ComThread.Release();
+    }
+
+    public void renewInstance() {
+        release();
+        newInstance();
     }
 
     public int getCount() {

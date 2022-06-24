@@ -1,6 +1,5 @@
 package cn.xiejx.ddtassistant.test;
 
-import cn.xiejx.ddtassistant.base.TestConfig;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.Captcha;
 import cn.xiejx.ddtassistant.type.auction.Auction;
@@ -23,12 +22,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        testConfig();
-    }
-
-    public static void testConfig() {
-        TestConfig load = new TestConfig().load();
-        System.out.println(load);
     }
 
     public static void ocr() {

@@ -22,13 +22,11 @@ public class DmController {
     @RequestMapping("/dm/getDdtHwnds")
     public List<Integer> getDdtHwnds() {
         return dmLogic.getDdtHwnds();
-//        return Arrays.asList(1, 2, 3);
     }
 
     @RequestMapping("/dm/getGameScreenPath")
     public MyString getGameScreenPath(int hwnd) {
         return new MyString(dmLogic.getGameScreenPath(hwnd));
-//        return new MyString("file/114.png");
     }
 
 }

@@ -23,6 +23,9 @@ public class Constants {
 
     public static final String TEMP_GAME_SCREEN_SHOT_DIR = TEMP_DIR + "gameScreen/";
 
+    public static final String DESKTOP_SCREEN_SHOT_DIR = Constants.TEMP_DIR + "screenshot/";
+
+
     public static final String BMP_SUFFIX = ".bmp";
     public static final String JPG_SUFFIX = ".jpg";
     public static final String PNG_SUFFIX = ".png";
