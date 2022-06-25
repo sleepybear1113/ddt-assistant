@@ -9,6 +9,10 @@ import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
 import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
 import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.tj.TjResponse;
+import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.ComThread;
+import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
@@ -22,6 +26,21 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
+        // 大漠插件的 programId
+        String programId = "dm.dmsoft";
+        // 使用单线程的方式初始化，3.1233 大漠不支持 MTA
+        ComThread.InitSTA();
+        // 实例化大漠组件对象
+        ActiveXComponent dm = new ActiveXComponent(programId);
+        Dispatch dispatch = dm.getObject();
+        // 通过 Dispatch.call() 方法来调用 COM 组件的方法，返回值为 Variant 类型，可以使用 getString、getInt 来获取对应返回值
+        // Ver 为获取大漠版本号的方法
+        Variant variant = Dispatch.call(dispatch, "Ver");
+        System.out.println(variant.getString());
+        // 释放 Variant 对象
+        variant.safeRelease();
+        // 释放资源
+        ComThread.Release();
     }
 
     public static void ocr() {

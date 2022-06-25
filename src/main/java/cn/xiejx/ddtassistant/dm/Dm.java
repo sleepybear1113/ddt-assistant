@@ -1,27 +1,24 @@
 package cn.xiejx.ddtassistant.dm;
 
-import cn.xiejx.ddtassistant.base.UserConfig;
-import cn.xiejx.ddtassistant.utils.Util;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author sleepybear
  */
-@Slf4j
 public class Dm {
+    private static final Logger log = LoggerFactory.getLogger(Dm.class);
 
     public static final String PROGRAM_ID_DM = "dm.dmsoft";
 
     private Dispatch dmDispatch;
-
-    private int count = 0;
 
     public Dm() {
         newInstance();
@@ -42,28 +39,22 @@ public class Dm {
         newInstance();
     }
 
-    public int getCount() {
-        return count;
-    }
-
-    public void clearCount() {
-        this.count = 0;
-    }
-
     public String getVersion() {
         Variant variant = Dispatch.call(dmDispatch, "Ver");
+        String ver = variant.getString();
         variant.safeRelease();
-        return variant.getString();
+        return ver;
     }
 
     public int getId() {
         Variant variant = Dispatch.call(dmDispatch, "GetID");
+        int id = variant.getInt();
         variant.safeRelease();
-        return variant.getInt();
+        return id;
     }
 
     public void bindWindow(int hwnd, String display, String mouse, String keypad, int mode) {
-        invoke("BindWindow", hwnd, display, mouse, keypad, mode).safeRelease();
+        Dispatch.call(dmDispatch,"BindWindow", hwnd, display, mouse, keypad, mode).safeRelease();
     }
 
     public int getWindow(int hwnd, int flag) {
@@ -128,8 +119,8 @@ public class Dm {
         bindWindow(hwnd, "dx2", "windows", "windows", 0);
     }
 
-    public void bindWindow(Integer hwnd, UserConfig userConfig) {
-        bindWindow(hwnd, "dx2", userConfig.getMouseMode(), userConfig.getKeyPadMode(), 0);
+    public void bindWindow(Integer hwnd, String mouse, String keypad) {
+        bindWindow(hwnd, "dx2", mouse, keypad, 0);
     }
 
     public void unBindWindow() {
@@ -229,7 +220,7 @@ public class Dm {
     }
 
     private boolean validFindPicParam(int x1, int y1, int x2, int y2, String templatePath) {
-        if (StringUtils.isBlank(templatePath)) {
+        if (isBlank(templatePath)) {
             log.error("找图失败：没有样图！");
             return false;
         }
@@ -266,7 +257,7 @@ public class Dm {
 
     public void leftClick(int x, int y, long delay) {
         moveTo(x, y);
-        Util.sleep(delay);
+        sleep(delay);
         leftClick();
     }
 
@@ -288,7 +279,7 @@ public class Dm {
 
     public void leftDoubleClick(int x, int y, long delay) {
         moveTo(x, y);
-        Util.sleep(delay);
+        sleep(delay);
         leftDoubleClick();
     }
 
@@ -327,21 +318,32 @@ public class Dm {
     public void pressKeyChars(String[] keys, Long delay) {
         for (String key : keys) {
             keyPressChar(key);
-            Util.sleep(delay);
+            sleep(delay);
         }
     }
 
     public Variant invoke(String method, Object... params) {
-        count++;
         return Dispatch.call(dmDispatch, method, params);
     }
 
-    public Variant invoke(String method, String... params) {
-        if (params == null || params.length == 0) {
-            return Dispatch.call(dmDispatch, method);
+    public static void sleep(Long t) {
+        try {
+            if (t != null && t > 0) {
+                TimeUnit.MILLISECONDS.sleep(t);
+            }
+        } catch (InterruptedException ignored) {
         }
-        Object[] objects = new Object[params.length];
-        System.arraycopy(params, 0, objects, 0, params.length);
-        return invoke(method, objects);
+    }
+
+    public static boolean isBlank(CharSequence cs) {
+        int strLen = cs == null ? 0 : cs.length();
+        if (strLen != 0) {
+            for (int i = 0; i < strLen; ++i) {
+                if (!Character.isWhitespace(cs.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

@@ -6,6 +6,9 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.KeyPadUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
+import com.jacob.com.ComFailException;
+import com.jacob.com.Dispatch;
+import com.jacob.com.Variant;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -23,6 +26,8 @@ public class DmDdt extends Dm {
     public static final String DDT_FLASH_CLASS_NAME = "MacromediaFlashPlayerActiveX";
     private final Integer hwnd;
     private boolean bind;
+
+    private int count = 0;
 
     /**
      * 游戏的全屏区域
@@ -58,6 +63,27 @@ public class DmDdt extends Dm {
         return dmDdt;
     }
 
+    @Override
+    public Variant invoke(String method, Object... params) {
+        try {
+            count++;
+            return super.invoke(method, params);
+        } catch (ComFailException e) {
+            log.warn("句柄[{}]绑定失败，已解绑，错误日志如下：", hwnd);
+            clearCount();
+            unbind();
+            throw e;
+        }
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void clearCount() {
+        this.count = 0;
+    }
+
     public void bind() {
         if (bind) {
             return;
@@ -72,7 +98,7 @@ public class DmDdt extends Dm {
             return;
         }
         bind = true;
-        super.bindWindow(this.hwnd, userConfig);
+        super.bindWindow(this.hwnd, userConfig.getMouseMode(), userConfig.getKeyPadMode());
         GlobalVariable.DM_DDT_MAP.putIfAbsent(this.hwnd, this);
     }
 

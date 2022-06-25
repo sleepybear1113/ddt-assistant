@@ -199,15 +199,13 @@ public class MonitorLogic {
         if (!monitorVariable.refreshTime(interval)) {
             return;
         }
-        GlobalVariable.THREAD_POOL.execute(() -> {
-            try {
-                captchaLogic.bindAll();
-            } catch (FrontException e) {
-                log.info("{}", e.getMessage());
-            }
-            log.info("[监控线程] 等待 {} 毫秒后检测新增窗口", interval);
-            monitorVariable.finish();
-        });
+        try {
+            captchaLogic.bindAll();
+        } catch (FrontException e) {
+            log.info("{}", e.getMessage());
+        }
+        log.info("[监控线程] 等待 {} 毫秒后检测新增窗口", interval);
+        monitorVariable.finish();
     }
 
     private void monitorOfflineDetect(Long interval, MonitorVariable monitorVariable) {
