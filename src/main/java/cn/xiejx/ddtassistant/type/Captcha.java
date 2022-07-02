@@ -358,7 +358,7 @@ public class Captcha extends BaseType {
         if (isRunning(hwnd, Captcha.class)) {
             return false;
         }
-        GlobalVariable.THREAD_POOL.execute(() -> ((Captcha) Captcha.createInstance(DmDdt.createInstance(hwnd), Captcha.class)).identifyCaptchaLoop(userConfig));
+        GlobalVariable.THREAD_POOL.execute(() -> Captcha.createInstance(DmDdt.createInstance(hwnd), Captcha.class).identifyCaptchaLoop(userConfig));
         return true;
     }
 

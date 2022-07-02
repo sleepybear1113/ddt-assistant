@@ -17,26 +17,40 @@ public class BaseType implements Serializable {
 
     private boolean running;
 
-    private final DmDdt dm;
+    private DmDdt dm;
 
     private static final List<BaseType> BASE_TYPE_LIST = new ArrayList<>();
 
+    public BaseType() {
+    }
+
     public BaseType(DmDdt dm) {
+        init(dm);
+    }
+
+    public void init(DmDdt dm) {
         this.dm = dm;
         this.running = false;
         BASE_TYPE_LIST.add(this);
     }
 
-    public static <T extends BaseType> BaseType createInstance(DmDdt dm, Class<T> clazz) {
+    @SuppressWarnings("unchecked")
+    public static <T extends BaseType> T createInstance(DmDdt dm, Class<T> clazz) {
         String key = clazz.getSimpleName() + "_" + dm.getHwnd();
-        BaseType baseType = GlobalVariable.BASE_TYPE_MAP.get(key);
-        if (baseType != null) {
-            return baseType;
+        T t = (T) GlobalVariable.BASE_TYPE_MAP.get(key);
+        if (t != null) {
+            return t;
         }
 
-        baseType = new BaseType(dm);
-        GlobalVariable.BASE_TYPE_MAP.put(key, baseType);
-        return baseType;
+        try {
+            t = clazz.newInstance();
+            t.init(dm);
+        } catch (InstantiationException | IllegalAccessException ignored) {
+        }
+        if (t != null) {
+            GlobalVariable.BASE_TYPE_MAP.put(key, t);
+        }
+        return t;
     }
 
     public <T extends BaseType> BaseType remove() {
