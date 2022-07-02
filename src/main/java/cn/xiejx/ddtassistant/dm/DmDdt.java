@@ -3,11 +3,12 @@ package cn.xiejx.ddtassistant.dm;
 import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.logic.MonitorLogic;
+import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.utils.KeyPadUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import com.jacob.com.ComFailException;
-import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,7 +72,9 @@ public class DmDdt extends Dm {
         } catch (ComFailException e) {
             log.warn("句柄[{}]绑定失败，已解绑，错误日志如下：", hwnd);
             clearCount();
+            BaseType.removeAllTypes(this.hwnd);
             unbind();
+            GlobalVariable.GLOBAL_MAP.put(MonitorLogic.REFRESH_NEW_CAPTCHA_BIND_KEY, Boolean.TRUE.toString());
             throw e;
         }
     }

@@ -23,8 +23,9 @@ import java.util.List;
  * @author sleepybear
  */
 @Slf4j
-public class Captcha {
+public class Captcha extends BaseType {
 
+    private static final long serialVersionUID = -2259938240133602111L;
     public static List<String> captchaTemplateNameList = new ArrayList<>();
     public static List<String> captchaTemplateNameDarkList = new ArrayList<>();
     public static List<String> flopBonusTemplateNameList = new ArrayList<>();
@@ -88,9 +89,6 @@ public class Captcha {
 
     public static final int MIN_ANSWER_TIME = 8;
 
-    private final DmDdt dm;
-
-    private boolean identifyCaptchaRunning;
     private long lastCaptchaTime;
     private String lastRemoteCaptchaId;
     private String lastCaptchaFilePath;
@@ -100,35 +98,14 @@ public class Captcha {
     private static boolean hasGetUserInfo = false;
 
     private Captcha(DmDdt dm) {
-        this.dm = dm;
-        this.identifyCaptchaRunning = false;
+        super(dm);
         lastCaptchaTime = 0;
         lastRemoteCaptchaId = null;
         lastCaptchaFilePath = null;
     }
 
-    public static Captcha createInstance(DmDdt dm) {
-        Captcha captcha = GlobalVariable.CAPTCHA_MAP.get(dm.getHwnd());
-        if (captcha != null) {
-            return captcha;
-        }
-
-        captcha = new Captcha(dm);
-        GlobalVariable.CAPTCHA_MAP.put(dm.getHwnd(), captcha);
-        return captcha;
-    }
-
-    public static boolean isRunning(Integer hwnd) {
-        Captcha captcha = GlobalVariable.CAPTCHA_MAP.get(hwnd);
-        if (captcha == null) {
-            return false;
-        }
-
-        return captcha.identifyCaptchaRunning;
-    }
-
     public void captureCaptchaAllRegionPic(String path) {
-        dm.capturePicByRegion(path, CAPTCHA_FULL_REACT);
+        getDm().capturePicByRegion(path, CAPTCHA_FULL_REACT);
     }
 
     public boolean findCaptcha(String templatePath) {
@@ -147,50 +124,54 @@ public class Captcha {
         if (StringUtils.isBlank(templatePath)) {
             return false;
         }
-        int[] pic = dm.findPic(rect, templatePath, "010101", threshold, 0);
+        int[] pic = getDm().findPic(rect, templatePath, "010101", threshold, 0);
         return pic[0] > 0;
     }
 
     public void captureCaptchaQuestionPic(String path) {
-        dm.capturePicByRegion(path, CAPTCHA_QUESTION_REACT);
+        getDm().capturePicByRegion(path, CAPTCHA_QUESTION_REACT);
     }
 
     public void captureCaptchaCountDownPic(String path) {
-        dm.capturePicByRegion(path, CAPTCHA_COUNT_DOWN_REACT);
+        getDm().capturePicByRegion(path, CAPTCHA_COUNT_DOWN_REACT);
     }
 
     public void captureCountDownSampleRegion(String path) {
-        dm.capturePicByRegion(path, CAPTCHA_COUNTDOWN_SAMPLE_REACT);
+        getDm().capturePicByRegion(path, CAPTCHA_COUNTDOWN_SAMPLE_REACT);
     }
 
     public void captureCountDownNumberRegion(String path) {
-        dm.capturePicByRegion(path, COUNT_DOWN_NUMBER_RECT);
+        getDm().capturePicByRegion(path, COUNT_DOWN_NUMBER_RECT);
     }
 
     public void identifyCaptchaLoop(UserConfig userConfig) {
-        if (identifyCaptchaRunning) {
-            log.info("[{}] 线程已经在运行中了", dm.getHwnd());
+        Integer hwnd = getDm().getHwnd();
+        if (isRunning()) {
+            log.info("[{}] 线程已经在运行中了", hwnd);
             return;
         }
 
-        boolean isFlashWindow = dm.isWindowClassFlashPlayerActiveX();
+        // 判断是否 flash
+        boolean isFlashWindow = getDm().isWindowClassFlashPlayerActiveX();
         if (!isFlashWindow) {
-            dm.unbind();
+            unbindAndRemove();
             return;
         }
 
-        dm.bind(userConfig);
+        // 绑定
+        getDm().bind(userConfig);
+        setRunning(true);
+        log.info("绑定 flash 窗口，句柄：{}", hwnd);
 
-        identifyCaptchaRunning = true;
-        log.info("绑定 flash 窗口，句柄：{}", dm.getHwnd());
         long lastLogTime = System.currentTimeMillis();
-        while (true) {
+        // 开始运行
+        while (isRunning()) {
             // 输出日志
             long now = System.currentTimeMillis();
             Long logPrintInterval = userConfig.getLogPrintInterval();
             if (logPrintInterval != null && logPrintInterval > 0) {
                 if (now - lastLogTime > logPrintInterval) {
-                    log.info("[{}] 窗口正在运行", dm.getHwnd());
+                    log.info("[{}] 窗口正在运行", hwnd);
                     lastLogTime = System.currentTimeMillis();
                 }
             }
@@ -198,9 +179,9 @@ public class Captcha {
             // 每次识屏间隔
             Util.sleep(userConfig.getCaptureInterval());
             // 判断是否还是 flash
-            if (!dm.isWindowClassFlashPlayerActiveX()) {
-                log.info("[{}] 当前句柄不为 flash 窗口，解绑！", dm.getHwnd());
-                dm.unBindWindow();
+            if (!getDm().isWindowClassFlashPlayerActiveX()) {
+                log.info("[{}] 当前句柄不为 flash 窗口，解绑！", hwnd);
+                unbindAndRemove();
                 break;
             }
 
@@ -209,7 +190,8 @@ public class Captcha {
             // 检测验证码的代码
             identifyCaptcha(userConfig);
         }
-        identifyCaptchaRunning = false;
+        setRunning(false);
+        remove();
     }
 
     public void identifyCaptcha(UserConfig userConfig) {
@@ -218,10 +200,10 @@ public class Captcha {
             if (!findCaptcha(getTemplateDarkBmpNames(), DEFAULT_DARK_PIC_THRESHOLD)) {
                 return;
             } else {
-                log.info("[{}] 发现验证码-暗！", dm.getHwnd());
+                log.info("[{}] 发现验证码-暗！", getDm().getHwnd());
             }
         } else {
-            log.info("[{}] 发现验证码-亮！", dm.getHwnd());
+            log.info("[{}] 发现验证码-亮！", getDm().getHwnd());
         }
 
         // 上报错误，如果有
@@ -230,33 +212,26 @@ public class Captcha {
         // 设置按钮缓存
         MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), MonitorLogic.CAPTCHA_DELAY, ExpireWayEnum.AFTER_UPDATE);
 
-        log.info("[{}] 点亮屏幕", dm.getHwnd());
-        dm.leftClick(100, 100, 100);
-        dm.leftClick(100, 100, 100);
+        log.info("[{}] 点亮屏幕", getDm().getHwnd());
+        getDm().leftClick(100, 100, 100);
+        getDm().leftClick(100, 100, 100);
         Util.sleep(300L);
-        dm.leftClick(100, 100, 100);
+        getDm().leftClick(100, 100, 100);
         Util.sleep(100L);
 
         // 验证码保存路径
         String captchaDir = "captcha/" + Util.getTimeString(Util.TIME_YMD_FORMAT) + "/";
-        String captchaName = captchaDir + dm.getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
+        String captchaName = captchaDir + getDm().getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
         this.lastCaptchaFilePath = captchaName;
-        File file = new File(captchaDir);
-        if (!file.isDirectory()) {
-            boolean mkdirs = file.mkdirs();
-        }
+        // 倒计时保存路径
         String countDownDir = "captcha/countDown/";
-        String countDownName = countDownDir + dm.getHwnd() + ".png";
-        file = new File(countDownDir);
-        if (!file.isDirectory()) {
-            boolean mkdirs = file.mkdirs();
-        }
+        String countDownName = countDownDir + getDm().getHwnd() + ".png";
 
         // 截屏
         captureCaptchaQuestionPic(captchaName);
         //倒计时
         captureCountDownNumberRegion(countDownName);
-        log.info("[{}] 验证码保存到本地，文件名为：{}", dm.getHwnd(), captchaName);
+        log.info("[{}] 验证码保存到本地，文件名为：{}", getDm().getHwnd(), captchaName);
         Integer countDown = OcrUtil.ocrCountDownPic(countDownName);
         long startCaptchaTime = System.currentTimeMillis();
 
@@ -264,22 +239,22 @@ public class Captcha {
         TjResponse response = new TjResponse();
         if (countDown != null && countDown <= MIN_ANSWER_TIME) {
             response.setChoiceEnum(ChoiceEnum.UNDEFINED);
-            log.info("[{}] 验证码倒计时剩下 {} 秒，来不及提交打码，进行自定义选择", dm.getHwnd(), countDown);
+            log.info("[{}] 验证码倒计时剩下 {} 秒，来不及提交打码，进行自定义选择", getDm().getHwnd(), countDown);
         } else if (userConfig.validUserInfo()) {
             TjPredictDto tjPredictDto = TjPredictDto.build(userConfig, captchaName);
-            log.info("[{}] 提交平台识别...倒计时还剩下 {} 秒", dm.getHwnd(), countDown);
+            log.info("[{}] 提交平台识别...倒计时还剩下 {} 秒", getDm().getHwnd(), countDown);
             long countDownTime = countDown == null ? userConfig.getTimeout() : (countDown - 2) * 1000L;
             response = TjHttpUtil.waitToGetChoice(countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
             if (ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
                 long leftTime = countDownTime - (System.currentTimeMillis() - startCaptchaTime);
                 if (leftTime > MIN_ANSWER_TIME * 1000) {
                     reportErrorResult(response.getResult().getId(), true);
-                    log.info("[{}] 平台返回结果有误，但倒计时仍有 {} 毫秒，再次请求平台", dm.getHwnd(), leftTime);
+                    log.info("[{}] 平台返回结果有误，但倒计时仍有 {} 毫秒，再次请求平台", getDm().getHwnd(), leftTime);
                     response = TjHttpUtil.waitToGetChoice(leftTime - 2000, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
                 }
             }
         } else {
-            log.info("[{}] 用户名或密码为空，无法提交打码平台", dm.getHwnd());
+            log.info("[{}] 用户名或密码为空，无法提交打码平台", getDm().getHwnd());
             response.setChoiceEnum(ChoiceEnum.UNDEFINED);
         }
         this.lastRemoteCaptchaId = response.getResult().getId();
@@ -287,7 +262,7 @@ public class Captcha {
         // 获取结果
         ChoiceEnum choiceEnum = response.getChoiceEnum();
         // 判断是否还是 flash
-        if (!dm.isWindowClassFlashPlayerActiveX()) {
+        if (!getDm().isWindowClassFlashPlayerActiveX()) {
             return;
         }
 
@@ -298,7 +273,7 @@ public class Captcha {
             // 识别错误，那么走用户自定义
             String defaultChoiceAnswer = userConfig.getDefaultChoiceAnswer();
             if (defaultChoiceAnswer == null || defaultChoiceAnswer.length() == 0) {
-                log.info("[{}] 用户没有设置默认选项，跳过选择，等待 5000 毫秒继续下一轮检测", dm.getHwnd());
+                log.info("[{}] 用户没有设置默认选项，跳过选择，等待 5000 毫秒继续下一轮检测", getDm().getHwnd());
                 Util.sleep(5000L);
                 return;
             }
@@ -307,9 +282,9 @@ public class Captcha {
                 // 用户选了 abcd 之外的，默认赋值 a
                 choiceEnum = ChoiceEnum.A;
             }
-            log.info("[{}] 平台返回结果格式不正确，进行用户自定义选择，{}", dm.getHwnd(), choiceEnum);
+            log.info("[{}] 平台返回结果格式不正确，进行用户自定义选择，{}", getDm().getHwnd(), choiceEnum);
         } else {
-            log.info("[{}] 选择结果 {}", dm.getHwnd(), choiceEnum.getChoice());
+            log.info("[{}] 选择结果 {}", getDm().getHwnd(), choiceEnum.getChoice());
 
             // 上传结果到服务器
             final ChoiceEnum answer = choiceEnum;
@@ -317,13 +292,13 @@ public class Captcha {
         }
 
         // 点击选项
-        dm.leftClick(choiceEnum.getXy(), 100);
+        getDm().leftClick(choiceEnum.getXy(), 100);
         Util.sleep(300L);
-        dm.leftClick(choiceEnum.getXy(), 100);
+        getDm().leftClick(choiceEnum.getXy(), 100);
 
         // 提交答案
         Util.sleep(500L);
-        dm.leftClick(SUBMIT_BUTTON_POINT, 100);
+        getDm().leftClick(SUBMIT_BUTTON_POINT, 100);
 
         this.lastCaptchaTime = System.currentTimeMillis();
         Util.sleep(1000L);
@@ -338,10 +313,10 @@ public class Captcha {
             return;
         }
         if (MonitorLogic.FLOP_BONUS_CACHER.get(MonitorLogic.FLOP_BONUS_FOUND_KEY) == null) {
-            log.info("[{}] 发现副本大翻牌！", dm.getHwnd());
+            log.info("[{}] 发现副本大翻牌！", getDm().getHwnd());
         }
 
-        MonitorLogic.FLOP_BONUS_CACHER.set(MonitorLogic.FLOP_BONUS_FOUND_KEY, new Pair<>(pveFlopBonusAppearDelay, this.dm), userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
+        MonitorLogic.FLOP_BONUS_CACHER.set(MonitorLogic.FLOP_BONUS_FOUND_KEY, new Pair<>(pveFlopBonusAppearDelay, getDm()), userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
     }
 
     public void reportErrorResult(String id, boolean force) {
@@ -355,7 +330,7 @@ public class Captcha {
             }
         }
 
-        log.info("[{}] [报错] 对上一次错误打码报错给平台，id = {}", dm.getHwnd(), id);
+        log.info("[{}] [报错] 对上一次错误打码报错给平台，id = {}", getDm().getHwnd(), id);
 
         GlobalVariable.THREAD_POOL.execute(() -> {
             try {
@@ -380,10 +355,10 @@ public class Captcha {
             }
         });
 
-        if (Captcha.isRunning(hwnd)) {
+        if (isRunning(hwnd, Captcha.class)) {
             return false;
         }
-        GlobalVariable.THREAD_POOL.execute(() -> Captcha.createInstance(DmDdt.createInstance(hwnd)).identifyCaptchaLoop(userConfig));
+        GlobalVariable.THREAD_POOL.execute(() -> ((Captcha) Captcha.createInstance(DmDdt.createInstance(hwnd), Captcha.class)).identifyCaptchaLoop(userConfig));
         return true;
     }
 

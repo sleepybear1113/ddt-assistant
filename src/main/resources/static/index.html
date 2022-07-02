@@ -233,10 +233,12 @@
         <hr>
         <span>{{msg}}</span>
         <br/>
-        <button v-on:click="changeImgSize(25)">25%</button>
-        <button v-on:click="changeImgSize(50)">50%</button>
-        <button v-on:click="changeImgSize(75)">75%</button>
-        <button v-on:click="changeImgSize(100)">100%</button>
+        <button v-on:click="changeImgSize('25')">25%</button>
+        <button v-on:click="changeImgSize('50')">50%</button>
+        <button v-on:click="changeImgSize('75')">75%</button>
+        <button v-on:click="changeImgSize('100')">100%</button>
+        <button v-on:click="changeImgSize('-10')">-10%</button>
+        <button v-on:click="changeImgSize('+10')">+10%</button>
         <br/>
         <img :src="src" alt="" :width="width">
     </div>

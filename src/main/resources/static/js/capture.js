@@ -40,6 +40,9 @@ let captureApp = new Vue({
             });
         },
         changeImgSize: function (width) {
+            if (width.startsWith("-") || width.startsWith("+")) {
+                width = parseInt(this.width.replace("%", "")) + parseInt(width);
+            }
             this.width = width + "%";
         },
     }

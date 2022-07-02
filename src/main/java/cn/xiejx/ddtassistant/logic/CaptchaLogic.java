@@ -5,6 +5,7 @@ import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
+import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.Captcha;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
@@ -77,7 +78,7 @@ public class CaptchaLogic {
         BindResultVo bindResultVo = new BindResultVo();
         for (int hwnd : ddtWindowHwnd) {
             Util.sleep(150L);
-            boolean running = Captcha.isRunning(hwnd);
+            boolean running = Captcha.isRunning(hwnd, Captcha.class);
             if (running) {
                 bindResultVo.increaseRunningCount();
             } else {
@@ -91,7 +92,7 @@ public class CaptchaLogic {
     }
 
     public StringRet captureCaptchaSampleRegion() {
-        Collection<Captcha> captchaList = GlobalVariable.CAPTCHA_MAP.values();
+        Collection<Captcha> captchaList = BaseType.getBaseTypes(Captcha.class);
         if (CollectionUtils.isEmpty(captchaList)) {
             return StringRet.buildFail("当前没有正在运行的线程");
         }

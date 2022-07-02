@@ -39,6 +39,8 @@ public class MonitorLogic {
     public static final String FLOP_BONUS_FOUND_KEY = "key_flop_bonus_found";
     public static final long CAPTCHA_DELAY = 5000L;
 
+    public static final String REFRESH_NEW_CAPTCHA_BIND_KEY = "immediatelyRefreshNewCaptchaBind";
+
     @Resource
     private CaptchaLogic captchaLogic;
     @Resource
@@ -196,7 +198,7 @@ public class MonitorLogic {
      * @param interval interval
      */
     public void monitorNewCaptchaBind(Long interval, MonitorVariable monitorVariable) {
-        if (!monitorVariable.refreshTime(interval)) {
+        if (!monitorVariable.refreshTime(interval) && !immediatelyRefreshNewCaptchaBind()) {
             return;
         }
         try {
@@ -206,6 +208,14 @@ public class MonitorLogic {
         }
         log.info("[监控线程] 等待 {} 毫秒后检测新增窗口", interval);
         monitorVariable.finish();
+    }
+
+    public boolean immediatelyRefreshNewCaptchaBind() {
+        if (Boolean.TRUE.toString().equalsIgnoreCase(GlobalVariable.GLOBAL_MAP.get(REFRESH_NEW_CAPTCHA_BIND_KEY))) {
+            GlobalVariable.GLOBAL_MAP.put(REFRESH_NEW_CAPTCHA_BIND_KEY, Boolean.FALSE.toString());
+            return true;
+        }
+        return false;
     }
 
     private void monitorOfflineDetect(Long interval, MonitorVariable monitorVariable) {
