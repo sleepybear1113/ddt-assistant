@@ -97,8 +97,15 @@ public class Captcha extends BaseType {
 
     private static boolean hasGetUserInfo = false;
 
+    public Captcha() {
+    }
+
     private Captcha(DmDdt dm) {
-        super(dm);
+        init(dm);
+    }
+
+    public void init(DmDdt dm) {
+        super.init(dm);
         lastCaptchaTime = 0;
         lastRemoteCaptchaId = null;
         lastCaptchaFilePath = null;

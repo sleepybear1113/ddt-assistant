@@ -46,6 +46,7 @@ public class BaseType implements Serializable {
             t = clazz.newInstance();
             t.init(dm);
         } catch (InstantiationException | IllegalAccessException ignored) {
+            ignored.printStackTrace();
         }
         if (t != null) {
             GlobalVariable.BASE_TYPE_MAP.put(key, t);

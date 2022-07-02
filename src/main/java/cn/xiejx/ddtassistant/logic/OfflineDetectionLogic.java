@@ -21,6 +21,7 @@ public class OfflineDetectionLogic {
 
     public static final String OFFLINE_DIALOG_MSG = "对不起，断线了请刷新页面，重新登录！";
     public static final String OFFSITE_LOGIN_MSG = "您的帐号在别处登陆...";
+    public static final String OFFSITE_LOGOUT_MSG =   "您的登陆凭证已超时,请重新登陆.";
     @Resource
     private DmDdt defaultDm;
 
@@ -42,7 +43,10 @@ public class OfflineDetectionLogic {
     }
 
     public List<Integer> getOfflineAlerts() {
-        return getAlerts(OFFLINE_DIALOG_MSG);
+        List<Integer> list = new ArrayList<>();
+        list.addAll(getAlerts(OFFLINE_DIALOG_MSG));
+        list.addAll(getAlerts(OFFSITE_LOGOUT_MSG));
+        return list;
     }
 
     public List<Integer> getOffsiteAlerts() {
