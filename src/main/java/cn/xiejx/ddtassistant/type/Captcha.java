@@ -15,7 +15,6 @@ import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,6 +103,7 @@ public class Captcha extends BaseType {
         init(dm);
     }
 
+    @Override
     public void init(DmDdt dm) {
         super.init(dm);
         lastCaptchaTime = 0;

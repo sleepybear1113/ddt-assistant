@@ -3,7 +3,6 @@ package cn.xiejx.ddtassistant.constant;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.auction.Auction;
-import cn.xiejx.ddtassistant.type.Captcha;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
