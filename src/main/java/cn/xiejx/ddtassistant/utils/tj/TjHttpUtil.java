@@ -1,7 +1,10 @@
 package cn.xiejx.ddtassistant.utils.tj;
 
+import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.logic.EmailLogic;
 import cn.xiejx.ddtassistant.logic.MonitorLogic;
+import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.Cacher;
 import cn.xiejx.ddtassistant.utils.cacher.CacherBuilder;
@@ -135,7 +138,7 @@ public class TjHttpUtil {
         httpHelper.request();
     }
 
-    public static String getAccountInfo(String username, String password) {
+    public static String getAccountInfo(String username, String password, Boolean lowBalanceRemind, Double lowBalanceNum) {
         if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
             return "";
         }
@@ -150,8 +153,22 @@ public class TjHttpUtil {
                 return "获取用户信息失败，" + tjAccountInfo.getMessage();
             }
             String data = tjAccountInfo.getData();
-            TjConsumption tjConsumption = JSON.parseObject(data,TjConsumption.class);
-            return String.format("当前余额：%s，总消费：%s，总成功：%s，总失败：%s", tjConsumption.getBalance(), tjConsumption.getConsumed(), tjConsumption.getSuccessNum(), tjConsumption.getFailNum());
+            TjConsumption tjConsumption = JSON.parseObject(data, TjConsumption.class);
+
+            // 低余额提醒
+            String balance = tjConsumption.getBalance();
+            if (Util.isNumber(balance) && Boolean.TRUE.equals(lowBalanceRemind) && lowBalanceNum != null && lowBalanceNum > 0) {
+                double realtimeBalance = Double.parseDouble(balance);
+                if (realtimeBalance < lowBalanceNum) {
+                    log.warn("当前余额：{}，低于设定值 {}，请注意！", realtimeBalance, lowBalanceNum);
+                    SettingConfig settingConfig = SpringContextUtil.getBean(SettingConfig.class);
+                    if (settingConfig != null) {
+                        EmailLogic.sendLowBalanceNotify(settingConfig.getEmail(), realtimeBalance);
+                    }
+                }
+            }
+
+            return String.format("当前余额：%s，总消费：%s，总成功：%s，总失败：%s", balance, tjConsumption.getConsumed(), tjConsumption.getSuccessNum(), tjConsumption.getFailNum());
         } catch (Exception e) {
             String s = "获取用户信息失败：" + e.getMessage();
             log.warn(s, e);

@@ -357,7 +357,7 @@ public class Captcha extends BaseType {
         GlobalVariable.THREAD_POOL.execute(() -> {
             if (!hasGetUserInfo) {
                 hasGetUserInfo = true;
-                String accountInfo = TjHttpUtil.getAccountInfo(userConfig.getUsername(), userConfig.getPassword());
+                String accountInfo = TjHttpUtil.getAccountInfo(userConfig.getUsername(), userConfig.getPassword(), userConfig.getLowBalanceRemind(), userConfig.getLowBalanceNum());
                 log.info(accountInfo);
             }
         });

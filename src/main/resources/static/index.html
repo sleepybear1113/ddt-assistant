@@ -50,6 +50,14 @@
             <input id="input-password" v-model="userConfig.password" type="password"><br/>
             <label for="input-softId">softId </label>
             <input id="input-softId" v-model="userConfig.softId"><br/>
+            <input id="checkbox-lowBalanceRemind" type="checkbox" v-model="userConfig.lowBalanceRemind">
+            <label for="checkbox-lowBalanceRemind">
+                余额低于
+                <label for="input-lowBalanceNum"></label>
+                <input id="input-lowBalanceNum" v-model="userConfig.lowBalanceNum" class="ms-input-small">
+                开启邮件提醒（每次启动时判断）
+            </label><br/>
+
             <button v-on:click="testCaptcha()">测试验证码</button>
             <button v-on:click="showTjAccountInfo()">查看余额</button>
         </div>

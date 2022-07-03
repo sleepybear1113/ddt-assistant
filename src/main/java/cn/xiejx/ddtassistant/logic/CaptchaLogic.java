@@ -109,6 +109,8 @@ public class CaptchaLogic {
     public StringRet getTjAccountInfo() {
         String username = userConfig.getUsername();
         String password = userConfig.getPassword();
-        return StringRet.buildSuccess(TjHttpUtil.getAccountInfo(username, password));
+        Boolean lowBalanceRemind = userConfig.getLowBalanceRemind();
+        Double lowBalanceNum = userConfig.getLowBalanceNum();
+        return StringRet.buildSuccess(TjHttpUtil.getAccountInfo(username, password,lowBalanceRemind, lowBalanceNum));
     }
 }

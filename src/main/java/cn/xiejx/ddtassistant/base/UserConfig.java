@@ -38,6 +38,14 @@ public class UserConfig extends BaseConfig implements Serializable {
      */
     private String softId;
     /**
+     * 是否开启低余额提醒
+     */
+    private Boolean lowBalanceRemind;
+    /**
+     * 低余额提醒余额值
+     */
+    private Double lowBalanceNum;
+    /**
      * 识屏时间间隔
      */
     private Long captureInterval;

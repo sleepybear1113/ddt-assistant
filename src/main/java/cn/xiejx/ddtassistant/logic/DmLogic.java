@@ -31,6 +31,9 @@ public class DmLogic {
 
     public String getGameScreenPath(int hwnd) {
         String path = Constants.TEMP_GAME_SCREEN_SHOT_DIR + hwnd + "-" + System.currentTimeMillis() + ".png";
+        if (!defaultDm.isWindowClassFlashPlayerActiveX(hwnd)) {
+            throw new FrontException(String.format("该句柄[%s]不是 flash 游戏句柄", hwnd));
+        }
         DmDdt dmDdt = DmDdt.createInstance(hwnd);
         dmDdt.bind();
         dmDdt.captureFullGamePic(path);

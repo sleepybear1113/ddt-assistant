@@ -180,4 +180,13 @@ public class Util {
         Util.delayDeleteFile(path, 3000L);
         return bytes;
     }
+
+    public static boolean isNumber(String s) {
+        try {
+            Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }

@@ -21,6 +21,8 @@ class UserConfig {
         this.logPrintInterval = props.logPrintInterval;
         this.detectNewWindowInterval = props.detectNewWindowInterval;
         this.extraPorts = props.extraPorts;
+        this.lowBalanceRemind = props.lowBalanceRemind;
+        this.lowBalanceNum = props.lowBalanceNum;
     }
 }
 

@@ -40,12 +40,7 @@ public class EmailLogic {
 
     public Boolean sendOfflineRemindEmail(Integer offlineNum, Integer offsiteNum) {
         EmailConfig email = settingConfig.getEmail();
-        if (email == null) {
-            throw new FrontException("邮箱未设置！");
-        }
-        if (!email.valid()) {
-            throw new FrontException("邮箱设置错误！");
-        }
+        valid(email);
         String subject = "掉线提醒";
         String body = "时间：%s\n掉线数量：%s, 异地数量：%s\n这个是由 ddt-assistant 发出的掉线提醒邮件。";
         String timeString = Util.getTimeString(Util.TIME_ALL_FORMAT);
@@ -54,5 +49,31 @@ public class EmailLogic {
         } catch (MessagingException ignored) {
         }
         return true;
+    }
+
+    public Boolean sendLowBalanceNotify(double balance) {
+        EmailConfig email = settingConfig.getEmail();
+        return sendLowBalanceNotify(email, balance);
+    }
+
+    public static Boolean sendLowBalanceNotify(EmailConfig emailConfig, double balance) {
+        valid(emailConfig);
+        String subject = "低余额提醒";
+        String body = "时间：%s\n余额：%s，请注意使用情况。\n这个是由 ddt-assistant 发出的低余额提醒邮件。";
+        String timeString = Util.getTimeString(Util.TIME_ALL_FORMAT);
+        try {
+            MailUtil.sendMail(emailConfig.getEmailFrom(), emailConfig.getEmailPassword(), emailConfig.getEmailToList(), subject, String.format(body, timeString, balance));
+        } catch (MessagingException ignored) {
+        }
+        return true;
+    }
+
+    public static void valid(EmailConfig email) {
+        if (email == null) {
+            throw new FrontException("邮箱未设置！");
+        }
+        if (!email.valid()) {
+            throw new FrontException("邮箱设置错误！");
+        }
     }
 }

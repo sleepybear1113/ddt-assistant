@@ -20,6 +20,8 @@ let captchaApp = new Vue({
             detectNewWindowInterval: "",
             extraPorts: "",
             defaultChoiceAnswer: "",
+            lowBalanceRemind: "",
+            lowBalanceNum: "",
         },
 
         captureSampleChecked: "",

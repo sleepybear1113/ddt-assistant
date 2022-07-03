@@ -21,7 +21,7 @@ import java.util.Arrays;
 @RestController
 @Slf4j
 public class ProxyController {
-    private static final String CARD_TYPE = "十六全套";
+    private static final String CARD_TYPE = "二十全套";
 
     @RequestMapping("/ocr2")
     public String proxyOcr2(HttpServletRequest request) throws IOException {
