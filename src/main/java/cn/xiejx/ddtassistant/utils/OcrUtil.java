@@ -59,6 +59,28 @@ public class OcrUtil {
         }
     }
 
+    public static Integer ocrAuctionItemArguePrice(String path) {
+        try {
+            ITesseract instance = new Tesseract();
+            BufferedImage bufferedImage = changeAuctionItemImg(path);
+            instance.setDatapath("tessdata");
+            instance.setLanguage("eng");
+            String ocr = instance.doOCR(bufferedImage);
+            ImageIO.write(bufferedImage, "png", new File("tmp/auction/10.png"));
+            if (StringUtils.isBlank(ocr)) {
+                return null;
+            }
+            String res = ocr.trim().replace("b", "6").replace("T", "7").replace("s", "");
+            if (StringUtils.isNumeric(res)) {
+                return Integer.valueOf(res);
+            }
+        } catch (Exception e) {
+            log.warn("OCR 图像识别失败：{}", e.getMessage());
+            return null;
+        }
+        return null;
+    }
+
     public static Integer ocrAuctionItemNum(String path) {
         try {
             ITesseract instance = new Tesseract();

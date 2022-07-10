@@ -32,6 +32,16 @@ public class AuctionConstants {
     public static final int[] MOUTHFUL_PRICE_POINT = {160, 320};
 
     /**
+     * 竞拍价 ocr 区域范围
+     */
+    public static final int[] ARGUE_PRICE_OCR_RECT = {50, 251, 150, 258};
+
+    /**
+     * 一口价 ocr 区域范围
+     */
+    public static final int[] MOUTHFUL_PRICE_OCR_RECT = {50, 303, 150, 310};
+
+    /**
      * 物品数量输入框的数字框坐标
      */
     public static final int[] NUM_INPUT_BOX_NUM_POINT = {500, 280};

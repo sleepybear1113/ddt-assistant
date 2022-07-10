@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.type.auction;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.MyInterruptException;
+import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.common.Common;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
@@ -18,16 +19,22 @@ import java.io.File;
  * @date 2022/06/02 20:42
  */
 @Slf4j
-public class Auction {
+public class Auction extends BaseType {
 
-    private final DmDdt dm;
-
+    private static final long serialVersionUID = 8932679197291875438L;
     private boolean running;
     private boolean stop;
 
+    public Auction() {
+    }
+
     private Auction(DmDdt dm) {
-        this.dm = dm;
-        this.running = false;
+        init(dm);
+    }
+
+    @Override
+    public void init(DmDdt dm) {
+        super.init(dm);
         this.stop = false;
     }
 
@@ -52,12 +59,12 @@ public class Auction {
 
     public void stop() {
         this.running = false;
-        GlobalVariable.AUCTION_MAP.remove(dm.getHwnd());
+        GlobalVariable.AUCTION_MAP.remove(getDm().getHwnd());
     }
 
     public void stopAndUnbind() {
         stop();
-        dm.unbind();
+        getDm().unbind();
     }
 
     public static boolean stopAuction(int hwnd) {
@@ -82,16 +89,16 @@ public class Auction {
 
     public void goLoop() {
         if (running) {
-            log.info("[{}] 线程已经在运行中了", dm.getHwnd());
+            log.info("[{}] 线程已经在运行中了", getDm().getHwnd());
             return;
         }
-        boolean isFlashWindow = dm.isWindowClassFlashPlayerActiveX();
+        boolean isFlashWindow = getDm().isWindowClassFlashPlayerActiveX();
         if (!isFlashWindow) {
-            stop();
+            unbindAndRemove();
             return;
         }
 
-        dm.bind();
+        getDm().bind();
         running = true;
 
         // 打开拍卖场，转到拍卖栏
@@ -100,31 +107,29 @@ public class Auction {
 
         int n = 1;
         while (n <= AuctionConstants.AuctionPosition.N * AuctionConstants.AuctionPosition.N) {
-            if (!dm.isBind()) {
-                log.info("[{}] 绑定丢失，终止！", dm.getHwnd());
+            if (!getDm().isBind()) {
+                log.info("[{}] 绑定丢失，终止！", getDm().getHwnd());
                 break;
             }
-            if (stop || !dm.isWindowClassFlashPlayerActiveX()) {
-                log.info("[{}] 运行终止！", dm.getHwnd());
-                stop();
+            if (stop || !getDm().isWindowClassFlashPlayerActiveX()) {
+                log.info("[{}] 运行终止！", getDm().getHwnd());
                 break;
             }
             try {
                 go(n);
             } catch (MyInterruptException e) {
-                log.info("[{}] 中止", dm.getHwnd());
-                stop();
+                log.info("[{}] 中止", getDm().getHwnd());
                 break;
             }
             n++;
             Util.sleep(300L);
         }
 
-        stop();
+        remove();
     }
 
     public void go(int n) {
-        dm.leftClick(10, 10);
+        getDm().leftClick(10, 10);
         Util.sleep(100L);
 
         testRunningWithException();
@@ -136,11 +141,11 @@ public class Auction {
         }
 
         // 点击背包第 n 个
-        dm.leftClick(point, 200L);
+        getDm().leftClick(point, 200L);
         Util.sleep(400L);
 
         // 点击拍卖的地方
-        dm.leftClick(AuctionConstants.AUCTION_INPUT_POINT, 200L);
+        getDm().leftClick(AuctionConstants.AUCTION_INPUT_POINT, 200L);
         Util.sleep(300L);
 
         testRunningWithException();
@@ -161,7 +166,13 @@ public class Auction {
             return;
         }
 
+        // 获取物品名
         auctionItem = auctionData.getItem(itemName);
+        if (auctionItem == null) {
+            log.info("列表中找不到名为[{}]的配置，重新识别", itemName);
+            itemName = ocrItemName();
+            auctionItem = auctionData.getItem(itemName);
+        }
         if (auctionItem == null) {
             log.info("列表中找不到名为[{}]的配置，放回背包", itemName);
             putItemBack(num);
@@ -176,7 +187,7 @@ public class Auction {
 
         // 物品启用之后，确认数量放入拍卖格子
         if (num > 1) {
-            dm.leftClick(AuctionConstants.NUM_INPUT_BOX_CONFIRM_POINT, 100L);
+            getDm().leftClick(AuctionConstants.NUM_INPUT_BOX_CONFIRM_POINT, 100L);
             Util.sleep(200L);
         }
 
@@ -198,41 +209,42 @@ public class Auction {
         log.info("[{}]：竞拍价：{}*{}={}, 一口价：{}*{}={}, 时长：{}", auctionItem.getSuitableName(), auctionItem.getArgueUnitPrice(), num, price[0], auctionItem.getMouthfulUnitPrice(), num, price[1], auctionItem.getAuctionTime());
 
         // 双击竞拍价框
-        dm.leftDoubleClick(AuctionConstants.ARGUE_PRICE_POINT);
-        dm.leftDoubleClick(AuctionConstants.ARGUE_PRICE_POINT);
+        getDm().leftDoubleClick(AuctionConstants.ARGUE_PRICE_POINT);
+        getDm().leftDoubleClick(AuctionConstants.ARGUE_PRICE_POINT);
         Util.sleep(100L);
         // 删除数值
-        dm.keyPressChar("back");
-        dm.keyPressChar("back");
+        getDm().keyPressChar("back");
+        getDm().keyPressChar("back");
         if (price[0] != null) {
             Util.sleep(100L);
             // 如果有值，那么填入
-            dm.pressKeyChars(AuctionItem.priceToStr(price[0]), 100L);
+            getDm().pressKeyChars(AuctionItem.priceToStr(price[0]), 100L);
         }
 
         Util.sleep(100L);
         // 双击一口价
-        dm.leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
-        dm.leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
+        getDm().leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
+        getDm().leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
         Util.sleep(100L);
         // 删除数值
-        dm.keyPressChar("back");
-        dm.keyPressChar("back");
+        getDm().keyPressChar("back");
+        getDm().keyPressChar("back");
         if (price[1] != null) {
             // 如果有值，那么填入
             Util.sleep(100L);
-            dm.pressKeyChars(AuctionItem.priceToStr(price[1]), 100L);
+            getDm().pressKeyChars(AuctionItem.priceToStr(price[1]), 100L);
         }
+        ensureArguePrice(price[1]);
         Util.sleep(200L);
 
         // 选择拍卖时间
         AuctionConstants.AuctionTimeEnum auctionTime = AuctionConstants.AuctionTimeEnum.getAuctionTime(auctionItem.getAuctionTime());
-        dm.leftClick(auctionTime.getPosition());
+        getDm().leftClick(auctionTime.getPosition());
         Util.sleep(100L);
         testRunningWithException();
 
         // 进行拍卖！
-        dm.leftClick(AuctionConstants.SELL_POINT);
+        getDm().leftClick(AuctionConstants.SELL_POINT);
     }
 
     public void inputPrice() {
@@ -265,7 +277,7 @@ public class Auction {
      * @return boolean
      */
     public boolean findAuctionTitlePic(String templatePath, double threshold) {
-        int[] pic = dm.findPic(AuctionConstants.AUCTION_TITLE_FIND_RECT, templatePath, "010101", threshold, 0);
+        int[] pic = getDm().findPic(AuctionConstants.AUCTION_TITLE_FIND_RECT, templatePath, "010101", threshold, 0);
         if (pic == null) {
             return false;
         }
@@ -273,16 +285,16 @@ public class Auction {
     }
 
     public boolean gotoAuction() {
-        if (!Common.findMorePic(dm, "", 0.6)) {
-            log.info("[{}] 未找到 更多 按钮", dm.getHwnd());
+        if (!Common.findMorePic(getDm(), "", 0.6)) {
+            log.info("[{}] 未找到 更多 按钮", getDm().getHwnd());
             return false;
         }
-        Common.clickMore(dm);
+        Common.clickMore(getDm());
         return true;
     }
 
     public boolean findInputNumBox(String templatePath, double threshold) {
-        int[] pic = dm.findPic(AuctionConstants.NUM_INPUT_BOX_FIND_SELL_RECT, templatePath, "010101", threshold, 0);
+        int[] pic = getDm().findPic(AuctionConstants.NUM_INPUT_BOX_FIND_SELL_RECT, templatePath, "010101", threshold, 0);
         if (pic == null) {
             return false;
         }
@@ -291,8 +303,8 @@ public class Auction {
 
     public String ocrItemName() {
         String dir = "tmp/auction/";
-        String filename = dir + dm.getHwnd() + "-item_name-" + System.currentTimeMillis() + ".png";
-        dm.capturePicByRegion(filename, AuctionConstants.ITEM_INPUT_NAME_OCR_RECT);
+        String filename = dir + getDm().getHwnd() + "-item_name-" + System.currentTimeMillis() + ".png";
+        getDm().capturePicByRegion(filename, AuctionConstants.ITEM_INPUT_NAME_OCR_RECT);
         String s = OcrUtil.ocrAuctionItemName(filename);
         if (!new File(filename).delete()) {
             log.info("文件{}无法删除", filename);
@@ -300,10 +312,21 @@ public class Auction {
         return s;
     }
 
+    public Integer ocrItemArguePrice() {
+        String dir = "tmp/auction/";
+        String filename = dir + getDm().getHwnd() + "-item_argue_price-" + System.currentTimeMillis() + ".png";
+        getDm().capturePicByRegion(filename, AuctionConstants.ARGUE_PRICE_OCR_RECT);
+        Integer price = OcrUtil.ocrAuctionItemArguePrice(filename);
+        if (!new File(filename).delete()) {
+            log.info("文件{}无法删除", filename);
+        }
+        return price;
+    }
+
     public Integer ocrItemNum() {
         String dir = "tmp/auction/";
-        String filename = dir + dm.getHwnd() + "-item_num" + System.currentTimeMillis() + ".png";
-        dm.capturePicByRegion(filename, AuctionConstants.NUM_INPUT_OCR_RECT);
+        String filename = dir + getDm().getHwnd() + "-item_num" + System.currentTimeMillis() + ".png";
+        getDm().capturePicByRegion(filename, AuctionConstants.NUM_INPUT_OCR_RECT);
         Integer i = OcrUtil.ocrAuctionItemNum(filename);
         if (!new File(filename).delete()) {
             log.info("文件{}无法删除", filename);
@@ -315,27 +338,54 @@ public class Auction {
 
     }
 
+    public void ensureArguePrice(Integer price) {
+        Integer existPrice = ocrItemArguePrice();
+        if (existPrice == null && price == null) {
+            return;
+        }
+        if (price == null) {
+            getDm().leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
+            getDm().leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
+            Util.sleep(100L);
+            // 删除数值
+            getDm().keyPressChar("back");
+            getDm().keyPressChar("back");
+            return;
+        }
+
+        if (existPrice == null) {
+            getDm().leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
+            getDm().leftDoubleClick(AuctionConstants.MOUTHFUL_PRICE_POINT);
+            Util.sleep(100L);
+            // 删除数值
+            getDm().keyPressChar("back");
+            getDm().keyPressChar("back");
+            Util.sleep(100L);
+            getDm().pressKeyChars(AuctionItem.priceToStr(price), 100L);
+        }
+    }
+
     public void putItemBack(Integer num) {
         testRunningWithException();
         // 放回原来背包位置
         if (num != null && num > 1) {
             // 取消拍卖
-            dm.leftClick(AuctionConstants.NUM_INPUT_BOX_CANCEL_POINT, 100L);
+            getDm().leftClick(AuctionConstants.NUM_INPUT_BOX_CANCEL_POINT, 100L);
         } else {
             // 数量为 1 的放回原来位置
-            dm.leftClick(AuctionConstants.AUCTION_INPUT_POINT);
+            getDm().leftClick(AuctionConstants.AUCTION_INPUT_POINT);
             Util.sleep(300L);
-            dm.leftClick(AuctionConstants.PUT_BACK_POINT, 100L);
+            getDm().leftClick(AuctionConstants.PUT_BACK_POINT, 100L);
         }
         Util.sleep(200L);
     }
 
     public void closeNumInputBox() {
-        dm.leftClick(AuctionConstants.NUM_INPUT_BOX_CANCEL_POINT);
+        getDm().leftClick(AuctionConstants.NUM_INPUT_BOX_CANCEL_POINT);
     }
 
     public void captureSellNumSamplePic(String path) {
-        dm.capturePicByRegion(path, AuctionConstants.NUM_INPUT_BOX_SELL_NUM_SAMPLE_RECT);
+        getDm().capturePicByRegion(path, AuctionConstants.NUM_INPUT_BOX_SELL_NUM_SAMPLE_RECT);
     }
 
     public void testRunningWithException() {
