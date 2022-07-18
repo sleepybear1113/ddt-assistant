@@ -120,6 +120,7 @@ class AuctionData {
 
         this.auctionItemList = list;
         this.autoAddUnknown = props.autoAddUnknown;
+        this.confirm = props.confirm;
     }
 }
 
@@ -129,6 +130,7 @@ class AuctionItem {
             return;
         }
 
+        this.shown = true;
         this.name = props.name;
         this.ocrName = props.ocrName;
         this.enabled = props.enabled;
@@ -209,5 +211,16 @@ class OfflineDetection {
 
         this.delay = props.delay;
         this.emailRemind = props.emailRemind;
+    }
+}
+
+class AuctionFilterButton {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.condition = props.condition;
+        this.chosen = props.chosen === true;
     }
 }

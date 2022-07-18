@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.base;
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,7 +23,7 @@ public class SettingConfig extends BaseConfig implements Serializable {
     private EmailConfig email;
 
     @Override
-    @JSONField(serialize = false)
+    @JsonIgnore
     public String getFileName() {
         return "setting.json";
     }
@@ -35,7 +35,7 @@ public class SettingConfig extends BaseConfig implements Serializable {
         return settingConfig;
     }
 
-    @JSONField(serialize = false)
+    @JsonIgnore
     public KeyPressWayEnum getKeyPadPressWayEnum() {
         return KeyPressWayEnum.getWay(this.keyPadPressWay);
     }

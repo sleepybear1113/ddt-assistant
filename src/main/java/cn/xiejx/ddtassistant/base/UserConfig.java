@@ -1,14 +1,13 @@
 package cn.xiejx.ddtassistant.base;
 
 import cn.xiejx.ddtassistant.constant.Constants;
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +107,7 @@ public class UserConfig extends BaseConfig implements Serializable {
     private String extraPorts;
 
     @Override
-    @JSONField(serialize = false)
+    @JsonIgnore
     public String getFileName() {
         return "user-config.json";
     }
@@ -139,25 +138,6 @@ public class UserConfig extends BaseConfig implements Serializable {
 
     public void setUserConfig(UserConfig userConfig) {
         BeanUtils.copyProperties(userConfig, this);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public UserConfig load() {
-        // 新路径
-        File file = new File(getFilePath());
-        if (!file.exists()) {
-            // 如果新路径没有配置文件
-            File oldFile = new File(getFileName());
-            if (oldFile.exists()) {
-                // 旧路径有配置文件，那么迁移
-                if (!oldFile.renameTo(file)) {
-                    log.warn("移动配置文件[{}]失败", getFileName());
-                }
-            }
-        }
-
-        return super.load();
     }
 
     public boolean validUserInfo() {
@@ -288,6 +268,7 @@ public class UserConfig extends BaseConfig implements Serializable {
         return extraPorts;
     }
 
+    @JsonIgnore
     public List<Integer> getPortArray() {
         if (StringUtils.isBlank(this.extraPorts)) {
             return null;

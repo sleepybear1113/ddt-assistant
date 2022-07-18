@@ -75,6 +75,7 @@ public class DmDdt extends Dm {
             BaseType.removeAllTypes(this.hwnd);
             unbind();
             GlobalVariable.GLOBAL_MAP.put(MonitorLogic.REFRESH_NEW_CAPTCHA_BIND_KEY, Boolean.TRUE.toString());
+            Util.sleep(300L);
             throw e;
         }
     }
@@ -91,6 +92,7 @@ public class DmDdt extends Dm {
         if (bind) {
             return;
         }
+        log.info("绑定[{}]...", getHwnd());
         bind = true;
         super.bindWindow(this.hwnd);
         GlobalVariable.DM_DDT_MAP.putIfAbsent(this.hwnd, this);
@@ -121,6 +123,10 @@ public class DmDdt extends Dm {
             return false;
         }
         return dmDdt.isBind();
+    }
+
+    public void clickCorner() {
+        leftClick(10, 10);
     }
 
     @Override
@@ -220,5 +226,21 @@ public class DmDdt extends Dm {
 
     public void captureFullGamePic(String path) {
         capturePicByRegion(path, GAME_FULL_REACT);
+    }
+
+    public int[] findPicInFullGame(String templatePath, String deltaColor, double threshold) {
+        return super.findPic(GAME_FULL_REACT, templatePath, deltaColor, threshold, DmConstants.SearchWay.LEFT2RIGHT_UP2DOWN);
+    }
+
+    public List<int[]> findPicExInFullGame(String templatePath, String deltaColor, double threshold) {
+        return super.findPicEx(GAME_FULL_REACT, templatePath, deltaColor, threshold, DmConstants.SearchWay.LEFT2RIGHT_UP2DOWN);
+    }
+
+    public List<DmDomains.PicEx> findPicExInFullGame(List<String> templatePaths, String deltaColor, double threshold) {
+        return super.findPicEx(GAME_FULL_REACT, templatePaths, deltaColor, threshold, DmConstants.SearchWay.LEFT2RIGHT_UP2DOWN);
+    }
+
+    public List<DmDomains.PicEx> findPicEx(int[] region, List<String> templatePaths, String deltaColor, double threshold) {
+        return super.findPicEx(region, templatePaths, deltaColor, threshold, DmConstants.SearchWay.LEFT2RIGHT_UP2DOWN);
     }
 }

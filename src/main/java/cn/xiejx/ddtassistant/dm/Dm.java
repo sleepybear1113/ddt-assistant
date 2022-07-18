@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,21 +41,21 @@ public class Dm {
     }
 
     public String getVersion() {
-        Variant variant = Dispatch.call(dmDispatch, "Ver");
+        Variant variant = invoke("Ver");
         String ver = variant.getString();
         variant.safeRelease();
         return ver;
     }
 
     public int getId() {
-        Variant variant = Dispatch.call(dmDispatch, "GetID");
+        Variant variant = invoke("GetID");
         int id = variant.getInt();
         variant.safeRelease();
         return id;
     }
 
     public void bindWindow(int hwnd, String display, String mouse, String keypad, int mode) {
-        Dispatch.call(dmDispatch,"BindWindow", hwnd, display, mouse, keypad, mode).safeRelease();
+        invoke("BindWindow", hwnd, display, mouse, keypad, mode).safeRelease();
     }
 
     public int getWindow(int hwnd, int flag) {
@@ -175,8 +176,8 @@ public class Dm {
         variant.safeRelease();
     }
 
-    public int[] findPic(int[] xxyy, String templatePath, String deltaColor, double threshold, int i) {
-        return findPic(xxyy[0], xxyy[1], xxyy[2], xxyy[3], templatePath, deltaColor, threshold, i);
+    public int[] findPic(int[] xy, String templatePath, String deltaColor, double threshold, DmConstants.SearchWay searchWay) {
+        return findPic(xy[0], xy[1], xy[2], xy[3], templatePath, deltaColor, threshold, searchWay.getType());
     }
 
     public int[] findPic(int x1, int y1, int x2, int y2, String templatePath, String deltaColor, double threshold, int i) {
@@ -194,18 +195,87 @@ public class Dm {
         return new int[]{xx, yy};
     }
 
-    public React findPicS(int x1, int y1, int x2, int y2, String templatePath, String deltaColor, double threshold, int i) {
+    /**
+     * 查找指定区域内的图片,位图必须是24位色格式,支持透明色,当图像上下左右4个顶点的颜色一样时,则这个颜色将作为透明色处理.
+     * 这个函数可以查找多个图片,并且返回所有找到的图像的坐标.
+     *
+     * @param xy            数组，{区域的左上X坐标, 区域的左上Y坐标, 区域的右下X坐标, 区域的右下Y坐标}
+     * @param templatePaths 字符串列表:图片名,可以是多个图片,比如"test.bmp|test2.bmp|test3.bmp"
+     * @param deltaColor    字符串: 颜色色偏比如"203040" 表示RGB的色偏分别是20 30 40 (这里是16进制表示)
+     * @param threshold     双精度浮点数:相似度,取值范围0.1-1.0
+     * @param searchWay     查找方向, {@link DmConstants.SearchWay}
+     * @return List<DmDomains.PicEx>
+     */
+    public List<DmDomains.PicEx> findPicEx(int[] xy, List<String> templatePaths, String deltaColor, double threshold, DmConstants.SearchWay searchWay) {
+        if (isEmpty(templatePaths)) {
+            return new ArrayList<>();
+        }
+
+        String join = join(templatePaths, "|");
+        List<int[]> findPicExes = findPicEx(xy, join, deltaColor, threshold, searchWay);
+        if (isEmpty(findPicExes)) {
+            return new ArrayList<>();
+        }
+
+        List<DmDomains.PicEx> list = new ArrayList<>();
+        for (int[] find : findPicExes) {
+            DmDomains.PicEx picEx = new DmDomains.PicEx(find[0], find[1], find[2], templatePaths.get(find[0]));
+            list.add(picEx);
+        }
+        return list;
+    }
+
+    /**
+     * 查找指定区域内的图片,位图必须是24位色格式,支持透明色,当图像上下左右4个顶点的颜色一样时,则这个颜色将作为透明色处理.
+     * 这个函数可以查找多个图片,并且返回所有找到的图像的坐标.
+     *
+     * @param xy           数组，{区域的左上X坐标, 区域的左上Y坐标, 区域的右下X坐标, 区域的右下Y坐标}
+     * @param templatePath 字符串:图片名,可以是多个图片,比如"test.bmp|test2.bmp|test3.bmp"
+     * @param deltaColor   字符串: 颜色色偏比如"203040" 表示RGB的色偏分别是20 30 40 (这里是16进制表示)
+     * @param threshold    双精度浮点数:相似度,取值范围0.1-1.0
+     * @param searchWay    查找方向, {@link DmConstants.SearchWay}
+     * @return list, [index, 区域的左上X坐标, 区域的左上Y坐标]
+     */
+    public List<int[]> findPicEx(int[] xy, String templatePath, String deltaColor, double threshold, DmConstants.SearchWay searchWay) {
+        String s = findPicEx(xy[0], xy[1], xy[2], xy[3], templatePath, deltaColor, threshold, searchWay.getType());
+        List<int[]> list = new ArrayList<>();
+        if (isBlank(s)) {
+            return list;
+        }
+        String[] split = s.split("\\|");
+        for (String s1 : split) {
+            String[] search = s1.split(",");
+            int[] add = new int[3];
+            add[0] = Integer.parseInt(search[0]);
+            add[1] = Integer.parseInt(search[1]);
+            add[2] = Integer.parseInt(search[2]);
+            list.add(add);
+        }
+        return list;
+    }
+
+    /**
+     * 查找指定区域内的图片,位图必须是24位色格式,支持透明色,当图像上下左右4个顶点的颜色一样时,则这个颜色将作为透明色处理.
+     * 这个函数可以查找多个图片,并且返回所有找到的图像的坐标.
+     *
+     * @param x1           整形数:区域的左上X坐标
+     * @param y1           整形数:区域的左上Y坐标
+     * @param x2           整形数:区域的右下X坐标
+     * @param y2           整形数:区域的右下Y坐标
+     * @param templatePath 字符串:图片名,可以是多个图片,比如"test.bmp|test2.bmp|test3.bmp"
+     * @param deltaColor   字符串: 颜色色偏比如"203040" 表示RGB的色偏分别是20 30 40 (这里是16进制表示)
+     * @param threshold    双精度浮点数:相似度,取值范围0.1-1.0
+     * @param i            整形数:查找方向,0: 从左到右,从上到下 1: 从左到右,从下到上 2: 从右到左,从上到下 3: 从右到左, 从下到上
+     * @return 字符串: 返回的是所有找到的坐标格式如下:"id,x,y|id,x,y..|id,x,y" (图片左上角的坐标)
+     */
+    public String findPicEx(int x1, int y1, int x2, int y2, String templatePath, String deltaColor, double threshold, int i) {
         if (invalidFindPicParam(x1, y1, x2, y2, templatePath)) {
             return null;
         }
-        Variant x = new Variant(0, true);
-        Variant y = new Variant(0, true);
-        Variant variant = invoke("FindPicS", x1, y1, x2, y2, templatePath, deltaColor, threshold, i, x, y);
-        React react = new React(x.getInt(), y.getInt(), variant.getString());
+        Variant variant = invoke("FindPicEx", x1, y1, x2, y2, templatePath, deltaColor, threshold, i);
+        String string = variant.getString();
         variant.safeRelease();
-        x.safeRelease();
-        y.safeRelease();
-        return react;
+        return string;
     }
 
     public int imageToBmp(String fromPicName, String toBmpName) {
@@ -307,8 +377,7 @@ public class Dm {
     }
 
     public void keyPressChar(String key) {
-        Variant variant = invoke("KeyPressChar", key);
-        variant.safeRelease();
+        invoke("KeyPressChar", key).safeRelease();
     }
 
     public void pressKeyChars(String[] keys) {
@@ -345,5 +414,41 @@ public class Dm {
             }
         }
         return true;
+    }
+
+    public static boolean isEmpty(Collection<?> coll) {
+        return coll == null || coll.isEmpty();
+    }
+
+    public static String join(Iterable<?> iterable, String separator) {
+        Iterator<?> iterator = iterable == null ? null : iterable.iterator();
+        if (iterator == null) {
+            return null;
+        } else if (!iterator.hasNext()) {
+            return "";
+        } else {
+            Object first = iterator.next();
+            if (!iterator.hasNext()) {
+                return Objects.toString(first, "");
+            } else {
+                StringBuilder buf = new StringBuilder(256);
+                if (first != null) {
+                    buf.append(first);
+                }
+
+                while (iterator.hasNext()) {
+                    if (separator != null) {
+                        buf.append(separator);
+                    }
+
+                    Object obj = iterator.next();
+                    if (obj != null) {
+                        buf.append(obj);
+                    }
+                }
+
+                return buf.toString();
+            }
+        }
     }
 }

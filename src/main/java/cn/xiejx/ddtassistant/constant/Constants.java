@@ -1,31 +1,44 @@
 package cn.xiejx.ddtassistant.constant;
 
-import cn.xiejx.ddtassistant.dm.Dm;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 /**
  * @author sleepybear
  */
 public class Constants {
-    public static final Map<Integer, Dm> HWND_DM_MAP = new ConcurrentHashMap<>();
-
-    public static final String RESOURCE_DIR = "img/";
-
+    /**
+     * ==============================================
+     * 一级文件夹
+     * ==============================================
+     */
+    public static final String RESOURCE_PIC_DIR = "资源图片/";
+    public static final String RESOURCE_FILE_DIR = "资源文件/";
+    public static final String PIC_DIR = "图片/";
+    public static final String CONFIG_DIR = "用户配置文件/";
     public static final String TEMP_DIR = "tmp/";
 
-    public static final String PIC_DIR = "pictures/";
-
-    public static final String CONFIG_DIR = "config/";
-
+    /**
+     * ==============================================
+     * 二级文件夹
+     * ==============================================
+     */
+    public static final String TEMPLATE_PICTURE_DIR = RESOURCE_PIC_DIR + "模板/";
     public static final String FLOP_BONUS_DIR = PIC_DIR + "副本翻牌截图/";
-
+    public static final String CAPTCHA_DIR = PIC_DIR + "验证码截图/";
+    public static final String TESS_DATA_DIR = "tessdata";
     public static final String TEMP_GAME_SCREEN_SHOT_DIR = TEMP_DIR + "gameScreen/";
-
+    public static final String AUCTION_TMP_DIR = Constants.TEMP_DIR + "auction/";
     public static final String DESKTOP_SCREEN_SHOT_DIR = Constants.TEMP_DIR + "screenshot/";
 
+    /**
+     * ==============================================
+     * 三级文件夹
+     * ==============================================
+     */
+    public static final String CAPTCHA_COUNT_DOWN_DIR = CAPTCHA_DIR + "倒计时截图/";
 
+    /*
+     * ====================================================================
+     * ====================================================================
+     */
     public static final String BMP_SUFFIX = ".bmp";
     public static final String JPG_SUFFIX = ".jpg";
     public static final String PNG_SUFFIX = ".png";

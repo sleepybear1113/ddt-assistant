@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.utils.tj;
 
-import com.alibaba.fastjson2.JSON;
+import cn.xiejx.ddtassistant.utils.Util;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -85,8 +85,12 @@ public class TjResponse implements Serializable {
         }else {
             TjPicResult tjPicResult = null;
             try {
-                tjPicResult = JSON.parseObject(data, TjPicResult.class);
-                tjResponse.setChoiceEnum(ChoiceEnum.getChoice(tjPicResult.getResult()));
+                tjPicResult = Util.parseJsonToObject(data, TjPicResult.class);
+                if (tjPicResult == null) {
+                    tjResponse.setChoiceEnum(ChoiceEnum.UNDEFINED);
+                } else {
+                    tjResponse.setChoiceEnum(ChoiceEnum.getChoice(tjPicResult.getResult()));
+                }
             } catch (Exception ignored) {
                 tjResponse.setChoiceEnum(ChoiceEnum.UNDEFINED);
             }

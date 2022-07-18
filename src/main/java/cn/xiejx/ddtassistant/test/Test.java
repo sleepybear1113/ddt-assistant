@@ -1,23 +1,30 @@
 package cn.xiejx.ddtassistant.test;
 
+import cn.xiejx.ddtassistant.constant.Constants;
+import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.dm.DmConstants;
 import cn.xiejx.ddtassistant.dm.DmDdt;
-import cn.xiejx.ddtassistant.type.Captcha;
+import cn.xiejx.ddtassistant.dm.DmDomains;
+import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.type.auction.Auction;
+import cn.xiejx.ddtassistant.type.auction.AuctionConstants;
+import cn.xiejx.ddtassistant.type.captcha.CaptchaConstants;
+import cn.xiejx.ddtassistant.utils.ImgUtil;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
-import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
-import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
-import cn.xiejx.ddtassistant.utils.tj.TjResponse;
-import com.jacob.activeX.ActiveXComponent;
-import com.jacob.com.ComThread;
-import com.jacob.com.Dispatch;
-import com.jacob.com.Variant;
 import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.tess4j.TesseractException;
+import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -26,73 +33,134 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        // 大漠插件的 programId
-        String programId = "dm.dmsoft";
-        // 使用单线程的方式初始化，3.1233 大漠不支持 MTA
-        ComThread.InitSTA();
-        // 实例化大漠组件对象
-        ActiveXComponent dm = new ActiveXComponent(programId);
-        Dispatch dispatch = dm.getObject();
-        // 通过 Dispatch.call() 方法来调用 COM 组件的方法，返回值为 Variant 类型，可以使用 getString、getInt 来获取对应返回值
-        // Ver 为获取大漠版本号的方法
-        Variant variant = Dispatch.call(dispatch, "Ver");
-        System.out.println(variant.getString());
-        // 释放 Variant 对象
-        variant.safeRelease();
-        // 释放资源
-        ComThread.Release();
+        auctionNameCap();
     }
 
-    public static void ocr() {
-        String filename = "tmp/auction/790348-item_name.png";
-        String s = OcrUtil.ocrAuctionItemName(filename);
+    public static void capWind() {
+        int[] region = new int[]{480, 20, 520, 43};
+        int hwnd = 329468;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.clickCorner();
+        dm.capturePicByRegion("tmp/wind2/" + System.currentTimeMillis() + ".png", region);
+    }
+
+    public static void ocrWind() throws IOException, TesseractException {
+        int[] blue = {60, 60, 60};
+        int[][][] colors = new int[][][]{
+                {blue, ImgUtil.WHITE, blue},
+//                {ImgUtil.WHITE, ImgUtil.BLACK, ImgUtil.COLOR_40},
+        };
+        BufferedImage bufferedImage = ImgUtil.changeImgColor("tmp/wind/1658028220368.png", colors, ImgUtil.DeltaInOut.DELTA_IN);
+
+        String ocr = OcrUtil.ocr(bufferedImage);
+        System.out.println(ocr);
+    }
+
+    public static void find1() {
+        int hwnd = 329468;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.clickCorner();
+        List<String> templateImgList = GlobalVariable.getTemplateImgList(TypeConstants.TemplatePrefix.AUCTION_NUM_BOX_CONFIRM_CANCEL_BUTTON);
+        int[] found = dm.findPic(AuctionConstants.NUM_INPUT_OR_DROP_CONFIRM_CANCEL_FIND_RECT, StringUtils.join(templateImgList, "|"), "010101", 0.5, DmConstants.SearchWay.LEFT2RIGHT_UP2DOWN);
+        System.out.println(found[0] > 0);
+    }
+
+    public static void testOcrNumTotal() {
+        int hwnd = 67702;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        Auction auction = Auction.createInstance(dm, Auction.class);
+        auction.setRunning(true);
+        auction.getDm().clickCorner();
+        for (int i = 1; i <= 999; i++) {
+            Integer num = auction.ocrItemNum();
+            if (Objects.equals(num, i)) {
+                System.out.println(i + ", num = " + num + " is ok");
+            } else {
+                System.err.println(i + ", num = " + num + " !!!!!!!!!!!!!!!!!!");
+            }
+            auction.getDm().leftClick(AuctionConstants.NUM_INPUT_BOX_NUM_ADD_POINT);
+            Util.sleep(100L);
+            Util.sleep(100L);
+        }
+    }
+
+    public static void ocr() throws Exception {
+        String filename = "tmp/ocr/b/1657729494540.png";
+//        ImgUtil.cleanImg(filename,"tmp/ocr/b/1.png", ImageClean.Type.CAPTCHA_WHITE_CHAR);
+        String s = OcrUtil.ocrAuctionItemName(filename,"tmp/ocr/b/3.png");
         System.out.println(s);
     }
 
-    public static void testAuction() {
-        int hwnd = 790348;
+    public static void auctionNameCap() {
+        int hwnd = 393942;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
-        dm.leftClick(10, 10);
+        Auction auction = Auction.createInstance(dm, Auction.class);
+        auction.setRunning(true);
+//        auction.getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
+//        Util.sleep(100L);
+        auction.getDm().clickCorner();
         Util.sleep(100L);
-        Auction auction = Auction.createInstance(dm);
-        auction.go(1);
+        String path = "tmp/ocr/raw/" + System.currentTimeMillis() + ".png";
+        auction.captureItemNameOcrRect(path);
+        String s = OcrUtil.ocrAuctionItemName(path, path.replace("raw", "b"));
+        System.out.println(s);
+//        System.out.println(auction.ocrItemMouthfulPrice());
+//        int[] picInFullGame = auction.getDm().findPicInFullGame("资源图片/模板/拍卖场-是否需要出售-1.bmp", "030303", 0.7);
+//        System.out.println(Arrays.toString(picInFullGame));
+//        auction.getDm().findPicExInFullGame("资源图片/模板/副本-翻牌-游戏结算-1.bmp|资源图片/模板/拍卖场-是否需要出售-1.bmp", "030303", 0.7);
+    }
+
+    public static void testAuction() {
+        int hwnd = 2230920;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        Auction auction = Auction.createInstance(dm, Auction.class);
+        auction.setRunning(true);
+//        auction.getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
+//        Util.sleep(100L);
+        auction.getDm().clickCorner();
+        Util.sleep(100L);
+        auction.ensureInAuction();
+//        System.out.println(auction.ocrItemMouthfulPrice());
+//        int[] picInFullGame = auction.getDm().findPicInFullGame("资源图片/模板/拍卖场-是否需要出售-1.bmp", "030303", 0.7);
+//        System.out.println(Arrays.toString(picInFullGame));
+//        auction.getDm().findPicExInFullGame("资源图片/模板/副本-翻牌-游戏结算-1.bmp|资源图片/模板/拍卖场-是否需要出售-1.bmp", "030303", 0.7);
     }
 
     public static void captureAuctionSample() {
-        int hwnd = 4656088;
-        DmDdt dm = DmDdt.createInstance(hwnd);
-        dm.bind();
-        dm.leftClick(10, 10);
-        Util.sleep(100L);
-        Auction auction = Auction.createInstance(dm);
-        auction.captureSellNumSamplePic("test/auction-1.bmp");
-
+        AuctionConstants.AuctionPosition.getIndexPic("test/bag.png", 16);
     }
 
     public static void captureCountDownNumber() {
-        String countDownDir = "captcha/countDown/";
-        String countDownName = countDownDir + 662382 + ".png";
+        String countDownName = Constants.CAPTCHA_COUNT_DOWN_DIR + 662382 + ".png";
         Integer countDown = OcrUtil.ocrCountDownPic("test/113.png");
         System.out.println(countDown);
     }
 
-    public static void captureFlopBonus() {
-        int hwnd = 329146;
+    public static void capture() {
+        int hwnd = 329468;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
-        dm.capturePicByRegion("test/" + Captcha.TEMPLATE_FLOP_BONUS_PREFIX + "1.bmp", Captcha.FLOP_BONUS_SAMPLE_RECT);
+        dm.clickCorner();
+        Util.sleep(200L);
+        dm.capturePicByRegion(TypeConstants.TemplatePrefix.getFullPathWithFullName(TypeConstants.TemplatePrefix.AUCTION_DROP_CONFIRM_CANCEL_BUTTON, 1), AuctionConstants.NUM_INPUT_OR_DROP_CONFIRM_CANCEL_SAMPLE_RECT);
     }
 
-    public static void captureSome() {
-        int hwnd = 592822;
+    public static void findPic() {
+        int hwnd = 526516;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
         dm.leftClick(10, 10);
         Util.sleep(100L);
-        dm.capturePicByRegion("test/114.png", DmDdt.GAME_FULL_REACT);
+
+        Map<String, List<String>> templateImgMap = TypeConstants.TemplatePrefix.getTemplateImgMap();
+        List<DmDomains.PicEx> picExInFullGame = dm.findPicExInFullGame(templateImgMap.get(TypeConstants.TemplatePrefix.AUCTION_SOLD_OUT_INTRO), "020202", 0.7);
 //        dm.capturePicByRegion("test/full-a-1.png", DmDdt.GAME_FULL_REACT);
-        System.out.println("ok");
+        System.out.println(picExInFullGame);
     }
 
     public static void captureFull() {
@@ -120,7 +188,7 @@ public class Test {
         int hwnd = 4264830;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
-        dm.capturePicByRegion("test/template-dark-1.bmp", Captcha.CAPTCHA_COUNTDOWN_SAMPLE_REACT);
+        dm.capturePicByRegion("test/template-dark-1.bmp", CaptchaConstants.CAPTCHA_COUNTDOWN_SAMPLE_REACT);
     }
 
     public static void testKey() throws AWTException {
@@ -131,19 +199,12 @@ public class Test {
     }
 
     public static void r() {
-        String captchaDir = "captcha/" + Util.getTimeString(Util.TIME_YMD_FORMAT);
+        String captchaDir = Constants.CAPTCHA_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT);
         File file = new File(captchaDir);
         if (!file.isDirectory()) {
             System.out.println(file.mkdirs());
         }
 
-    }
-
-    public static void testYzm() {
-        TjPredictDto tjPredictDto = new TjPredictDto("sleepybear", "tj123456", "7", null, null, "captcha-sample.jpg");
-        TjResponse tjResponse = TjHttpUtil.getTjResponse(tjPredictDto);
-
-        System.out.println(tjResponse);
     }
 
     public static void sleep(long t) {

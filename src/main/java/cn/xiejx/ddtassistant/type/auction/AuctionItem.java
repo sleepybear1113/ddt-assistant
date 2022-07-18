@@ -1,12 +1,15 @@
 package cn.xiejx.ddtassistant.type.auction;
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import cn.xiejx.ddtassistant.utils.Util;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * There is description
@@ -33,15 +36,15 @@ public class AuctionItem implements Serializable {
     /**
      * 竞拍价单价
      */
-    private Double argueUnitPrice;
+    private String argueUnitPrice;
     /**
      * 一口价单价
      */
-    private Double mouthfulUnitPrice;
+    private String mouthfulUnitPrice;
     /**
      * 最小挂的数量
      */
-    private Integer minNum;
+    private String minNum;
     /**
      * 拍卖时限
      */
@@ -50,36 +53,55 @@ public class AuctionItem implements Serializable {
      * 丢掉卖金币
      */
     private Boolean drop;
-    /**
-     * 每组数量，需要大于等于 minNum
-     */
-    private Integer batchNum;
 
-    public Integer[] getPrice(Integer num) {
-        if (!Boolean.TRUE.equals(enabled) || num == null) {
-            return null;
+    @JsonIgnore
+    public List<String> getMinNumList() {
+        if (StringUtils.isBlank(this.minNum)) {
+            return new ArrayList<>();
         }
-
-        Integer[] res = {null, null};
-        if (argueUnitPrice != null) {
-            double arguePrice = argueUnitPrice * num;
-            int i = BigDecimal.valueOf(arguePrice).setScale(0, RoundingMode.HALF_UP).intValue();
-            res[0] = i;
-        }
-        if (mouthfulUnitPrice != null) {
-            double mouthfulPrice = mouthfulUnitPrice * num;
-            int i = BigDecimal.valueOf(mouthfulPrice).setScale(0, RoundingMode.HALF_UP).intValue();
-            res[1] = i;
-        }
-        if (res[0] != null && res[1] != null) {
-            if (res[1] <= res[0]) {
-                res[1] = res[0] + 1;
-            }
-        }
-        return res;
+        String[] split = this.minNum.split(",");
+        return Arrays.asList(split);
     }
 
-    @JSONField(serialize = false)
+    @JsonIgnore
+    public List<Double> getArgueUnitPriceList() {
+        ArrayList<Double> list = new ArrayList<>();
+        if (StringUtils.isBlank(this.argueUnitPrice)) {
+            return list;
+        }
+        String[] split = this.argueUnitPrice.split(",");
+        for (String s : split) {
+            list.add(Double.valueOf(s));
+        }
+        return list;
+    }
+
+    @JsonIgnore
+    public List<Double> getMouthfulUnitPriceList() {
+        ArrayList<Double> list = new ArrayList<>();
+        if (StringUtils.isBlank(this.mouthfulUnitPrice)) {
+            return list;
+        }
+        String[] split = this.mouthfulUnitPrice.split(",");
+        for (String s : split) {
+            list.add(Double.valueOf(s));
+        }
+        return list;
+    }
+
+    @JsonIgnore
+    public AuctionPrice getPrice(Integer num) {
+        if (!Boolean.TRUE.equals(this.enabled) || num == null) {
+            return null;
+        }
+        List<String> minNumList = getMinNumList();
+        if (CollectionUtils.isEmpty(minNumList)) {
+            return null;
+        }
+        return AuctionPrice.parseAuctionPrice(minNumList, getArgueUnitPriceList(), getMouthfulUnitPriceList(), num);
+    }
+
+    @JsonIgnore
     public String getSuitableName() {
         return StringUtils.isNotBlank(this.name) ? this.name : this.ocrName;
     }
@@ -95,5 +117,52 @@ public class AuctionItem implements Serializable {
 
     public boolean isDrop() {
         return Boolean.TRUE.equals(this.drop);
+    }
+
+    public void setMinNum(String minNum) {
+        ArrayList<String> list = new ArrayList<>();
+        if (StringUtils.isNotBlank(minNum)) {
+            String[] nums = minNum.replace("，", ",").split(",");
+            for (String num : nums) {
+                String number = Util.getIntegerNumberWithSign(num);
+                if (number != null) {
+                    list.add(number);
+                }
+            }
+        }
+        this.minNum = StringUtils.join(list, ",");
+    }
+
+    public void setMinNum(Integer minNum) {
+        setMinNum(String.valueOf(minNum));
+    }
+
+    public void setArgueUnitPrice(String argueUnitPrice) {
+        this.argueUnitPrice = parsePrice(argueUnitPrice);
+    }
+
+    public void setArgueUnitPrice(Double argueUnitPrice) {
+        setArgueUnitPrice(String.valueOf(argueUnitPrice));
+    }
+
+    public void setMouthfulUnitPrice(String mouthfulUnitPrice) {
+        this.mouthfulUnitPrice = parsePrice(mouthfulUnitPrice);
+    }
+
+    public void setMouthfulUnitPrice(Double mouthfulUnitPrice) {
+        setMouthfulUnitPrice(String.valueOf(mouthfulUnitPrice));
+    }
+
+    private static String parsePrice(String priceStr) {
+        ArrayList<Double> list = new ArrayList<>();
+        if (StringUtils.isNotBlank(priceStr)) {
+            String[] prices = priceStr.replace("，", ",").split(",");
+            for (String price : prices) {
+                if (Util.isNumber(price)) {
+                    list.add(Double.valueOf(price));
+                }
+            }
+        }
+        return StringUtils.join(list, ",");
     }
 }

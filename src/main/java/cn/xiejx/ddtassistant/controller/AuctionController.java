@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * There is description
@@ -25,20 +26,31 @@ public class AuctionController {
         return auctionLogic.getAuctionData();
     }
 
+    @RequestMapping("/auction/getFilterCondition")
+    public List<String> getFilterCondition() {
+        return auctionLogic.getFilterCondition();
+    }
+
     @RequestMapping("/auction/update")
     public Boolean update(@RequestBody AuctionData auctionData) {
         auctionLogic.updateAuctionData(auctionData);
         return true;
     }
 
+    @RequestMapping("/auction/updateFilterCondition")
+    public Boolean updateFilterCondition(@RequestBody List<String> filter) {
+        auctionLogic.updateFilterCondition(filter);
+        return true;
+    }
+
     @RequestMapping("/auction/bindAndSell")
-    public Boolean bindAndSell(int hwnd) {
-        return auctionLogic.bindAndSell(hwnd);
+    public Boolean bindAndSell(int hwnd, Boolean confirm) {
+        return auctionLogic.bindAndSell(hwnd, Boolean.TRUE.equals(confirm));
     }
 
     @RequestMapping("/auction/bindAndSellAll")
-    public MyString bindAndSell(Integer[] hwnds) {
-        return new MyString(auctionLogic.bindAndSellAll(hwnds));
+    public MyString bindAndSell(Integer[] hwnds, Boolean confirm) {
+        return new MyString(auctionLogic.bindAndSellAll(hwnds, Boolean.TRUE.equals(confirm)));
     }
 
     @RequestMapping("/auction/stop")

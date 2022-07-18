@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.base;
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -25,7 +25,7 @@ public class EmailConfig implements Serializable {
         BeanUtils.copyProperties(emailConfig, this);
     }
 
-    @JSONField(serialize = false)
+    @JsonIgnore
     public String[] getEmailToList() {
         if (StringUtils.isBlank(emailTo)) {
             return null;

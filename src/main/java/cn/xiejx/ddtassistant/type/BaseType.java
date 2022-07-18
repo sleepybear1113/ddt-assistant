@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 /**
@@ -43,9 +44,10 @@ public class BaseType implements Serializable {
         }
 
         try {
-            t = clazz.newInstance();
+            t = clazz.getDeclaredConstructor().newInstance();
             t.init(dm);
-        } catch (InstantiationException | IllegalAccessException ignored) {
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException ignored) {
         }
         if (t != null) {
             GlobalVariable.BASE_TYPE_MAP.put(key, t);
@@ -53,6 +55,7 @@ public class BaseType implements Serializable {
         return t;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public <T extends BaseType> BaseType remove() {
         return remove(getDm().getHwnd(), getClass());
     }
@@ -104,7 +107,14 @@ public class BaseType implements Serializable {
     }
 
     public static void removeAllTypes(Integer hwnd) {
+        removeByType(hwnd, null);
+    }
+
+    public static <T extends BaseType> void removeByType(Integer hwnd, Class<T> clazz) {
         for (BaseType baseType : BASE_TYPE_LIST) {
+            if (clazz != null && !baseType.getClass().equals(clazz)) {
+                continue;
+            }
             if (Objects.equals(baseType.getDm().getHwnd(), hwnd)) {
                 baseType.remove();
             }
@@ -121,5 +131,9 @@ public class BaseType implements Serializable {
 
     public DmDdt getDm() {
         return dm;
+    }
+
+    public Integer getHwnd() {
+        return getDm().getHwnd();
     }
 }

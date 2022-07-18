@@ -9,6 +9,16 @@ package cn.xiejx.ddtassistant.type.common;
 public class CommonConstants {
 
     /**
+     * 灰屏继续游戏模板区域
+     */
+    public static final int[] CONTINUE_GAME_SAMPLE_RECT = {440, 290, 560, 370};
+
+    /**
+     * 游戏首页模板区域
+     */
+    public static final int[] HOME_PAGE_SAMPLE_RECT = {310, 160, 500, 230};
+
+    /**
      * 游戏右下角“更多”的坐标
      */
     public static final int[] MORE_POINT = {};

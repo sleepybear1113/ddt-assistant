@@ -1,7 +1,8 @@
 package cn.xiejx.ddtassistant.type.common;
 
 import cn.xiejx.ddtassistant.dm.Dm;
-import cn.xiejx.ddtassistant.dm.DmDdt;
+import cn.xiejx.ddtassistant.dm.DmConstants;
+import cn.xiejx.ddtassistant.type.BaseType;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -13,12 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class Common {
 
-    public boolean openMore(DmDdt dm) {
-        if (!Common.findMorePic(dm, "", 0.6)) {
-            log.info("[{}] 未找到 更多 按钮", dm.getHwnd());
+    public boolean openMore(BaseType baseType) {
+        if (!Common.findMorePic(baseType.getDm(), "", 0.6)) {
+            log.info("[{}] 未找到 更多 按钮", baseType.getHwnd());
             return false;
         }
-        Common.clickMore(dm);
+        Common.clickMore(baseType.getDm());
         return true;
     }
 
@@ -32,7 +33,7 @@ public class Common {
      * @return boolean
      */
     public static boolean findMorePic(Dm dm, String templatePath, double threshold) {
-        int[] pic = dm.findPic(CommonConstants.MORE_FIND_RECT, templatePath, "010101", threshold, 0);
+        int[] pic = dm.findPic(CommonConstants.MORE_FIND_RECT, templatePath, "010101", threshold, DmConstants.SearchWay.LEFT2RIGHT_UP2DOWN);
         if (pic == null) {
             return false;
         }

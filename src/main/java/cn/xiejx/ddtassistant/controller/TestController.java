@@ -1,9 +1,7 @@
 package cn.xiejx.ddtassistant.controller;
 
 import cn.xiejx.ddtassistant.annotation.LogAppInfo;
-import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
-import cn.xiejx.ddtassistant.dm.Dm;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.utils.Util;
 import lombok.Data;
@@ -62,32 +60,6 @@ public class TestController {
         testRes.setSuccess(true);
         testRes.setMsg(String.format("一共%s线程，点击位置为 x = %s，y = %s", dmDdts.size(), x, y));
         return testRes;
-    }
-
-    @LogAppInfo
-    @RequestMapping("/test/invoke")
-    public Object testInvoke(String method, String params) {
-        TestRes testRes = new TestRes();
-        Collection<Dm> dms = Constants.HWND_DM_MAP.values();
-        if (CollectionUtils.isEmpty(dms)) {
-            testRes.setMsg("没有正在运行的线程！");
-            testRes.setSuccess(false);
-            return testRes;
-        }
-
-        if (params == null) {
-            for (Dm dm : dms) {
-                GlobalVariable.THREAD_POOL.execute(() -> System.out.println(dm.invoke(method, (String) null)));
-            }
-        } else {
-            String[] split = params.split(",");
-            for (Dm dm : dms) {
-                GlobalVariable.THREAD_POOL.execute(() -> System.out.println(dm.invoke(method, split)));
-            }
-        }
-
-        testRes.setMsg("操作完成");
-        return false;
     }
 
     @Data

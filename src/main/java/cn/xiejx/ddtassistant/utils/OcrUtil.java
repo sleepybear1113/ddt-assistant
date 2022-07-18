@@ -1,13 +1,14 @@
 package cn.xiejx.ddtassistant.utils;
 
+import cn.xiejx.ddtassistant.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,14 +20,20 @@ import java.io.IOException;
  */
 @Slf4j
 public class OcrUtil {
+    public static final String TESS_DATA_PATH = Constants.TESS_DATA_DIR;
+    public static final String END_LANGUAGE = "eng";
+    public static final String ZH_DDT_LANGUAGE = "zh_ddt";
 
     public static Integer ocrCountDownPic(String path) {
         try {
-            ITesseract instance = new Tesseract();
-            BufferedImage bufferedImage = changeImgBgColor(path);
-            instance.setDatapath("tessdata");
-            instance.setLanguage("eng");
-            String ocr = instance.doOCR(bufferedImage);
+            int[] blue = {70, 180, 230};
+            int[][][] colors = new int[][][]{
+                    {blue, ImgUtil.WHITE, ImgUtil.COLOR_40},
+                    {ImgUtil.WHITE, ImgUtil.BLACK, ImgUtil.COLOR_40},
+            };
+            BufferedImage bufferedImage = ImgUtil.changeImgColor(path, colors, ImgUtil.DeltaInOut.DELTA_OUT);
+
+            String ocr = ocr(bufferedImage, END_LANGUAGE);
             if (StringUtils.isBlank(ocr)) {
                 return null;
             }
@@ -42,13 +49,28 @@ public class OcrUtil {
     }
 
     public static String ocrAuctionItemName(String path) {
+        return ocrAuctionItemName(path, null);
+    }
+
+    public static String ocrAuctionItemName(String path, String cleanImgPath) {
         try {
-            ITesseract instance = new Tesseract();
-            BufferedImage bufferedImage = changeAuctionItemImg(path);
-            instance.setDatapath("tessdata");
-            instance.setLanguage("zh_ddt");
-            String ocr = instance.doOCR(bufferedImage);
-            ImageIO.write(bufferedImage, "png", new File("tmp/auction/10.png"));
+            int[] black = {30, 30, 30};
+            int[] white = {240, 240, 240};
+            int[] t = {150, 150, 150};
+            int[][][] colors = new int[][][]{
+                    {black, white, ImgUtil.COLOR_40},
+                    {white, t, ImgUtil.COLOR_40},
+                    {t, black, ImgUtil.COLOR_40},
+                    {black, white, ImgUtil.COLOR_40},
+            };
+            BufferedImage bufferedImage = ImgUtil.changeImgColor(path, colors, ImgUtil.DeltaInOut.DELTA_OUT);
+
+            String ocr = ocr(bufferedImage, ZH_DDT_LANGUAGE);
+
+            if (StringUtils.isNotBlank(cleanImgPath)) {
+                writeImg(bufferedImage, cleanImgPath);
+            }
+
             if (StringUtils.isBlank(ocr)) {
                 return null;
             }
@@ -61,12 +83,13 @@ public class OcrUtil {
 
     public static Integer ocrAuctionItemArguePrice(String path) {
         try {
-            ITesseract instance = new Tesseract();
-            BufferedImage bufferedImage = changeAuctionItemImg(path);
-            instance.setDatapath("tessdata");
-            instance.setLanguage("eng");
-            String ocr = instance.doOCR(bufferedImage);
-            ImageIO.write(bufferedImage, "png", new File("tmp/auction/10.png"));
+            int[][][] colors = new int[][][]{
+                    {{80, 40, 10}, ImgUtil.WHITE, ImgUtil.COLOR_30},
+            };
+            BufferedImage bufferedImage = ImgUtil.changeImgColor(path, colors, ImgUtil.DeltaInOut.DELTA_OUT);
+
+            String ocr = ocr(bufferedImage, END_LANGUAGE);
+            ImageIO.write(bufferedImage, "png", new File(Constants.AUCTION_TMP_DIR + "10.png"));
             if (StringUtils.isBlank(ocr)) {
                 return null;
             }
@@ -83,10 +106,9 @@ public class OcrUtil {
 
     public static Integer ocrAuctionItemNum(String path) {
         try {
-            ITesseract instance = new Tesseract();
-            instance.setDatapath("tessdata");
-            instance.setLanguage("eng");
-            String ocr = instance.doOCR(new File(path));
+            BufferedImage bufferedImage = ImgUtil.changeImgColor(path, null, ImgUtil.DeltaInOut.DELTA_OUT);
+
+            String ocr = ocr(bufferedImage, END_LANGUAGE);
             if (StringUtils.isBlank(ocr)) {
                 return null;
             }
@@ -101,69 +123,30 @@ public class OcrUtil {
         }
     }
 
-    public static BufferedImage changeAuctionItemImg(String path) throws IOException {
-        BufferedImage img = ImageIO.read(new File(path));
-        WritableRaster raster = img.getRaster();
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        int[] delta = {40, 40, 40};
-        int[] black = {30, 30, 30};
-        int[] white1 = {150, 150, 150};
-        int[] white2 = {240, 240, 240};
-        int[] t = {150, 150, 150};
-
-        for (int xx = 0; xx < width; xx++) {
-            for (int yy = 0; yy < height; yy++) {
-                int[] pixels = raster.getPixel(xx, yy, (int[]) null);
-                changePixels(pixels, black, white2, delta, false);
-                changePixels(pixels, white2, t, delta, false);
-                changePixels(pixels, t, black, delta, false);
-                changePixels(pixels, black, white2, delta, false);
-                raster.setPixel(xx, yy, pixels);
-            }
-        }
-        ImageIO.write(img, "png", new File("tmp/auction/5.png"));
-        return img;
+    public static String ocr(BufferedImage bufferedImage) throws TesseractException {
+        return ocr(bufferedImage, END_LANGUAGE);
     }
 
-    public static BufferedImage changeImgBgColor(String path) throws IOException {
-        int[] sampleColor = {255, 255, 255};
-        int[] blue = {70, 180, 230};
-        int[] delta = {40, 40, 40};
-        int[] black = {0, 0, 0};
-        BufferedImage img = ImageIO.read(new File(path));
-
-        WritableRaster raster = img.getRaster();
-        int width = img.getWidth();
-        int height = img.getHeight();
-
-        for (int xx = 0; xx < width; xx++) {
-            for (int yy = 0; yy < height; yy++) {
-                int[] pixels = raster.getPixel(xx, yy, (int[]) null);
-                changePixels(pixels, blue, sampleColor, delta, false);
-                changePixels(pixels, sampleColor, black, delta, false);
-                raster.setPixel(xx, yy, pixels);
-            }
-        }
-        return img;
+    public static String ocr(BufferedImage bufferedImage, String language) throws TesseractException {
+        ITesseract instance = new Tesseract();
+        instance.setDatapath(TESS_DATA_PATH);
+        instance.setLanguage(language);
+        return instance.doOCR(bufferedImage);
     }
 
-    public static void changePixels(int[] input, int[] sample, int[] target, int[] delta, boolean forceChange) {
-        boolean flag = false;
-        for (int i = 0; i < input.length; i++) {
-            if (forceChange) {
-                flag = true;
-                break;
-            }
-            if (Math.abs(input[i] - sample[i]) > delta[i]) {
-                flag = true;
-                break;
-            }
-        }
-        if (!flag) {
-            return;
-        }
-        System.arraycopy(target, 0, input, 0, input.length);
+    public static String ocr(String path, String language) throws TesseractException {
+        ITesseract instance = new Tesseract();
+        instance.setDatapath(TESS_DATA_PATH);
+        instance.setLanguage(language);
+        return instance.doOCR(new File(path));
+    }
+
+    public static String ocr(String path) throws TesseractException {
+        return ocr(path, END_LANGUAGE);
+    }
+
+    public static void writeImg(BufferedImage bufferedImage, String path) throws IOException {
+        String[] split = path.split("\\.");
+        ImageIO.write(bufferedImage, split[split.length - 1], new File(path));
     }
 }

@@ -1,7 +1,7 @@
 package cn.xiejx.ddtassistant.controller;
 
 import cn.xiejx.ddtassistant.logic.CaptureLogic;
-import cn.xiejx.ddtassistant.vo.StringRet;
+import cn.xiejx.ddtassistant.vo.MyString;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +20,8 @@ public class CaptureController {
     private CaptureLogic captureLogic;
 
     @RequestMapping("/capture/getScreenshotPath")
-    public StringRet captureScreen() {
+    public MyString captureScreen() {
         String path = captureLogic.captureScreen();
-        return StringRet.buildSuccess(path);
+        return new MyString(path);
     }
 }

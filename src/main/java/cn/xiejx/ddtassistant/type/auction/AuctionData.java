@@ -1,7 +1,8 @@
 package cn.xiejx.ddtassistant.type.auction;
 
 import cn.xiejx.ddtassistant.utils.Util;
-import com.alibaba.fastjson2.JSON;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -26,6 +27,11 @@ public class AuctionData implements Serializable {
     private List<AuctionItem> auctionItemList;
 
     /**
+     * 筛选条件
+     */
+    private List<String> filterConditionList;
+
+    /**
      * OCR 不识别的加入列表
      */
     private Boolean autoAddUnknown;
@@ -39,6 +45,7 @@ public class AuctionData implements Serializable {
             return;
         }
         auctionItemList = auctionData.getAuctionItemList();
+        filterConditionList = auctionData.getFilterConditionList();
         autoAddUnknown = auctionData.getAutoAddUnknown();
     }
 
@@ -73,16 +80,23 @@ public class AuctionData implements Serializable {
             return auctionData;
         }
         try {
-            return JSON.parseObject(s, AuctionData.class);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            return mapper.readValue(s, AuctionData.class);
         } catch (Exception e) {
-            log.warn("加载拍卖场自定义列表失败, {}", e.getMessage());
+            log.warn("加载拍卖场自定义列表失败, {}", e.getMessage(), e);
         }
         return auctionData;
     }
 
     public void save() {
-        String s = JSON.toJSONString(this);
-        Util.writeFile(s, AuctionConstants.FILENAME);
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            String result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(this);
+            Util.writeFile(result, AuctionConstants.FILENAME);
+        } catch (Exception e) {
+            log.warn("保存失败, {}", e.getMessage(), e);
+        }
     }
 
     public void addNewUnknownItem(String name) {

@@ -4,17 +4,24 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.*;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -59,6 +66,30 @@ public class Util {
         return String.format("%d_%02d_%02d_%02d_%02d_%02d", year, month, day, hour, minute, second);
     }
 
+    public static <T> T parseJsonToObject(String s, Class<T> clazz) {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        return parseJsonToObject(s, clazz, mapper);
+    }
+
+    public static <T> T parseJsonToObject(String s, Class<T> clazz, ObjectMapper mapper) {
+        try {
+            return mapper.readValue(s, clazz);
+        } catch (Exception e) {
+            log.warn(e.getMessage(), e);
+            return null;
+        }
+    }
+
+    public static <T> T readFile(String path, Class<T> clazz) {
+        try {
+            String s = readFile(path);
+            return parseJsonToObject(s, clazz);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public static String readFile(String path) {
         StringBuilder s = new StringBuilder();
         try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(path)), StandardCharsets.UTF_8))) {
@@ -72,6 +103,15 @@ public class Util {
             return s.toString();
         } catch (IOException e) {
             return null;
+        }
+    }
+
+    public static <T> void writeFile(Object obj, String path) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            String result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+            writeFile(result, path);
+        } catch (JsonProcessingException ignored) {
         }
     }
 
@@ -183,10 +223,43 @@ public class Util {
 
     public static boolean isNumber(String s) {
         try {
-            Double.parseDouble(s);
+            new BigDecimal(s);
             return true;
         } catch (NumberFormatException e) {
             return false;
+        }
+    }
+
+    public static Integer getIntegerNumber(String s) {
+        if (!isNumber(s)) {
+            return null;
+        }
+        return new BigDecimal(s).intValue();
+    }
+
+    public static String getIntegerNumberWithSign(String s) {
+        if (!isNumber(s)) {
+            return null;
+        }
+        char c = s.charAt(0);
+        String s1 = String.valueOf(new BigDecimal(s).intValue());
+        if (c == '+') {
+            return c + s1;
+        }
+        return s1;
+    }
+
+    public static <T> List<String> getAllDeclaredFields(Class<T> clazz) {
+        List<String> list = new ArrayList<>();
+        try {
+            Field[] fields = clazz.getDeclaredFields();
+            for (Field field : fields) {
+                list.add(field.get(field.getName()).toString());
+            }
+            return list;
+        } catch (IllegalAccessException e) {
+            log.warn(e.getMessage(), e);
+            return list;
         }
     }
 }

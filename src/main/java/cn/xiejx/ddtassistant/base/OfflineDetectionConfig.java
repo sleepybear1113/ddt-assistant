@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.base;
 
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -21,7 +21,7 @@ public class OfflineDetectionConfig extends BaseConfig implements Serializable {
     private Boolean emailRemind;
 
     @Override
-    @JSONField(serialize = false)
+    @JsonIgnore
     public String getFileName() {
         return "offlineDetection.json";
     }

@@ -140,7 +140,7 @@
             <input id="checkbox-capture-sample" v-model="captureSampleChecked"
                    type="checkbox">勾选这个才能点击左边的按钮，防误触<br/>
             <span>“截图保存验证码模板区域图片”作用：如果你这里运行的时候，出现了验证码但是程序没有识别到，那么可能是自带的通用的样例图片与你的游戏画面匹配不上，比如糖果截图的图片可能在 36 无法识别。这时候需要两种解决方法：</span><br/>
-            <span>1. 自行参考程序 img 文件夹下面的 captcha-template-xxx.bmp 的图片样例截图，保存为.png、.jpg、.bmp 其中一种格式，格式如 captcha-template-123.png，中间数字不能与别的重复，程序启动的时候会自动将不是 .bmp 的转为 .bmp 加入识图样例中。</span><br/>
+            <span>1. 自行参考程序 资源图片/模板 文件夹下面的 副本-验证码-倒计时-xxx.bmp 的图片样例截图，保存为.png、.jpg、.bmp 其中一种格式，格式如 副本-验证码-倒计时-123.png，中间数字不能与别的重复，程序启动的时候会自动将不是 .bmp 的转为 .bmp 加入识图样例中。</span><br/>
             <span>2. 出现验证码区域，点击上述按截图保存，然后去对应文件夹查看，删除多截图的图片或者不正确的图片。</span>
         </div>
     </div>
@@ -163,71 +163,214 @@
     <div class="tab" id="auction">
         <h3>{{tabName}}</h3>
         <span>用来自动化挂物品到拍卖场。自动识别数量和物品名称，计算价格和是否拍卖，然后根据条件挂拍卖场。</span>
-        <br/>
-        <span>需要账号位于拍卖场，并且处于打开背包的状态下使用，切记不可拖动背包，否则定位会有偏差（否则重进拍卖场）！</span>
         <hr>
-
-        <button v-on:click="getDdtHwnds()">获取全部句柄</button>
-        <div>
+        <span v-for="tab in tabs">
+             <button v-on:click="changeTab(tab)">{{tab.name}}</button>
+        </span>
+        <hr>
+        <hr>
+        <div v-show="selectedTab === '使用界面'">
+            <button v-on:click="getDdtHwnds()">获取全部句柄</button>
+            <label for="checkbox-auctionConfirm">确认拍卖</label>
+            <input type="checkbox" id="checkbox-auctionConfirm" v-model="auctionData.confirm">
+            <div>
             <span v-for="hwnd in hwnds">
                 <label :for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
                 <input :id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
-                <button v-on:click="showImg(hwnd.hwnd)">查看游戏截图</button>
+                <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
                 <button v-on:click="sell(hwnd.hwnd)">运行</button>
                 <button v-on:click="stop(hwnd.hwnd)">停止</button>
                 <br/>
             </span>
-            <button v-on:click="sellAll()">运行以上勾选句柄</button>
-            <button v-on:click="stopAll()">停止所有句柄运行</button>
+                <button v-on:click="sellAll()">运行以上勾选句柄</button>
+                <button v-on:click="stopAll()">停止所有句柄运行</button>
+            </div>
+            <hr>
+
+            <div id="auction-data-filter">
+                <label for="filter-condition">筛选条件</label>
+                <input id="filter-condition" v-model="newFilterCondition">
+                <button v-on:click="addFilterConditionList(newFilterCondition)">添加</button>
+                <button v-on:click="deleteFilterConditionList()">删除</button>
+                <button v-on:click="saveFilterConditionList()">保存</button>
+                <br/>
+                <span v-for="button in filterConditionButtonList">
+                <button :class="button.chosen == true? 'button-chosen': ''"
+                        v-on:click="changeAuctionFilterList(button)">{{button.condition}}</button>
+            </span>
+            </div>
+
+            <hr>
+            <button v-on:click="savaItems()">保存</button>
+            <button v-on:click="getItems()">重载</button>
+            <button v-on:click="addNewItem()">添加一行</button>
+            <label for="checkbox-autoAddUnknown">是否自动添加未识别的OCR物品</label>
+            <input id="checkbox-autoAddUnknown" type="checkbox" v-model="auctionData.autoAddUnknown">
+
+            <table>
+                <thead>
+                <tr>
+                    <th>启用</th>
+                    <th>物品名</th>
+                    <th>OCR名</th>
+                    <th>竞拍单价</th>
+                    <th>一口单价</th>
+                    <th>最小拍卖数量</th>
+                    <th>时限</th>
+                    <th>卖金币</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <template v-for="(item, index) in auctionData.auctionItemList">
+                    <tr v-show="item.shown">
+                        <td>
+                            <label :for="'checkbox-auction-item-enabled-'+index">{{(index < 9? "0": "") + (index +
+                                1)}}</label>
+                            <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox" v-model="item.enabled">
+                        </td>
+
+                        <td>
+                            <input :id="'input-auction-item-name-'+index" v-model="item.name"
+                                   class="string-input-large">
+                        </td>
+
+                        <td>
+                            <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName"
+                                   class="string-input-large">
+                        </td>
+
+                        <td>
+                            <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
+                                   class="string-input">
+                        </td>
+
+                        <td>
+                            <input :id="'input-auction-item-mouthful-unit-price-'+index"
+                                   v-model="item.mouthfulUnitPrice"
+                                   class="string-input">
+                        </td>
+
+                        <td>
+                            <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum" class="string-input">
+                        </td>
+
+                        <td>
+                            <button v-show="item.auctionTime == 8" v-on:click="changeAuctionTime(item, 24)">&nbsp;&nbsp;8
+                            </button>
+                            <button v-show="item.auctionTime == 24" v-on:click="changeAuctionTime(item, 48)">24</button>
+                            <button v-show="item.auctionTime == 48" v-on:click="changeAuctionTime(item, 8)">48</button>
+                        </td>
+
+                        <td>
+                            <label :for="'checkbox-auction-item-drop-'+index">&nbsp;&nbsp;</label>
+                            <input :id="'checkbox-auction-item-drop-'+index" type="checkbox" v-model="item.drop">
+                        </td>
+
+                        <td>
+                            <button v-on:click="moveIndex(index, -1)">上移</button>
+                            <button v-on:click="moveIndex(index, 1)">下移</button>
+                            <button v-on:click="deleteItem(index)">删除</button>
+                        </td>
+                    </tr>
+                </template>
+            </table>
         </div>
 
-        <hr>
-        <button v-on:click="savaItems()">保存</button>
-        <button v-on:click="getItems()">重载</button>
-        <button v-on:click="addNewItem()">添加一行</button>
-        <label for="checkbox-autoAddUnknown">是否自动添加未识别的OCR物品</label>
-        <input id="checkbox-autoAddUnknown" type="checkbox" v-model="auctionData.autoAddUnknown">
-        <ol>
-            <div v-for="(item, index) in auctionData.auctionItemList">
+        <div v-show="selectedTab === '使用说明'">
+            <h3>功能简介：</h3>
+            <ol>
                 <li>
-                    <label :for="'checkbox-auction-item-enabled-'+index"></label>
-                    <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox" v-model="item.enabled">
-                    <label :for="'input-auction-item-name-'+index">物品名</label>
-                    <input :id="'input-auction-item-name-'+index" v-model="item.name" class="string-input-large">
-                    <label :for="'input-auction-item-ocr-name-'+index">OCR名</label>
-                    <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName" class="string-input-large">
-                    <label :for="'input-auction-item-argue-unit-price-'+index">竞拍单价</label>
-                    <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
-                           class="ms-input-small">
-                    <label :for="'input-auction-item-mouthful-unit-price-'+index">一口单价</label>
-                    <input :id="'input-auction-item-mouthful-unit-price-'+index" v-model="item.mouthfulUnitPrice"
-                           class="ms-input-small">
-                    <label :for="'input-auction-item-min-num-'+index">最小拍卖数量</label>
-                    <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum" type="number" min="-1"
-                           class="ms-input-middle">
-                    <label :for="'radio-auction-time-8-'+index">8</label>
-                    <input :id="'radio-auction-time-8-'+index" v-model="item.auctionTime" value="8" type="radio"
-                           :name="'group'+index">|
-                    <label :for="'radio-auction-time-24-'+index">24</label>
-                    <input :id="'radio-auction-time-24-'+index" v-model="item.auctionTime" value="24" type="radio"
-                           :name="'group'+index">|
-                    <label :for="'radio-auction-time-48-'+index">48</label>
-                    <input :id="'radio-auction-time-48-'+index" v-model="item.auctionTime" value="48" type="radio"
-                           :name="'group'+index">
-                    <label :for="'checkbox-auction-item-drop-'+index">|卖金币</label>
-                    <input :id="'checkbox-auction-item-drop-'+index" type="checkbox" v-model="item.drop">
-                    <button v-on:click="moveIndex(index, -1)">上移</button>
-                    <button v-on:click="moveIndex(index, 1)">下移</button>
-                    <button v-on:click="deleteItem(index)">删除</button>
+                    能够自动识别物品名、数量，使用 OCR 技术将物品名转为文字。
                 </li>
-            </div>
-        </ol>
+                <li>
+                    可以拍卖未绑定的物品，也可以将不需要的物品直接丢弃。
+                </li>
+                <li>
+                    针对每个物品可以单独设置价格和数量，通过单价和数量计算总价。
+                </li>
+                <li>
+                    支持批量出售单个物品的全部数量，也可以支持拆单、拆特定数量多次拍卖。
+                </li>
+            </ol>
+
+            <h3>使用步骤：</h3>
+            <ol>
+                <li>
+                    游戏进入拍卖场界面。
+                </li>
+                <li>
+                    点击获取全部句柄，等待 1 秒下面出现句柄数字和相关按钮。
+                </li>
+                <li>
+                    点击查看游戏截图可以了解运行的是哪一个窗口。
+                </li>
+                <li>
+                    点击运行，脚本会自己识别背包的有物品的格子，然后根据下面的配置信息，来识别物品名称、数量，计算价格并且拍卖。
+                </li>
+                <li>
+                    运行单个窗口不需要勾选，自动会勾选的。但是批量运行需要手动勾选哪几个窗口，而后所有窗口就能自动拍卖了。
+                </li>
+            </ol>
+
+            <h3>重要说明：</h3>
+            <ol>
+                <li>
+                    “确认拍卖”勾选框的作用：勾选之后才会最后点击拍卖按钮将物品进行拍卖，不勾选的话就不必担心测试过程中价格错误或者其他情况导致异常拍卖。建议首次运行的时候，先不勾选，观察一个游戏窗口的运行情况。若价格正常那么可以勾选上。
+                </li>
+                <li>
+                    物品中第一列“启用”列，只有勾选了，才会去拍卖（或者卖金币）。所以千万记得，想要拍卖切记勾选“启用”，只写价格、数量是不会被进一步操作的。
+                </li>
+                <li>
+                    记得修改之后，一定要点击保存！！！！！！！！！
+                </li>
+                <li>
+                    物品名和 OCR 名：物品名就是实际的物品的名称，需要手动填入。OCR 名就是识别游戏画面的文字，提取出来的文字，由于字库较少，所以识别可能会有一定的不一致。但是假如物品 ABC 被识别为了
+                    QWE，那么 OCR 名就为 QWE，可以手动在物品名中写上 ABC。但是程序内部还是按照 QWE 来识别。
+                    <br/>
+                    一般来说，不需要改 OCR 名，改了程序就识别不到了。如果识别出现不一致，也问题不大，因为 ABC 识别为 QWE 后，正常情况下，不会有另外的物品也被识别为 QWE，QWE 相当于是程序对 ABC
+                    的别名。
+                    <br/>
+                    由于物品较多，字库收集较麻烦，所以目前只收集了常见的字。
+                </li>
+                <li>
+                    <ul>
+                        <li>
+                            首先在价格输入框，一个输入框可以填写多个价格，也可以只填写一个，比如"20,18,16"。当填写多个价格的时候，需要用逗号分隔。多价格需要与多数量配合，在不同数量的时候，使用单价为
+                            20、18、16 的价格。可以有小数但是不能带其他符号。
+                        </li>
+                        <li>
+                            在最小数量输入框中，填写最小的拍卖数量。其中数量这块有三种格式，普通数字、带+的数字（正数）、带-的数字（负数）。当填写多个数量的时候，需要用逗号分隔。
+                        </li>
+                        <li>
+                            在最小数量输入框中，如果写普通数字，比如 50，那么物品数量超过 50 就会全部放入拍卖框中；如果是负数，比如 -100，那么物品数量大于等于 100，每次只放入拍卖场 100
+                            个；如果写正数，比如 +300，那么物品数量超过 300 才会按照 300 的整倍数放入如放入
+                            900、600、300。简单来说，就是正数是整倍数，负数是固定数量，普通数字是大于等于全部放入。
+                        </li>
+                        <li>
+                            在最小数量输入框中，也可以多个数值之间用逗号隔开，那么会从左到右依次匹配。如写了 “+100,-10,5”，而实际总数是 732，那么第一次会匹配 +100 整倍数 700
+                            进行拍卖。第二次匹配不到 +100 了因为数量只剩下 32，往后匹配到 -10，往拍卖场放入 3 次 10 数量的物品。最后匹配 5，但是此时数量只剩下 2，不满足大于等于
+                            5，此时停止拍卖该物品。
+                        </li>
+                        <li>
+                            同时单价也支持多价格，与数量匹配，对应位置数量启用对应位置价格。比如单价 19,17,15，数量 -999,-100,-10，那么有 999 数量的就按照 19 单价计算，剩下的有
+                            100 数量的每次 17 单价。
+                        </li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
     </div>
 
 
     <div class="tab" id="capture">
         <h3>截屏查看</h3>
         <hr>
+        <span>刷新频率：{{interval == null? "无": (interval + "毫秒")}}</span>
+        <span v-for="i in intervalList"><button v-on:click="changeInterval(i)">{{i}}</button></span>
+        <button v-on:click="changeInterval(interval - 100)">-100</button>
+        <button v-on:click="changeInterval(interval + 100)">+100</button>
+        <button v-on:click="clearIntervalFunc()">清空</button>
+        <br/>
         <button v-on:click="getScreenshotPath()">查看屏幕截图</button>
         <button v-on:click="getAllGamePicPath()">查看所有句柄截图</button>
         <br/>
@@ -235,7 +378,7 @@
         <br/>
         <div>
             <span v-for="hwnd in hwnds">
-                <button v-on:click="showImg(hwnd)">{{hwnd}}</button>
+                <button v-on:click="getGameShot(hwnd)">{{hwnd}}</button>
             </span>
         </div>
         <hr>

@@ -1,11 +1,11 @@
 package cn.xiejx.ddtassistant.logic;
 
 import cn.xiejx.ddtassistant.base.UserConfig;
-import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.type.BaseType;
-import cn.xiejx.ddtassistant.type.Captcha;
+import cn.xiejx.ddtassistant.type.TypeConstants;
+import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
 import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
@@ -37,7 +37,7 @@ public class CaptchaLogic {
     private DmDdt defaultDm;
 
     public TjResponse testCaptcha() {
-        TjPredictDto build = TjPredictDto.build(userConfig, "img/captcha-sample.bmp");
+        TjPredictDto build = TjPredictDto.build(userConfig, "资源图片/验证码测试/test-1.bmp");
         TjResponse response = TjHttpUtil.getTjResponse(build);
         log.info(String.valueOf(response));
         return response;
@@ -98,7 +98,7 @@ public class CaptchaLogic {
 
         List<String> pathList = new ArrayList<>();
         for (Captcha captcha : captchaList) {
-            String path = Constants.RESOURCE_DIR + Captcha.TEMPLATE_PIC_PREFIX + (RANDOM.nextInt(1000) + 100) + Constants.BMP_SUFFIX;
+            String path = TypeConstants.TemplatePrefix.getFullPathWithFullName(TypeConstants.TemplatePrefix.PVE_CAPTCHA_COUNT_DOWN, (RANDOM.nextInt(1000) + 100));
             captcha.captureCountDownSampleRegion(path);
             pathList.add(path);
         }
@@ -111,6 +111,6 @@ public class CaptchaLogic {
         String password = userConfig.getPassword();
         Boolean lowBalanceRemind = userConfig.getLowBalanceRemind();
         Double lowBalanceNum = userConfig.getLowBalanceNum();
-        return StringRet.buildSuccess(TjHttpUtil.getAccountInfo(username, password,lowBalanceRemind, lowBalanceNum));
+        return StringRet.buildSuccess(TjHttpUtil.getAccountInfo(username, password, lowBalanceRemind, lowBalanceNum));
     }
 }

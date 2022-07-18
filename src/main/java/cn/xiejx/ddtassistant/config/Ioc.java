@@ -3,18 +3,13 @@ package cn.xiejx.ddtassistant.config;
 import cn.xiejx.ddtassistant.base.OfflineDetectionConfig;
 import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.base.UserConfig;
-import cn.xiejx.ddtassistant.constant.Constants;
-import cn.xiejx.ddtassistant.dm.Dm;
+import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
-import cn.xiejx.ddtassistant.type.Captcha;
+import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.type.auction.AuctionData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.io.File;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author sleepybear
@@ -46,57 +41,11 @@ public class Ioc {
     @Bean
     public DmDdt initDmDdt() {
         DmDdt dmDdt = DmDdt.createInstance(null);
-        captchaImgToBmpBatch(dmDdt, Constants.RESOURCE_DIR);
+        initTemplateImgMap();
         return dmDdt;
     }
 
-    public static void captchaImgToBmpBatch(Dm dm, String path) {
-        File imgDir = new File(path);
-        if (!imgDir.exists()) {
-            return;
-        }
-        File[] files = imgDir.listFiles();
-        if (files == null || files.length == 0) {
-            return;
-        }
-        Set<String> bmpFileNameSet = new HashSet<>();
-        Set<String> otherFileNameSet = new HashSet<>();
-        for (File file : files) {
-            if (!file.isFile()) {
-                continue;
-            }
-            String fileName = file.getName();
-            if (fileName.endsWith(".bmp")) {
-                bmpFileNameSet.add(fileName);
-            } else {
-                otherFileNameSet.add(fileName);
-            }
-        }
-
-        for (String otherFileName : otherFileNameSet) {
-            if (otherFileName.endsWith(Constants.PNG_SUFFIX) || otherFileName.endsWith(Constants.JPG_SUFFIX)) {
-                String newBmpFileName = otherFileName.substring(0, otherFileName.length() - 4) + Constants.BMP_SUFFIX;
-                if (bmpFileNameSet.contains(newBmpFileName)) {
-                    continue;
-                }
-                dm.imageToBmp(path + otherFileName, path + newBmpFileName);
-                bmpFileNameSet.add(newBmpFileName);
-                log.info("图片 {} 转换为 {}", otherFileName, newBmpFileName);
-            }
-        }
-
-        for (String fileName : bmpFileNameSet) {
-            String fullPath = path + fileName;
-            if (fileName.startsWith(Captcha.TEMPLATE_PIC_PREFIX)) {
-                // 需要以 template- 前缀
-                if (fileName.contains("dark")) {
-                    Captcha.captchaTemplateNameDarkList.add(fullPath);
-                } else {
-                    Captcha.captchaTemplateNameList.add(fullPath);
-                }
-            } else if (fileName.startsWith(Captcha.TEMPLATE_FLOP_BONUS_PREFIX)) {
-                Captcha.flopBonusTemplateNameList.add(fullPath);
-            }
-        }
+    public static void initTemplateImgMap() {
+        GlobalVariable.templateImgMap = TypeConstants.TemplatePrefix.getTemplateImgMap();
     }
 }

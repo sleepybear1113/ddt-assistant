@@ -2,8 +2,7 @@ package cn.xiejx.ddtassistant.base;
 
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.utils.Util;
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,10 +27,10 @@ public abstract class BaseConfig implements Serializable {
      *
      * @return 文件名
      */
-    @JSONField(serialize = false)
+    @JsonIgnore
     public abstract String getFileName();
 
-    @JSONField(serialize = false)
+    @JsonIgnore
     public String getFilePath() {
         if (StringUtils.isBlank(getFileName())) {
             return null;
@@ -65,7 +64,7 @@ public abstract class BaseConfig implements Serializable {
         }
 
         try {
-            return (A) JSON.parseObject(s, getClass());
+            return (A) Util.parseJsonToObject(s, getClass());
         } catch (Exception e) {
             log.warn(e.getMessage(), e);
             return defaultConfig;
@@ -73,7 +72,6 @@ public abstract class BaseConfig implements Serializable {
     }
 
     public void save() {
-        String s = JSON.toJSONString(this);
-        Util.writeFile(s, getFilePath());
+        Util.writeFile(this, getFilePath());
     }
 }

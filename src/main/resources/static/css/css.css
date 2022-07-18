@@ -51,3 +51,7 @@ div {
     z-index: 90;
     background-color: rgb(0, 0, 0); opacity: 0.3;
 }
+
+.button-chosen {
+    background-color: darkgray;
+}

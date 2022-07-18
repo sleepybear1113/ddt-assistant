@@ -9,6 +9,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,8 @@ public class AuctionLogic {
     private DmDdt defaultDm;
 
     public AuctionData getAuctionData() {
-        return auctionData;
+        this.auctionData = AuctionData.load();
+        return this.auctionData;
     }
 
     public void updateAuctionData(AuctionData auctionData) {
@@ -33,29 +35,30 @@ public class AuctionLogic {
             throw new FrontException("数据为空");
         }
 
+        auctionData.setFilterConditionList(this.auctionData.getFilterConditionList());
         this.auctionData.update(auctionData);
         this.auctionData.save();
     }
 
-    public Boolean bindAndSell(int hwnd) {
-        boolean running = Auction.isRunning(hwnd);
+    public Boolean bindAndSell(int hwnd, boolean confirm) {
+        boolean running = Auction.isRunning(hwnd, Auction.class);
         if (running) {
             return false;
         }
-        return Auction.startSellThread(hwnd);
+        return Auction.startSellThread(hwnd, confirm);
     }
 
-    public String bindAndSellAll(Integer[] hwnds) {
+    public String bindAndSellAll(Integer[] hwnds, boolean confirm) {
         if (hwnds == null || hwnds.length == 0) {
             throw new FrontException("未选择任何句柄！");
         }
         BindResultVo bindResultVo = new BindResultVo();
         for (Integer hwnd : hwnds) {
-            boolean running = Auction.isRunning(hwnd);
+            boolean running = Auction.isRunning(hwnd, Auction.class);
             if (running) {
                 bindResultVo.increaseRunningCount();
             } else {
-                Auction.startSellThread(hwnd);
+                Auction.startSellThread(hwnd, confirm);
                 bindResultVo.increaseNewAddCount();
             }
         }
@@ -63,10 +66,6 @@ public class AuctionLogic {
     }
 
     public Boolean stop(int hwnd) {
-        boolean running = Auction.isRunning(hwnd);
-        if (!running) {
-            return false;
-        }
         return Auction.stopAuction(hwnd);
     }
 
@@ -85,5 +84,14 @@ public class AuctionLogic {
             throw new FrontException("没有 flash 窗口");
         }
         return ddtWindowHwnd;
+    }
+
+    public void updateFilterCondition(List<String> filter) {
+        this.auctionData.setFilterConditionList(filter);
+        updateAuctionData(this.auctionData);
+    }
+
+    public List<String> getFilterCondition() {
+        return CollectionUtils.isEmpty(this.auctionData.getFilterConditionList()) ? new ArrayList<>() : this.auctionData.getFilterConditionList();
     }
 }

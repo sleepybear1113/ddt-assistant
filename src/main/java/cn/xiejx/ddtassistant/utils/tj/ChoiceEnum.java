@@ -1,6 +1,6 @@
 package cn.xiejx.ddtassistant.utils.tj;
 
-import cn.xiejx.ddtassistant.type.Captcha;
+import cn.xiejx.ddtassistant.type.captcha.CaptchaConstants;
 
 import java.util.Arrays;
 
@@ -12,10 +12,10 @@ public enum ChoiceEnum {
     /**
      * 选项
      */
-    A("A", Captcha.ANSWER_CHOICE_POINT_A),
-    B("B", Captcha.ANSWER_CHOICE_POINT_B),
-    C("C", Captcha.ANSWER_CHOICE_POINT_C),
-    D("D", Captcha.ANSWER_CHOICE_POINT_D),
+    A("A", CaptchaConstants.ANSWER_CHOICE_POINT_A),
+    B("B", CaptchaConstants.ANSWER_CHOICE_POINT_B),
+    C("C", CaptchaConstants.ANSWER_CHOICE_POINT_C),
+    D("D", CaptchaConstants.ANSWER_CHOICE_POINT_D),
     WAITING("识别中", null),
     UNDEFINED("未知", null),
     ;

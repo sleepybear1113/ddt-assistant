@@ -12,7 +12,8 @@ import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
-import com.alibaba.fastjson2.JSON;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,7 +77,7 @@ public class TjHttpUtil {
             res.setMessage("验证码获取结果为空");
             return res;
         }
-        TjResponse tjResponse = JSON.parseObject(responseBody, TjResponse.class);
+        TjResponse tjResponse = Util.parseJsonToObject(responseBody, TjResponse.class);
         TjResponse response = TjResponse.buildResponse(tjResponse);
         response.setCost(end - start);
         return response;
@@ -148,12 +149,20 @@ public class TjHttpUtil {
             HttpResponseHelper responseHelper = httpHelper.request();
             String responseBody = responseHelper.getResponseBody();
 
-            TjAccountInfo tjAccountInfo = JSON.parseObject(responseBody, TjAccountInfo.class);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+            TjAccountInfo tjAccountInfo = Util.parseJsonToObject(responseBody, TjAccountInfo.class, mapper);
+            if (tjAccountInfo == null) {
+                return "解析平台返回内容失败";
+            }
             if (!Boolean.TRUE.equals(tjAccountInfo.getSuccess())) {
                 return "获取用户信息失败，" + tjAccountInfo.getMessage();
             }
-            String data = tjAccountInfo.getData();
-            TjConsumption tjConsumption = JSON.parseObject(data, TjConsumption.class);
+            TjConsumption tjConsumption = tjAccountInfo.getData();
+            if (tjConsumption == null) {
+                return "解析平台返回内容失败";
+            }
 
             // 低余额提醒
             String balance = tjConsumption.getBalance();

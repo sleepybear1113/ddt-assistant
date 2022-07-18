@@ -14,5 +14,5 @@ public class TjAccountInfo implements Serializable {
     private Boolean success;
     private String code;
     private String message;
-    private String data;
+    private TjConsumption data;
 }
