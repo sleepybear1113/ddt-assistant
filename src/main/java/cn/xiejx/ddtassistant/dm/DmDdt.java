@@ -70,13 +70,13 @@ public class DmDdt extends Dm {
             count++;
             return super.invoke(method, params);
         } catch (ComFailException e) {
-            log.warn("句柄[{}]绑定失败，已解绑，错误日志如下：", hwnd);
+            log.warn("句柄[{}]绑定失败，已解绑，错误信息为： {}", hwnd, e.getMessage());
             clearCount();
             BaseType.removeAllTypes(this.hwnd);
             unbind();
             GlobalVariable.GLOBAL_MAP.put(MonitorLogic.REFRESH_NEW_CAPTCHA_BIND_KEY, Boolean.TRUE.toString());
             Util.sleep(300L);
-            throw e;
+            throw new RuntimeException();
         }
     }
 

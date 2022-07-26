@@ -170,20 +170,23 @@
         <hr>
         <hr>
         <div v-show="selectedTab === '使用界面'">
+            <button v-on:click="sellAll()">运行以下勾选句柄</button>
+            <button v-on:click="stopAll()">停止所有句柄运行</button>
+            <br/>
             <button v-on:click="getDdtHwnds()">获取全部句柄</button>
             <label for="checkbox-auctionConfirm">确认拍卖</label>
             <input type="checkbox" id="checkbox-auctionConfirm" v-model="auctionData.confirm">
             <div>
-            <span v-for="hwnd in hwnds">
-                <label :for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
-                <input :id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
-                <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
-                <button v-on:click="sell(hwnd.hwnd)">运行</button>
-                <button v-on:click="stop(hwnd.hwnd)">停止</button>
-                <br/>
-            </span>
-                <button v-on:click="sellAll()">运行以上勾选句柄</button>
-                <button v-on:click="stopAll()">停止所有句柄运行</button>
+                <span v-for="hwnd in hwnds">
+                    <label :for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
+                    <input :id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                    <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
+                    <button v-on:click="sell(hwnd.hwnd)">运行</button>
+                    <button v-on:click="stop(hwnd.hwnd)">停止</button>
+                    <br/>
+                </span>
+                <span v-show="hwnds.length === 0"><i>没有获取可运行的句柄，请点击“获取”</i></span>
+
             </div>
             <hr>
 
@@ -206,6 +209,26 @@
             <button v-on:click="addNewItem()">添加一行</button>
             <label for="checkbox-autoAddUnknown">是否自动添加未识别的OCR物品</label>
             <input id="checkbox-autoAddUnknown" type="checkbox" v-model="auctionData.autoAddUnknown">
+
+            <div>
+                <label>
+                    先道具栏再装备栏
+                    <input type="radio" value="1" v-model="auctionData.sellType">
+                </label>
+                <label>
+                    丨仅道具栏
+                    <input type="radio" value="2" v-model="auctionData.sellType">
+                </label>
+                <br/>
+                <label>
+                    先装备栏再道具栏
+                    <input type="radio" value="3" v-model="auctionData.sellType">
+                </label>
+                <label>
+                    丨仅装备栏
+                    <input type="radio" value="4" v-model="auctionData.sellType">
+                </label>
+            </div>
 
             <table>
                 <thead>

@@ -9,6 +9,7 @@ import cn.xiejx.ddtassistant.exception.MyInterruptException;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.type.common.Common;
+import cn.xiejx.ddtassistant.utils.ImgUtil;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
@@ -89,40 +90,78 @@ public class Auction extends BaseType {
             remove();
             return;
         }
+        putBackItem();
 
-        // 背包截图，来确定物品位置
-        String bagPicPath = Constants.AUCTION_TMP_DIR + "bag-" + getHwnd() + "-" + System.currentTimeMillis() + ".png";
-        captureBagArea(bagPicPath);
-        List<Integer> indexes = AuctionConstants.AuctionPosition.getNotEmptyBagIndex(bagPicPath);
-        Util.delayDeleteFile(bagPicPath, 100L);
-
-        if (CollectionUtils.isEmpty(indexes)) {
-            log.info("[{}] 背包为空，拍卖场功能结束！", getHwnd());
+        AuctionData auctionData = SpringContextUtil.getBean(AuctionData.class);
+//        auctionData = AuctionData.load();
+        if (auctionData == null) {
             remove();
             return;
         }
-        log.info("[{}] 背包需要拍卖位置：{}", getHwnd(), indexes);
 
-        for (int i = 0; i < indexes.size(); i++) {
-            Integer index = indexes.get(i);
-            if (!getDm().isBind()) {
-                log.info("[{}] 绑定丢失，终止！", getHwnd());
-                break;
+        AuctionConstants.AuctionPosition.SellType sellType = AuctionConstants.AuctionPosition.SellType.getSellType(auctionData.getSellType());
+        // 选择装备栏或者道具栏的点击位置
+        int[][] clickPoints = {null, null};
+        if (sellType == AuctionConstants.AuctionPosition.SellType.PROPS_AND_EQUIPMENT) {
+            clickPoints[0] = AuctionConstants.PROPS_TAB_POINT;
+            clickPoints[1] = AuctionConstants.EQUIPMENT_TAB_POINT;
+        } else if (sellType == AuctionConstants.AuctionPosition.SellType.EQUIPMENT_AND_PROPS) {
+            clickPoints[0] = AuctionConstants.EQUIPMENT_TAB_POINT;
+            clickPoints[1] = AuctionConstants.PROPS_TAB_POINT;
+        } else if (sellType == AuctionConstants.AuctionPosition.SellType.EQUIPMENT_ONLY) {
+            clickPoints[0] = AuctionConstants.EQUIPMENT_TAB_POINT;
+        } else if (sellType == AuctionConstants.AuctionPosition.SellType.PROPS_ONLY) {
+            clickPoints[0] = AuctionConstants.PROPS_TAB_POINT;
+        }
+
+        for (int[] clickPoint : clickPoints) {
+            if (clickPoint == null) {
+                continue;
             }
-            if (stop || !getDm().isWindowClassFlashPlayerActiveX()) {
-                log.info("[{}] 运行终止！", getHwnd());
-                break;
+
+            // 点击道具栏活装备栏
+            getDm().leftClick(clickPoint);
+            Util.sleep(200L);
+            getDm().leftClick(clickPoint);
+            Util.sleep(200L);
+
+            // 背包截图，来确定物品位置
+            String bagPicPath = Constants.AUCTION_TMP_DIR + "bag-" + getHwnd() + "-" + System.currentTimeMillis() + ".png";
+            captureBagArea(bagPicPath);
+            List<Integer> indexes = AuctionConstants.AuctionPosition.getNotEmptyBagIndex(bagPicPath);
+            Util.delayDeleteFile(bagPicPath, 100L);
+
+            if (CollectionUtils.isEmpty(indexes)) {
+                log.info("[{}] 背包为空，拍卖场功能结束！", getHwnd());
+                remove();
+                return;
             }
-            try {
-                log.info("[{}] 拍卖第 {} 个！", getHwnd(), index);
-                if (Boolean.TRUE.equals(go(index))) {
-                    i--;
+            log.info("[{}] 背包需要拍卖位置：{}", getHwnd(), indexes);
+
+            // 开始逐个拍卖
+            for (int i = 0; i < indexes.size(); i++) {
+                Integer index = indexes.get(i);
+                if (!getDm().isBind()) {
+                    log.info("[{}] 绑定丢失，终止！", getHwnd());
+                    break;
                 }
-            } catch (MyInterruptException e) {
-                log.info("[{}] 中止", getHwnd());
-                break;
+                if (stop || !getDm().isWindowClassFlashPlayerActiveX()) {
+                    log.info("[{}] 运行终止！", getHwnd());
+                    break;
+                }
+                try {
+                    // 开始拍卖
+                    log.info("[{}] 拍卖第 {} 个！", getHwnd(), index);
+                    Boolean left = go(index);
+                    if (Boolean.TRUE.equals(left)) {
+                        i--;
+                    }
+                } catch (MyInterruptException e) {
+                    log.info("[{}] 中止", getHwnd());
+                    break;
+                }
+                Util.sleep(300L);
             }
-            Util.sleep(300L);
         }
 
         log.info("[{}] 拍卖完毕！", getHwnd());
@@ -171,7 +210,7 @@ public class Auction extends BaseType {
         log.info("物品：{}, 数量：{}", itemName, num);
 
         AuctionData auctionData = SpringContextUtil.getBean(AuctionData.class);
-        auctionData = AuctionData.load();
+//        auctionData = AuctionData.load();
 
         if (auctionData == null) {
             log.info("auctionData 为空！");
@@ -268,6 +307,8 @@ public class Auction extends BaseType {
             return false;
         }
 
+        picExList = closeMsgBox1(picExList, templateImgList);
+        picExList = closeMsgBox2(picExList, templateImgList);
         picExList = ensureActiveSoldOutTab(picExList, templateImgList);
         picExList = ensureActiveBag(picExList, templateImgList);
         picExList = closeMsgBox1(picExList, templateImgList);
@@ -324,13 +365,20 @@ public class Auction extends BaseType {
         return null;
     }
 
+    /**
+     * 关闭卖金币弹窗
+     *
+     * @param picExList       picExList
+     * @param templateImgList templateImgList
+     * @return List
+     */
     public List<DmDomains.PicEx> closeMsgBox1(List<DmDomains.PicEx> picExList, List<String> templateImgList) {
         if (CollectionUtils.isEmpty(picExList)) {
             return null;
         }
 
         for (int i = 0; i < 3; i++) {
-            if (!DmDomains.PicEx.contains(picExList, TypeConstants.TemplatePrefix.AUCTION_DROP_SOLD_OUT)) {
+            if (!DmDomains.PicEx.contains(picExList, TypeConstants.TemplatePrefix.AUCTION_DROP_CONFIRM_CANCEL_BUTTON)) {
                 return picExList;
             }
 
@@ -343,6 +391,13 @@ public class Auction extends BaseType {
         return null;
     }
 
+    /**
+     * 关闭拍卖数量弹窗
+     *
+     * @param picExList       picExList
+     * @param templateImgList templateImgList
+     * @return List
+     */
     public List<DmDomains.PicEx> closeMsgBox2(List<DmDomains.PicEx> picExList, List<String> templateImgList) {
         if (CollectionUtils.isEmpty(picExList)) {
             return null;
@@ -360,6 +415,21 @@ public class Auction extends BaseType {
         }
         log.info("[{}] 无法关闭拍卖数量弹窗", getHwnd());
         return null;
+    }
+
+    public void putBackItem() {
+        String path = Constants.AUCTION_TMP_DIR + "item-icon-" + getHwnd() + "-" + System.currentTimeMillis() + ".png";
+        getDm().capturePicByRegion(path, AuctionConstants.ITEM_INPUT_ICON_RECT);
+        int[] avgColor = ImgUtil.getAvgColor(path);
+        int[] delta = {30, 30, 30};
+        Util.delayDeleteFile(path, null);
+        if (ImgUtil.colorInDelta(avgColor, AuctionConstants.ITEM_INPUT_ICON_STANDARD_COLOR, delta)) {
+            return;
+        }
+        // 有色差，表示有物品，需放回
+        log.info("[{}] 将已放入物品放回", getHwnd());
+        Util.sleep(300L);
+        putItemBack(1);
     }
 
     public Integer getNum() {
@@ -542,6 +612,7 @@ public class Auction extends BaseType {
             getDm().leftClick(AuctionConstants.NUM_INPUT_BOX_CANCEL_POINT, 100L);
         } else {
             // 数量为 1 的放回原来位置
+            getDm().leftClick(AuctionConstants.PUT_BACK_POINT, 100L);
             getDm().leftClick(AuctionConstants.AUCTION_INPUT_POINT);
             Util.sleep(300L);
             getDm().leftClick(AuctionConstants.PUT_BACK_POINT, 100L);

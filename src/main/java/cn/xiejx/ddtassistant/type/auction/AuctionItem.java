@@ -122,7 +122,7 @@ public class AuctionItem implements Serializable {
     public void setMinNum(String minNum) {
         ArrayList<String> list = new ArrayList<>();
         if (StringUtils.isNotBlank(minNum)) {
-            String[] nums = minNum.replace("，", ",").split(",");
+            String[] nums = minNum.replace("，", ",").replace(" ", "").split(",");
             for (String num : nums) {
                 String number = Util.getIntegerNumberWithSign(num);
                 if (number != null) {
@@ -156,10 +156,10 @@ public class AuctionItem implements Serializable {
     private static String parsePrice(String priceStr) {
         ArrayList<Double> list = new ArrayList<>();
         if (StringUtils.isNotBlank(priceStr)) {
-            String[] prices = priceStr.replace("，", ",").split(",");
+            String[] prices = priceStr.replace("，", ",").replace(" ", "").split(",");
             for (String price : prices) {
                 if (Util.isNumber(price)) {
-                    list.add(Double.valueOf(price));
+                    list.add(Math.abs(Double.parseDouble(price)));
                 }
             }
         }

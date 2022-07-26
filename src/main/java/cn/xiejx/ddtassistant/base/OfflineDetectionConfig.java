@@ -23,7 +23,7 @@ public class OfflineDetectionConfig extends BaseConfig implements Serializable {
     @Override
     @JsonIgnore
     public String getFileName() {
-        return "offlineDetection.json";
+        return "掉线检测.json";
     }
 
     @Override

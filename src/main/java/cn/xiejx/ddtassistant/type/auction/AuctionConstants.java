@@ -29,6 +29,9 @@ public class AuctionConstants {
      */
     public static final int BAG_GAP = 4;
 
+    /**
+     * 背包空白颜色
+     */
     public static final int[] EMPTY_SAMPLE_COLOR = {208, 195, 146};
 
     /**
@@ -165,6 +168,16 @@ public class AuctionConstants {
      * 输入数量框、和卖金币的确认取消的寻找区域
      */
     public static final int[] NUM_INPUT_OR_DROP_CONFIRM_CANCEL_FIND_RECT = {300, 180, 700, 420};
+
+    /**
+     * 物品放置区域物品图标范围的无物品的标准颜色
+     */
+    public static final int[] ITEM_INPUT_ICON_STANDARD_COLOR = {58, 58, 58};
+
+    /**
+     * 物品放置区域物品图标范围
+     */
+    public static final int[] ITEM_INPUT_ICON_RECT = {50, 165, 85, 200};
 
     /**
      * 物品放置区域 ocr 范围
@@ -322,6 +335,50 @@ public class AuctionConstants {
             }
             return list;
         }
-    }
 
+        public enum SellType {
+            /**
+             * 先道具再装备
+             */
+            PROPS_AND_EQUIPMENT(1),
+            /**
+             * 仅装备
+             */
+            PROPS_ONLY(2),
+            /**
+             * 先装备再道具
+             */
+            EQUIPMENT_AND_PROPS(3),
+            /**
+             * 仅装备
+             */
+            EQUIPMENT_ONLY(4),
+            ;
+            private final Integer type;
+
+            SellType(Integer type) {
+                this.type = type;
+            }
+
+            public Integer getType() {
+                return type;
+            }
+
+            public static Integer getType(Integer type) {
+                return getSellType(type).getType();
+            }
+
+            public static SellType getSellType(Integer type) {
+                if (type == null) {
+                    return PROPS_AND_EQUIPMENT;
+                }
+                for (SellType sellType : values()) {
+                    if (sellType.getType().equals(type)) {
+                        return sellType;
+                    }
+                }
+                return PROPS_AND_EQUIPMENT;
+            }
+        }
+    }
 }

@@ -7,6 +7,7 @@ let auctionApp = new Vue({
             auctionItemList: [],
             autoAddUnknown: true,
             confirm: false,
+            sellType: "1",
         },
         hwnds: [],
         filterConditionButtonList: [],

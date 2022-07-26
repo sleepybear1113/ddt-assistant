@@ -1,6 +1,5 @@
 package cn.xiejx.ddtassistant.utils.tj;
 
-import cn.xiejx.ddtassistant.utils.Util;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -17,15 +16,11 @@ public class TjResponse implements Serializable {
     private Boolean success;
     private String code;
     private String message;
-    private String data;
-    private TjPicResult result;
-
-
+    private TjPicResult data;
     private ChoiceEnum choiceEnum;
     private Long cost;
 
     public TjResponse() {
-        this.result = new TjPicResult();
     }
 
     public static boolean validChoice(TjResponse tjResponse) {
@@ -33,12 +28,11 @@ public class TjResponse implements Serializable {
             return false;
         }
 
-        TjPicResult picResult = tjResponse.getResult();
-        if (picResult == null) {
+        if (tjResponse.getData() == null) {
             return false;
         }
 
-        String result = picResult.getResult();
+        String result = tjResponse.getData().getResult();
         if (result == null) {
             return false;
         }
@@ -78,24 +72,18 @@ public class TjResponse implements Serializable {
             tjResponse.setChoiceEnum(ChoiceEnum.UNDEFINED);
         }
 
-        String data = tjResponse.getData();
-        if (data == null || data.length() == 0) {
-            tjResponse.setResult(new TjPicResult());
-            tjResponse.setChoiceEnum(ChoiceEnum.UNDEFINED);
-        }else {
-            TjPicResult tjPicResult = null;
-            try {
-                tjPicResult = Util.parseJsonToObject(data, TjPicResult.class);
-                if (tjPicResult == null) {
-                    tjResponse.setChoiceEnum(ChoiceEnum.UNDEFINED);
-                } else {
-                    tjResponse.setChoiceEnum(ChoiceEnum.getChoice(tjPicResult.getResult()));
-                }
-            } catch (Exception ignored) {
+        TjPicResult tjPicResult = tjResponse.getData();
+        try {
+            if (tjPicResult == null) {
                 tjResponse.setChoiceEnum(ChoiceEnum.UNDEFINED);
+            } else {
+                tjResponse.setChoiceEnum(ChoiceEnum.getChoice(tjPicResult.getResult()));
             }
-            tjResponse.setResult(tjPicResult);
+        } catch (Exception ignored) {
+            tjResponse.setChoiceEnum(ChoiceEnum.UNDEFINED);
         }
+        tjResponse.setData(tjPicResult);
+
         return tjResponse;
     }
 }

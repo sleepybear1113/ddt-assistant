@@ -25,7 +25,7 @@ public class SettingConfig extends BaseConfig implements Serializable {
     @Override
     @JsonIgnore
     public String getFileName() {
-        return "setting.json";
+        return "设置信息.json";
     }
 
     @Override

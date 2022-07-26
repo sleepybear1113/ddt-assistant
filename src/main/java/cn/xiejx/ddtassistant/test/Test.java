@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        auctionNameCap();
+        testAuction();
     }
 
     public static void capWind() {
@@ -115,7 +115,7 @@ public class Test {
     }
 
     public static void testAuction() {
-        int hwnd = 2230920;
+        int hwnd = 329448;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
         Auction auction = Auction.createInstance(dm, Auction.class);
@@ -124,7 +124,7 @@ public class Test {
 //        Util.sleep(100L);
         auction.getDm().clickCorner();
         Util.sleep(100L);
-        auction.ensureInAuction();
+        auction.putBackItem();
 //        System.out.println(auction.ocrItemMouthfulPrice());
 //        int[] picInFullGame = auction.getDm().findPicInFullGame("资源图片/模板/拍卖场-是否需要出售-1.bmp", "030303", 0.7);
 //        System.out.println(Arrays.toString(picInFullGame));

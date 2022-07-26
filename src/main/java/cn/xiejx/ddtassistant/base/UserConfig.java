@@ -1,6 +1,5 @@
 package cn.xiejx.ddtassistant.base;
 
-import cn.xiejx.ddtassistant.constant.Constants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,10 +20,7 @@ import java.util.List;
 public class UserConfig extends BaseConfig implements Serializable {
     private static final long serialVersionUID = 4172087034701104358L;
 
-    public static final String OLD_PATH = "user-config.json";
-    private static final String PATH = Constants.CONFIG_DIR + OLD_PATH;
-
-    public static final long DEFAULT_CAPTURE_INTERVAL = 500L;
+    public static final long DEFAULT_CAPTURE_INTERVAL = 1000L;
     public static final long DEFAULT_TIMEOUT = 20000L;
     public static final String DEFAULT_MOUSE_MODE = "windows";
     public static final String DEFAULT_KEY_PAD_MODE = "windows";
@@ -109,7 +105,7 @@ public class UserConfig extends BaseConfig implements Serializable {
     @Override
     @JsonIgnore
     public String getFileName() {
-        return "user-config.json";
+        return "基本配置.json";
     }
 
     @Override

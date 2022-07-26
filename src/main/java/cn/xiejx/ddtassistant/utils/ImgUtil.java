@@ -80,10 +80,8 @@ public class ImgUtil {
                 raster.setPixel(xx, yy, pixels);
             }
         }
-        ImageIO.write(img, "png", new File(Constants.AUCTION_TMP_DIR + "5.png"));
         return img;
     }
-
 
     public static void changePixels(int[] input, int[] sample, int[] target, int[] delta, DeltaInOut deltaInOut, boolean forceChange) {
         boolean flag = false;
@@ -104,9 +102,26 @@ public class ImgUtil {
         System.arraycopy(target, 0, input, 0, input.length);
     }
 
-    public static int[] getAvgColor(String path) throws IOException {
-        BufferedImage img = ImageIO.read(new File(path));
-        return getAvgColor(img);
+    public static boolean colorInDelta(int[] color, int[] standard,int[] delta) {
+        if (color == null) {
+            return false;
+        }
+        if (standard == null) {
+            return true;
+        }
+        if (delta == null) {
+            delta = new int[]{0, 0, 0};
+        }
+        return Math.abs(color[0] - standard[0]) < delta[0] && Math.abs(color[1] - standard[1]) < delta[1] && Math.abs(color[2] - standard[2]) < delta[2];
+    }
+
+    public static int[] getAvgColor(String path) {
+        try {
+            BufferedImage img = ImageIO.read(new File(path));
+            return getAvgColor(img);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public static int[] getAvgColor(BufferedImage img) {

@@ -121,6 +121,7 @@ class AuctionData {
         this.auctionItemList = list;
         this.autoAddUnknown = props.autoAddUnknown;
         this.confirm = props.confirm;
+        this.sellType = props.sellType == null ? 1 : props.sellType;
     }
 }
 

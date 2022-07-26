@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.List;
@@ -36,17 +37,19 @@ public class AuctionData implements Serializable {
      */
     private Boolean autoAddUnknown;
 
-    private AuctionData() {
+    /**
+     * 出售方式
+     */
+    private Integer sellType;
 
+    private AuctionData() {
     }
 
     public void update(AuctionData auctionData) {
         if (auctionData == null) {
             return;
         }
-        auctionItemList = auctionData.getAuctionItemList();
-        filterConditionList = auctionData.getFilterConditionList();
-        autoAddUnknown = auctionData.getAutoAddUnknown();
+        BeanUtils.copyProperties(auctionData, this);
     }
 
     public AuctionItem getItem(String name) {
@@ -106,5 +109,13 @@ public class AuctionData implements Serializable {
         auctionItem.setAuctionTime("48");
         auctionItem.setMinNum(1);
         auctionItemList.add(auctionItem);
+    }
+
+    public Integer getSellType() {
+        return AuctionConstants.AuctionPosition.SellType.getType(sellType);
+    }
+
+    public void setSellType(Integer sellType) {
+        this.sellType = AuctionConstants.AuctionPosition.SellType.getType(sellType);
     }
 }

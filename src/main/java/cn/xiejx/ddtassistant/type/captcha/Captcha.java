@@ -4,9 +4,11 @@ import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmConstants;
+import cn.xiejx.ddtassistant.dm.DmDomains;
 import cn.xiejx.ddtassistant.logic.MonitorLogic;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.BaseType;
+import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
@@ -16,6 +18,7 @@ import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.tj.TjResponse;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
@@ -59,12 +62,16 @@ public class Captcha extends BaseType {
         getDm().capturePicByRegion(path, CaptchaConstants.CAPTCHA_FULL_REACT);
     }
 
-    public boolean findCaptcha(String templatePath, double threshold) {
-        return findPicture(templatePath, threshold, CaptchaConstants.CAPTCHA_COUNTDOWN_FIND_REACT);
+    public boolean findCaptcha() {
+        List<String> templateImgList = GlobalVariable.getTemplateImgList(TypeConstants.TemplatePrefix.PVE_CAPTCHA_COUNT_DOWN);
+        List<DmDomains.PicEx> picExList = getDm().findPicEx(CaptchaConstants.CAPTCHA_COUNTDOWN_FIND_REACT, templateImgList, "020202", 0.7);
+        return CollectionUtils.isNotEmpty(picExList);
     }
 
-    public boolean findFlopBonus(String templatePath, double threshold) {
-        return findPicture(templatePath, threshold, CaptchaConstants.FLOP_BONUS_DETECT_RECT);
+    public boolean findFlopBonus() {
+        List<String> templateImgList = GlobalVariable.getTemplateImgList(TypeConstants.TemplatePrefix.PVE_FLOP_BONUS);
+        List<DmDomains.PicEx> picExList = getDm().findPicEx(CaptchaConstants.FLOP_BONUS_DETECT_RECT, templateImgList, "020202", 0.7);
+        return CollectionUtils.isNotEmpty(picExList);
     }
 
     private boolean findPicture(String templatePath, double threshold, int[] rect) {
@@ -113,6 +120,14 @@ public class Captcha extends BaseType {
         long lastLogTime = System.currentTimeMillis();
         // 开始运行
         while (isRunning()) {
+            // 每次识屏间隔
+            Long captureInterval = userConfig.getCaptureInterval();
+            if (captureInterval == null || captureInterval <= 0) {
+                // 未设置则不管
+                Util.sleep(500L);
+                continue;
+            }
+
             // 输出日志
             long now = System.currentTimeMillis();
             Long logPrintInterval = userConfig.getLogPrintInterval();
@@ -123,8 +138,7 @@ public class Captcha extends BaseType {
                 }
             }
 
-            // 每次识屏间隔
-            Util.sleep(userConfig.getCaptureInterval());
+            Util.sleep(captureInterval);
             // 判断是否还是 flash
             if (!getDm().isWindowClassFlashPlayerActiveX()) {
                 log.info("[{}] 当前句柄不为 flash 窗口，解绑！", hwnd);
@@ -143,7 +157,7 @@ public class Captcha extends BaseType {
 
     public void identifyCaptcha(UserConfig userConfig) {
         // 没找到
-        if (!findCaptcha(getTemplateBmpNames(), CaptchaConstants.DEFAULT_BRIGHT_PIC_THRESHOLD)) {
+        if (!findCaptcha()) {
             return;
         }
         log.info("[{}] 发现副本验证码！", getHwnd());
@@ -189,7 +203,7 @@ public class Captcha extends BaseType {
             if (ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
                 long leftTime = countDownTime - (System.currentTimeMillis() - startCaptchaTime);
                 if (leftTime > CaptchaConstants.MIN_ANSWER_TIME * 1000) {
-                    reportErrorResult(response.getResult().getId(), true);
+                    reportErrorResult(response.getData().getId(), true);
                     log.info("[{}] 平台返回结果有误，但倒计时仍有 {} 毫秒，再次请求平台", getHwnd(), leftTime);
                     response = TjHttpUtil.waitToGetChoice(leftTime - 2000, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
                 }
@@ -198,7 +212,7 @@ public class Captcha extends BaseType {
             log.info("[{}] 用户名或密码为空，无法提交打码平台", getHwnd());
             response.setChoiceEnum(ChoiceEnum.UNDEFINED);
         }
-        this.lastRemoteCaptchaId = response.getResult().getId();
+        this.lastRemoteCaptchaId = response.getData().getId();
 
         // 获取结果
         ChoiceEnum choiceEnum = response.getChoiceEnum();
@@ -209,7 +223,7 @@ public class Captcha extends BaseType {
 
         if (ChoiceEnum.UNDEFINED.equals(choiceEnum)) {
             // 报错
-            reportErrorResult(response.getResult().getId(), true);
+            reportErrorResult(response.getData().getId(), true);
 
             // 识别错误，那么走用户自定义
             String defaultChoiceAnswer = userConfig.getDefaultChoiceAnswer();
@@ -250,7 +264,7 @@ public class Captcha extends BaseType {
         if (pveFlopBonusAppearDelay == null || pveFlopBonusAppearDelay <= 0) {
             return;
         }
-        if (!findFlopBonus(getFlopBonusTemplateBmpNames(), CaptchaConstants.DEFAULT_FLOP_BONUS_PIC_THRESHOLD)) {
+        if (!findFlopBonus()) {
             return;
         }
         if (MonitorLogic.FLOP_BONUS_CACHER.get(MonitorLogic.FLOP_BONUS_FOUND_KEY) == null) {
