@@ -41,5 +41,6 @@ build/
 /test/
 /pictures/
 /tmp/
+/临时文件/
 /图片/
 /hs_err_pid*

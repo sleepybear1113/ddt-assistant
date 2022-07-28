@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.test;
 
+import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.utils.ImageClean;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -25,11 +26,11 @@ public class SimpleTest {
         String s = "461402.png";
         String src = "test/src/" + s;
         String dst = "test/dst/" + s;
-        imageClean.cleanImage("tmp/ocr/raw/1657723842466.png", "tmp/ocr/raw/1657723842466-1.png");
+        imageClean.cleanImage(Constants.TEMP_DIR + "ocr/raw/1657723842466.png", Constants.TEMP_DIR + "ocr/raw/1657723842466-1.png");
     }
 
     public static void ocr() throws TesseractException {
-        System.out.println(OcrUtil.ocr("tmp/ocr/raw/1657723842466-1.png", "chi_sim"));
+        System.out.println(OcrUtil.ocr(Constants.TEMP_DIR + "ocr/raw/1657723842466-1.png", "chi_sim"));
     }
 
     public static void testJson() throws JsonProcessingException {
@@ -43,6 +44,6 @@ public class SimpleTest {
     @Data
     static class Aq {
         @JsonAnySetter
-        public Map<String,String> a;
+        public Map<String, String> a;
     }
 }

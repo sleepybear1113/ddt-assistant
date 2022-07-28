@@ -42,7 +42,7 @@ public class Test {
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
         dm.clickCorner();
-        dm.capturePicByRegion("tmp/wind2/" + System.currentTimeMillis() + ".png", region);
+        dm.capturePicByRegion(Constants.TEMP_DIR + "wind2/" + System.currentTimeMillis() + ".png", region);
     }
 
     public static void ocrWind() throws IOException, TesseractException {
@@ -51,7 +51,7 @@ public class Test {
                 {blue, ImgUtil.WHITE, blue},
 //                {ImgUtil.WHITE, ImgUtil.BLACK, ImgUtil.COLOR_40},
         };
-        BufferedImage bufferedImage = ImgUtil.changeImgColor("tmp/wind/1658028220368.png", colors, ImgUtil.DeltaInOut.DELTA_IN);
+        BufferedImage bufferedImage = ImgUtil.changeImgColor(Constants.TEMP_DIR + "wind/1658028220368.png", colors, ImgUtil.DeltaInOut.DELTA_IN);
 
         String ocr = OcrUtil.ocr(bufferedImage);
         System.out.println(ocr);
@@ -88,9 +88,9 @@ public class Test {
     }
 
     public static void ocr() throws Exception {
-        String filename = "tmp/ocr/b/1657729494540.png";
-//        ImgUtil.cleanImg(filename,"tmp/ocr/b/1.png", ImageClean.Type.CAPTCHA_WHITE_CHAR);
-        String s = OcrUtil.ocrAuctionItemName(filename,"tmp/ocr/b/3.png");
+        String filename = Constants.TEMP_DIR + "ocr/b/1657729494540.png";
+//        ImgUtil.cleanImg(filename, Constants.TEMP_DIR + "ocr/b/1.png", ImageClean.Type.CAPTCHA_WHITE_CHAR);
+        String s = OcrUtil.ocrAuctionItemName(filename, Constants.TEMP_DIR + "ocr/b/3.png");
         System.out.println(s);
     }
 
@@ -104,7 +104,7 @@ public class Test {
 //        Util.sleep(100L);
         auction.getDm().clickCorner();
         Util.sleep(100L);
-        String path = "tmp/ocr/raw/" + System.currentTimeMillis() + ".png";
+        String path = Constants.TEMP_DIR + "ocr/raw/" + System.currentTimeMillis() + ".png";
         auction.captureItemNameOcrRect(path);
         String s = OcrUtil.ocrAuctionItemName(path, path.replace("raw", "b"));
         System.out.println(s);

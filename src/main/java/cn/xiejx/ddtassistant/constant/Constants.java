@@ -13,7 +13,7 @@ public class Constants {
     public static final String RESOURCE_FILE_DIR = "资源文件/";
     public static final String PIC_DIR = "图片/";
     public static final String CONFIG_DIR = "用户配置文件/";
-    public static final String TEMP_DIR = "tmp/";
+    public static final String TEMP_DIR = "临时文件/";
 
     /**
      * ==============================================
