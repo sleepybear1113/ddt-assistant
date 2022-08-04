@@ -18,7 +18,8 @@ public class Dm {
     private static final Logger log = LoggerFactory.getLogger(Dm.class);
 
     public static final String PROGRAM_ID_DM = "dm.dmsoft";
-
+    public static final String DEFAULT_MOUSE_MODE = "windows";
+    public static final String DEFAULT_KEY_PAD_MODE = "windows";
     private Dispatch dmDispatch;
 
     public Dm() {

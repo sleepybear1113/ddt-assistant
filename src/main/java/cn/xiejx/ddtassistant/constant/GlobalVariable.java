@@ -30,12 +30,19 @@ public class GlobalVariable {
         return t;
     }, new ThreadPoolExecutor.DiscardPolicy());
 
-
     public static List<String> getTemplateImgList(String template) {
         return getTemplateImgList(Collections.singletonList(template));
     }
 
+    public static List<String> getTemplateImgList(String template, boolean includeTemp) {
+        return getTemplateImgList(Collections.singletonList(template), includeTemp);
+    }
+
     public static List<String> getTemplateImgList(List<String> templates) {
+        return getTemplateImgList(templates, false);
+    }
+
+    public static List<String> getTemplateImgList(List<String> templates, boolean includeTemp) {
         if (MapUtils.isEmpty(templateImgMap)) {
             templateImgMap = TypeConstants.TemplatePrefix.getTemplateImgMap();
             if (MapUtils.isEmpty(templateImgMap)) {
@@ -49,6 +56,9 @@ public class GlobalVariable {
                 continue;
             }
             list.addAll(strings);
+        }
+        if (!includeTemp) {
+            list.removeIf(s -> s.contains(TypeConstants.TemplatePrefix.TEMP_STR));
         }
         return list;
     }

@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,9 +30,6 @@ import java.util.List;
 public class Captcha extends BaseType {
 
     private static final long serialVersionUID = -2259938240133602111L;
-    public static List<String> captchaTemplateNameList = new ArrayList<>();
-    public static List<String> captchaTemplateNameDarkList = new ArrayList<>();
-    public static List<String> flopBonusTemplateNameList = new ArrayList<>();
 
     private long lastCaptchaTime;
     private String lastRemoteCaptchaId;
@@ -90,12 +86,26 @@ public class Captcha extends BaseType {
         getDm().capturePicByRegion(path, CaptchaConstants.CAPTCHA_COUNT_DOWN_REACT);
     }
 
+    public void capturePveFlopBonusSampleRegion(String path) {
+        getDm().capturePicByRegion(path, CaptchaConstants.FLOP_BONUS_SAMPLE_RECT);
+    }
+
     public void captureCountDownSampleRegion(String path) {
         getDm().capturePicByRegion(path, CaptchaConstants.CAPTCHA_COUNTDOWN_SAMPLE_REACT);
     }
 
     public void captureCountDownNumberRegion(String path) {
         getDm().capturePicByRegion(path, CaptchaConstants.COUNT_DOWN_NUMBER_RECT);
+    }
+
+    public Integer captureAndOcrCountDown() {
+        // 倒计时保存路径
+        String countDownName = Constants.CAPTCHA_COUNT_DOWN_DIR + getHwnd() + "-" + System.currentTimeMillis() + ".png";
+        // 截屏倒计时
+        captureCountDownNumberRegion(countDownName);
+        Integer countDown = OcrUtil.ocrCountDownPic(countDownName);
+        Util.delayDeleteFile(countDownName, null);
+        return countDown;
     }
 
     public void identifyCaptchaLoop(UserConfig userConfig) {
@@ -113,9 +123,8 @@ public class Captcha extends BaseType {
         }
 
         // 绑定
-        getDm().bind(userConfig);
+        getDm().bind(userConfig.getMouseMode(), userConfig.getKeyPadMode());
         setRunning(true);
-        log.info("绑定 flash 窗口，句柄：{}", hwnd);
 
         long lastLogTime = System.currentTimeMillis();
         // 开始运行
@@ -168,30 +177,20 @@ public class Captcha extends BaseType {
         // 设置按钮缓存
         MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), MonitorLogic.CAPTCHA_DELAY, ExpireWayEnum.AFTER_UPDATE);
 
-        log.info("[{}] 点亮屏幕", getHwnd());
-        getDm().leftClick(100, 100, 100);
-        getDm().leftClick(100, 100, 100);
-        Util.sleep(300L);
-        getDm().leftClick(100, 100, 100);
-        Util.sleep(100L);
-
         // 验证码保存路径
         String captchaDir = Constants.CAPTCHA_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT) + "/";
         String captchaName = captchaDir + getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
         this.lastCaptchaFilePath = captchaName;
-        // 倒计时保存路径
-        String countDownName = Constants.CAPTCHA_COUNT_DOWN_DIR + getHwnd() + ".png";
 
         // 截屏
         captureCaptchaQuestionPic(captchaName);
-        //倒计时
-        captureCountDownNumberRegion(countDownName);
         log.info("[{}] 验证码保存到本地，文件名为：{}", getHwnd(), captchaName);
-        Integer countDown = OcrUtil.ocrCountDownPic(countDownName);
-        long startCaptchaTime = System.currentTimeMillis();
+        // 倒计时时间
+        Integer countDown = captureAndOcrCountDown();
 
+        long startCaptchaTime = System.currentTimeMillis();
         // 提交平台识别
-        TjResponse response = new TjResponse();
+        TjResponse response = TjResponse.buildEmptyResponse();
         if (countDown != null && countDown <= CaptchaConstants.MIN_ANSWER_TIME) {
             response.setChoiceEnum(ChoiceEnum.UNDEFINED);
             log.info("[{}] 验证码倒计时剩下 {} 秒，来不及提交打码，进行自定义选择", getHwnd(), countDown);
@@ -201,7 +200,9 @@ public class Captcha extends BaseType {
             long countDownTime = countDown == null ? userConfig.getTimeout() : (countDown - 2) * 1000L;
             response = TjHttpUtil.waitToGetChoice(countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
             if (ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
-                long leftTime = countDownTime - (System.currentTimeMillis() - startCaptchaTime);
+                // 如果返回结果错误，那么重新识别时间并且提交打码
+                countDown = captureAndOcrCountDown();
+                long leftTime = countDown == null ? countDownTime - (System.currentTimeMillis() - startCaptchaTime) : countDown * 1000;
                 if (leftTime > CaptchaConstants.MIN_ANSWER_TIME * 1000) {
                     reportErrorResult(response.getData().getId(), true);
                     log.info("[{}] 平台返回结果有误，但倒计时仍有 {} 毫秒，再次请求平台", getHwnd(), leftTime);
@@ -252,7 +253,7 @@ public class Captcha extends BaseType {
         getDm().leftClick(choiceEnum.getXy(), 100);
 
         // 提交答案
-        Util.sleep(500L);
+        Util.sleep(300L);
         getDm().leftClick(CaptchaConstants.SUBMIT_BUTTON_POINT, 100);
 
         this.lastCaptchaTime = System.currentTimeMillis();
@@ -313,19 +314,7 @@ public class Captcha extends BaseType {
         if (isRunning(hwnd, Captcha.class)) {
             return false;
         }
-        GlobalVariable.THREAD_POOL.execute(() -> Captcha.createInstance(DmDdt.createInstance(hwnd), Captcha.class).identifyCaptchaLoop(userConfig));
+        GlobalVariable.THREAD_POOL.execute(() -> Captcha.createInstance(hwnd, Captcha.class, false).identifyCaptchaLoop(userConfig));
         return true;
-    }
-
-    public static String getFlopBonusTemplateBmpNames() {
-        return StringUtils.join(Captcha.flopBonusTemplateNameList, "|");
-    }
-
-    public static String getTemplateBmpNames() {
-        return StringUtils.join(Captcha.captchaTemplateNameList, "|");
-    }
-
-    public static String getTemplateDarkBmpNames() {
-        return StringUtils.join(Captcha.captchaTemplateNameDarkList, "|");
     }
 }

@@ -3,7 +3,6 @@ package cn.xiejx.ddtassistant.config;
 import cn.xiejx.ddtassistant.base.OfflineDetectionConfig;
 import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.base.UserConfig;
-import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.type.auction.AuctionData;
@@ -41,11 +40,7 @@ public class Ioc {
     @Bean
     public DmDdt initDmDdt() {
         DmDdt dmDdt = DmDdt.createInstance(null);
-        initTemplateImgMap();
+        TypeConstants.TemplatePrefix.initTemplateImgMap();
         return dmDdt;
-    }
-
-    public static void initTemplateImgMap() {
-        GlobalVariable.templateImgMap = TypeConstants.TemplatePrefix.getTemplateImgMap();
     }
 }

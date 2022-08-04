@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.base;
 
+import cn.xiejx.ddtassistant.dm.Dm;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,8 +23,6 @@ public class UserConfig extends BaseConfig implements Serializable {
 
     public static final long DEFAULT_CAPTURE_INTERVAL = 1000L;
     public static final long DEFAULT_TIMEOUT = 20000L;
-    public static final String DEFAULT_MOUSE_MODE = "windows";
-    public static final String DEFAULT_KEY_PAD_MODE = "windows";
     public static final String DEFAULT_SOFT_ID = "3b995690b1794ff08bad1abb88a3e451";
 
     private String username;
@@ -126,8 +125,8 @@ public class UserConfig extends BaseConfig implements Serializable {
         userConfig.setDetectNewWindowInterval(null);
         userConfig.setTimeout(DEFAULT_TIMEOUT);
         userConfig.setLogPrintInterval(30000L);
-        userConfig.setMouseMode(DEFAULT_MOUSE_MODE);
-        userConfig.setKeyPadMode(DEFAULT_KEY_PAD_MODE);
+        userConfig.setMouseMode(Dm.DEFAULT_MOUSE_MODE);
+        userConfig.setKeyPadMode(Dm.DEFAULT_KEY_PAD_MODE);
         userConfig.setExtraPorts(null);
         return userConfig;
     }
@@ -238,22 +237,8 @@ public class UserConfig extends BaseConfig implements Serializable {
         this.detectNewWindowInterval = detectNewWindowInterval;
     }
 
-    public String getMouseMode() {
-        if (StringUtils.isBlank(mouseMode)) {
-            mouseMode = DEFAULT_MOUSE_MODE;
-        }
-        return mouseMode;
-    }
-
     public void setMouseMode(String mouseMode) {
         this.mouseMode = mouseMode;
-    }
-
-    public String getKeyPadMode() {
-        if (StringUtils.isBlank(keyPadMode)) {
-            keyPadMode = DEFAULT_KEY_PAD_MODE;
-        }
-        return keyPadMode;
     }
 
     public void setKeyPadMode(String keyPadMode) {

@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant.type;
 
 import cn.xiejx.ddtassistant.constant.Constants;
+import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.ImgUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import org.apache.commons.collections4.CollectionUtils;
@@ -17,6 +18,8 @@ import java.util.Map;
 public class TypeConstants {
 
     public static class TemplatePrefix {
+        public static final String TEMP_STR = "-临时模板";
+
         public static final String PVE_CAPTCHA_COUNT_DOWN = "副本-验证码-倒计时-";
         public static final String PVE_FLOP_BONUS = "副本-翻牌-游戏结算-";
 
@@ -62,6 +65,10 @@ public class TypeConstants {
             return getFullPathWithFullName(Constants.TEMPLATE_PICTURE_DIR, name, index);
         }
 
+        public static void initTemplateImgMap() {
+            GlobalVariable.templateImgMap = TypeConstants.TemplatePrefix.getTemplateImgMap();
+        }
+
         public static Map<String, List<String>> getTemplateImgMap() {
             return getTemplateImgMap(Constants.TEMPLATE_PICTURE_DIR);
         }
@@ -72,6 +79,7 @@ public class TypeConstants {
             if (CollectionUtils.isEmpty(allDeclaredFields)) {
                 return null;
             }
+            allDeclaredFields.removeIf(TEMP_STR::equals);
             allDeclaredFields.sort(String::compareTo);
             Map<String, List<String>> templateMap = new HashMap<>();
             for (String field : allDeclaredFields) {

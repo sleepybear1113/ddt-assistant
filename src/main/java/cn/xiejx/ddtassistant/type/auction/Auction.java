@@ -61,7 +61,7 @@ public class Auction extends BaseType {
         if (isRunning(hwnd, Auction.class)) {
             return false;
         }
-        GlobalVariable.THREAD_POOL.execute(() -> Auction.createInstance(DmDdt.createInstance(hwnd), Auction.class).goLoop(confirm));
+        GlobalVariable.THREAD_POOL.execute(() -> Auction.createInstance(hwnd, Auction.class, false).goLoop(confirm));
         return true;
     }
 
@@ -435,17 +435,12 @@ public class Auction extends BaseType {
     public Integer getNum() {
         ArrayList<String> templates = new ArrayList<>();
         templates.add(TypeConstants.TemplatePrefix.AUCTION_NUM_BOX_CONFIRM_CANCEL_BUTTON);
-//        templates.add(TypeConstants.TemplatePrefix.AUCTION_DROP_CONFIRM_CANCEL_BUTTON);
         List<String> templateImgList = GlobalVariable.getTemplateImgList(templates);
         List<DmDomains.PicEx> picEx = getDm().findPicEx(AuctionConstants.NUM_INPUT_OR_DROP_CONFIRM_CANCEL_FIND_RECT, templateImgList, "030303", 0.6);
         if (CollectionUtils.isEmpty(picEx)) {
             return 1;
         }
-//
-//        boolean inputNumBoxAppear = findInputNumBox(TypeConstants.TemplatePrefix.getFullPathWithFullName(TypeConstants.TemplatePrefix.AUCTION_NUM_BOX, 1), 0.7);
-//        if (!inputNumBoxAppear) {
-//            return 1;
-//        }
+
         Integer num = ocrItemNum();
         return (num == null || num == 1) ? -1 : num;
     }
@@ -630,6 +625,38 @@ public class Auction extends BaseType {
 
     public void captureSellNumSamplePic(String path) {
         getDm().capturePicByRegion(path, AuctionConstants.NUM_INPUT_BOX_SELL_NUM_SAMPLE_RECT);
+    }
+
+    public void captureBagOpenSamplePic(String path) {
+        getDm().capturePicByRegion(path, AuctionConstants.BAG_OPEN_TEMPLATE_RECT);
+    }
+
+    public void captureSellIntroSamplePic(String path) {
+        getDm().capturePicByRegion(path, AuctionConstants.SOLD_OUT_INTRO_TEMPLATE_RECT);
+    }
+
+    public void captureDropConfirmCancelSamplePic(String path) {
+        getDm().capturePicByRegion(path, AuctionConstants.SOLD_OUT_BOX_CONFIRM_SAMPLE_RECT);
+    }
+
+    public void captureNumInputConfirmCancelSamplePic(String path) {
+        getDm().capturePicByRegion(path, AuctionConstants.NUM_INPUT_OR_DROP_CONFIRM_CANCEL_SAMPLE_RECT);
+    }
+
+    public void captureSoldOutTabSamplePic(String path) {
+        getDm().capturePicByRegion(path, AuctionConstants.SOLD_OUT_TAB_TEMPLATE_RECT);
+    }
+
+    public void captureSearchTabTabSamplePic(String path) {
+        getDm().capturePicByRegion(path, AuctionConstants.SEARCH_TAB_TEMPLATE_RECT);
+    }
+
+    public void captureEquipmentTabSamplePic(String path) {
+        getDm().capturePicByRegion(path, AuctionConstants.EQUIPMENT_TAB_TEMPLATE_RECT);
+    }
+
+    public void capturePropsTabSamplePic(String path) {
+        getDm().capturePicByRegion(path, AuctionConstants.EQUIPMENT_TAB_TEMPLATE_RECT);
     }
 
     public void captureBagArea(String path) {

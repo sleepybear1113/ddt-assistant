@@ -53,6 +53,7 @@ public class TjResponse implements Serializable {
         res.setMessage("结果为空");
         res.setChoiceEnum(ChoiceEnum.UNDEFINED);
         res.setCost(-1L);
+        res.setData(new TjPicResult());
         return res;
     }
 

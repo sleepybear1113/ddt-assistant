@@ -10,8 +10,6 @@
 <script src="lib/js/axios.min.js"></script>
 <script src="lib/js/echarts.min.js"></script>
 <script src="js/config/axios-config.js"></script>
-<script src="js/objects.js"></script>
-<script src="js/utils.js"></script>
 <body>
 <div id="index">
     <div>
@@ -347,10 +345,13 @@
                     记得修改之后，一定要点击保存！！！！！！！！！
                 </li>
                 <li>
-                    物品名和 OCR 名：物品名就是实际的物品的名称，需要手动填入。OCR 名就是识别游戏画面的文字，提取出来的文字，由于字库较少，所以识别可能会有一定的不一致。但是假如物品 ABC 被识别为了
+                    物品名和 OCR 名：物品名就是实际的物品的名称，需要手动填入。OCR
+                    名就是识别游戏画面的文字，提取出来的文字，由于字库较少，所以识别可能会有一定的不一致。但是假如物品 ABC
+                    被识别为了
                     QWE，那么 OCR 名就为 QWE，可以手动在物品名中写上 ABC。但是程序内部还是按照 QWE 来识别。
                     <br/>
-                    一般来说，不需要改 OCR 名，改了程序就识别不到了。如果识别出现不一致，也问题不大，因为 ABC 识别为 QWE 后，正常情况下，不会有另外的物品也被识别为 QWE，QWE 相当于是程序对 ABC
+                    一般来说，不需要改 OCR 名，改了程序就识别不到了。如果识别出现不一致，也问题不大，因为 ABC 识别为 QWE
+                    后，正常情况下，不会有另外的物品也被识别为 QWE，QWE 相当于是程序对 ABC
                     的别名。
                     <br/>
                     由于物品较多，字库收集较麻烦，所以目前只收集了常见的字。
@@ -365,17 +366,21 @@
                             在最小数量输入框中，填写最小的拍卖数量。其中数量这块有三种格式，普通数字、带+的数字（正数）、带-的数字（负数）。当填写多个数量的时候，需要用逗号分隔。
                         </li>
                         <li>
-                            在最小数量输入框中，如果写普通数字，比如 50，那么物品数量超过 50 就会全部放入拍卖框中；如果是负数，比如 -100，那么物品数量大于等于 100，每次只放入拍卖场 100
+                            在最小数量输入框中，如果写普通数字，比如 50，那么物品数量超过 50 就会全部放入拍卖框中；如果是负数，比如
+                            -100，那么物品数量大于等于 100，每次只放入拍卖场 100
                             个；如果写正数，比如 +300，那么物品数量超过 300 才会按照 300 的整倍数放入如放入
                             900、600、300。简单来说，就是正数是整倍数，负数是固定数量，普通数字是大于等于全部放入。
                         </li>
                         <li>
-                            在最小数量输入框中，也可以多个数值之间用逗号隔开，那么会从左到右依次匹配。如写了 “+100,-10,5”，而实际总数是 732，那么第一次会匹配 +100 整倍数 700
-                            进行拍卖。第二次匹配不到 +100 了因为数量只剩下 32，往后匹配到 -10，往拍卖场放入 3 次 10 数量的物品。最后匹配 5，但是此时数量只剩下 2，不满足大于等于
+                            在最小数量输入框中，也可以多个数值之间用逗号隔开，那么会从左到右依次匹配。如写了
+                            “+100,-10,5”，而实际总数是 732，那么第一次会匹配 +100 整倍数 700
+                            进行拍卖。第二次匹配不到 +100 了因为数量只剩下 32，往后匹配到 -10，往拍卖场放入 3 次 10
+                            数量的物品。最后匹配 5，但是此时数量只剩下 2，不满足大于等于
                             5，此时停止拍卖该物品。
                         </li>
                         <li>
-                            同时单价也支持多价格，与数量匹配，对应位置数量启用对应位置价格。比如单价 19,17,15，数量 -999,-100,-10，那么有 999 数量的就按照 19 单价计算，剩下的有
+                            同时单价也支持多价格，与数量匹配，对应位置数量启用对应位置价格。比如单价 19,17,15，数量
+                            -999,-100,-10，那么有 999 数量的就按照 19 单价计算，剩下的有
                             100 数量的每次 17 单价。
                         </li>
                     </ul>
@@ -389,6 +394,7 @@
         <h3>截屏查看</h3>
         <hr>
         <span>刷新频率：{{interval == null? "无": (interval + "毫秒")}}</span>
+        <br/>
         <span v-for="i in intervalList"><button v-on:click="changeInterval(i)">{{i}}</button></span>
         <button v-on:click="changeInterval(interval - 100)">-100</button>
         <button v-on:click="changeInterval(interval + 100)">+100</button>
@@ -415,6 +421,45 @@
         <button v-on:click="changeImgSize('+10')">+10%</button>
         <br/>
         <img :src="src" alt="" :width="width">
+    </div>
+
+
+    <div class="tab" id="reCapture">
+        <h3>补偿截图</h3>
+        <hr>
+
+        <button v-on:click="getDdtHwnds()">刷新获取句柄</button>
+        <br/>
+        <div>
+            <span v-for="hwnd in hwnds">
+                <label :for="'reCapture-hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
+                <input :id="'reCapture-hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
+                <br/>
+            </span>
+            <span v-show="hwnds.length === 0"><i>没有获取可运行的句柄，请点击“获取”</i></span>
+            <hr>
+            <button v-on:click="openResourceDir()">打开文件夹</button>
+            <br/>
+            <span v-for="templateInfo in templateInfoList">
+                <span>模板名：{{templateInfo.msg}}</span>
+                <button v-on:click="reCaptureSampleImg(templateInfo.msg, templateInfo.url)">截图</button>
+                <button v-on:click="showTemplates(templateInfo.prefix)">查看已有样图</button>
+                <br/>
+            </span>
+            <hr>
+            <h3>截图样例</h3>
+            <span v-for="template in templates">
+                <span>{{template}}</span>
+                <br/>
+                <img :src="template">
+                <br/>
+                <button v-on:click="openDir(template, true)">打开文件所在位置</button>
+                <button v-on:click="deleteSampleImg(template)">删除该截图</button>
+                <button v-show="template.indexOf('-临时模板') > 0"  v-on:click="convertToOfficialTemplate(template)">转为正式模板</button>
+                <hr>
+            </span>
+        </div>
     </div>
 
 
@@ -492,7 +537,8 @@
             <br/>
             <span>各大邮箱为了安全，不把邮箱密码作为发件密码，只用授权码，这样子即使泄漏也不会危害到自身邮箱。</span>
             <br/>
-            <a href="https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256" target="_blank">点击此处查看 QQ
+            <a href="https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256" target="_blank">点击此处查看
+                QQ
                 邮箱如何获取授权码</a>
             <br/>
             <a href="https://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac21b8ba4d48ed49ebc"
@@ -534,7 +580,8 @@
                     <a>“大漠插件注册”文件夹：如果大漠插件不起作用，那么进去双击注册到系统。</a>
                 </li>
                 <li>
-                    <a>“ddt-assistant.jar”文件：主 Java 程序包（关键）。所有功能都集中于此，其他文件夹、文件都是附属依赖，唯独它是主程序。</a>
+                    <a>“ddt-assistant.jar”文件：主 Java
+                        程序包（关键）。所有功能都集中于此，其他文件夹、文件都是附属依赖，唯独它是主程序。</a>
                 </li>
             </ol>
             <h5>已知问题</h5>
@@ -550,7 +597,8 @@
                     <a>小更新：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，替换旧文件并且重命名为“ddt-assistant.jar”（不要版本号）。</a>
                 </li>
                 <li>
-                    <a>中等更新：在“小更新”的替换 jar 的基础上，可能会有一些资源文件的替换，比如在“img”文件夹添加几个文件，从群文件下载复制进去即可。</a>
+                    <a>中等更新：在“小更新”的替换 jar
+                        的基础上，可能会有一些资源文件的替换，比如在“img”文件夹添加几个文件，从群文件下载复制进去即可。</a>
                 </li>
                 <li>
                     <a>大更新：需要全量下载完整包，在整个项目存在实质性底层架构改变才会使用，一般不会涉及。</a>
@@ -559,7 +607,8 @@
                     <a>无脑更新：直接下载全量包，使用即可。不用考虑资源文件的额外下载。由于个人配置文件在脚本文件夹，所以可以把上一个版本的“config”文件夹复制过来，就能保持配置复用。</a>
                 </li>
                 <li>
-                    <a class="red-font">每次更新完成，第一次打开设置页面，切记，强制刷新浏览器，使用 Ctrl + F5 或者 Ctrl + 点击刷新按钮，来避免旧版本页面的缓存。</a>
+                    <a class="red-font">每次更新完成，第一次打开设置页面，切记，强制刷新浏览器，使用 Ctrl + F5 或者 Ctrl +
+                        点击刷新按钮，来避免旧版本页面的缓存。</a>
                 </li>
             </ol>
         </div>
@@ -574,35 +623,24 @@
             <p>本项目后端使用 Spring Boot 2.6.7 基于 32 位 Java 8 开发。</p>
             <p>本项目前端使用非 node 非 cli 的纯 vue.js 文件开发，不使用前端其他复杂框架。</p>
             <p>
-                本项目已开源（开放全部源代码），地址：<a href="https://github.com/sleepybear1113/ddt-assistant" target="_blank">https://github.com/sleepybear1113/ddt-assistant</a>
+                本项目已开源（开放全部源代码），地址：
+                <a href="https://github.com/sleepybear1113/ddt-assistant" target="_blank">https://github.com/sleepybear1113/ddt-assistant</a>
             </p>
             <hr>
             <p>本项目使用大漠插件作为后台操作游戏的插件，使用 tesseract 作为 OCR 工具。</p>
             <p>不对游戏做任何入侵、修改、增加、删除，不对游戏进行任何破坏，仅模拟人工点击等操作。</p>
             <p>非经允许，任何人不得将此程序用于商业用途，作者将保留一切该程序的权利。</p>
         </div>
-
-        <div v-show="selectedTab === '性能'">
-            <p>以下性能监控后台默认每 2 分钟收集一次，或者点击刷新立即获取</p>
-            <p>内存占用会随时间缓慢上升，直到到达 Java 认为需要清理的时候，进行一次大清理，占用会下降</p>
-            <hr>
-            <button v-on:click="showMemoryUse()">刷新</button>
-            <br/>
-            <a>当前占用 {{currentMemoryUse}} KB</a>
-            <a>最大占用 {{maxMemoryUse}} KB</a>
-            <div id="memory-use" style="width: 600px;height:400px;"></div>
-        </div>
     </div>
 </div>
 
-<script src="js/index.js"></script>
-<script src="js/offlineDetection.js"></script>
-<script src="js/captcha.js"></script>
-<script src="js/capture.js"></script>
-<script src="js/auction.js"></script>
-<script src="js/test.js"></script>
-<script src="js/tab.js"></script>
-<script src="js/setting.js"></script>
-<script src="js/introduction.js"></script>
+<script type="text/javascript">
+    ["utils", "objects"]
+        .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
+</script>
+<script type="text/javascript">
+    ["index", "offlineDetection", "captcha", "capture", "auction", "test", "tab", "setting", "introduction", "reCapture"]
+        .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
+</script>
 </body>
 </html>

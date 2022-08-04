@@ -19,8 +19,8 @@ public class SystemController {
     @Resource
     private SystemLogic systemLogic;
 
-    @RequestMapping("/system/getMemoryUse")
-    public List<MemoryUseVo> getMemoryUse() {
-        return systemLogic.getMemoryUse();
+    @RequestMapping("/system/openWithExplorer")
+    public void openWithExplorer(String path, Boolean select) {
+        systemLogic.openWithExplorer(path, Boolean.TRUE.equals(select));
     }
 }

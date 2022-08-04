@@ -69,9 +69,7 @@ public class Test {
 
     public static void testOcrNumTotal() {
         int hwnd = 67702;
-        DmDdt dm = DmDdt.createInstance(hwnd);
-        dm.bind();
-        Auction auction = Auction.createInstance(dm, Auction.class);
+        Auction auction = Auction.createInstance(hwnd, Auction.class, true);
         auction.setRunning(true);
         auction.getDm().clickCorner();
         for (int i = 1; i <= 999; i++) {
@@ -96,9 +94,7 @@ public class Test {
 
     public static void auctionNameCap() {
         int hwnd = 393942;
-        DmDdt dm = DmDdt.createInstance(hwnd);
-        dm.bind();
-        Auction auction = Auction.createInstance(dm, Auction.class);
+        Auction auction = Auction.createInstance(hwnd, Auction.class, true);
         auction.setRunning(true);
 //        auction.getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
 //        Util.sleep(100L);
@@ -116,9 +112,7 @@ public class Test {
 
     public static void testAuction() {
         int hwnd = 329448;
-        DmDdt dm = DmDdt.createInstance(hwnd);
-        dm.bind();
-        Auction auction = Auction.createInstance(dm, Auction.class);
+        Auction auction = Auction.createInstance(hwnd, Auction.class, true);
         auction.setRunning(true);
 //        auction.getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
 //        Util.sleep(100L);

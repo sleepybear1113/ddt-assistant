@@ -6,7 +6,7 @@ package cn.xiejx.ddtassistant.constant;
 public class Constants {
     /**
      * ==============================================
-     * 一级文件夹
+     * <p>一级文件夹</p>
      * ==============================================
      */
     public static final String RESOURCE_PIC_DIR = "资源图片/";
@@ -17,7 +17,7 @@ public class Constants {
 
     /**
      * ==============================================
-     * 二级文件夹
+     * <p>二级文件夹</p>
      * ==============================================
      */
     public static final String TEMPLATE_PICTURE_DIR = RESOURCE_PIC_DIR + "模板/";
@@ -30,7 +30,7 @@ public class Constants {
 
     /**
      * ==============================================
-     * 三级文件夹
+     * <p>三级文件夹</p>
      * ==============================================
      */
     public static final String CAPTCHA_COUNT_DOWN_DIR = CAPTCHA_DIR + "倒计时截图/";
@@ -42,4 +42,8 @@ public class Constants {
     public static final String BMP_SUFFIX = ".bmp";
     public static final String JPG_SUFFIX = ".jpg";
     public static final String PNG_SUFFIX = ".png";
+
+    public static String[] firstDirList() {
+        return new String[]{Constants.RESOURCE_PIC_DIR, Constants.RESOURCE_FILE_DIR, Constants.PIC_DIR, Constants.CONFIG_DIR, Constants.TEMP_DIR};
+    }
 }

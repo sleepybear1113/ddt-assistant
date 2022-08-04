@@ -38,7 +38,7 @@ public class DmLogic {
         dmDdt.bind();
         dmDdt.captureFullGamePic(path);
         Util.delayDeleteFile(path, 5000L);
-        return path.replace(Constants.TEMP_DIR, "file/");
+        return path;
     }
 
     public String captureScreen() {
@@ -47,6 +47,6 @@ public class DmLogic {
         int[] region = {0, 0, 5000, 5000};
         defaultDm.capturePicByRegion(path, region);
         Util.delayDeleteFile(path, 3000L);
-        return path.replace("tmp", "file");
+        return path;
     }
 }

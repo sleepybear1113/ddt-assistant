@@ -1,7 +1,6 @@
 package cn.xiejx.ddtassistant.dm;
 
 import cn.xiejx.ddtassistant.base.SettingConfig;
-import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.logic.MonitorLogic;
 import cn.xiejx.ddtassistant.type.BaseType;
@@ -11,6 +10,7 @@ import cn.xiejx.ddtassistant.utils.Util;
 import com.jacob.com.ComFailException;
 import com.jacob.com.Variant;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,13 +98,16 @@ public class DmDdt extends Dm {
         GlobalVariable.DM_DDT_MAP.putIfAbsent(this.hwnd, this);
     }
 
-    public void bind(UserConfig userConfig) {
+    public void bind(String mouseMode, String keyPadMode) {
         if (bind) {
             return;
         }
         bind = true;
-        super.bindWindow(this.hwnd, userConfig.getMouseMode(), userConfig.getKeyPadMode());
+        mouseMode = StringUtils.isBlank(mouseMode) ? DEFAULT_MOUSE_MODE : mouseMode;
+        keyPadMode = StringUtils.isBlank(keyPadMode) ? DEFAULT_KEY_PAD_MODE : keyPadMode;
+        super.bindWindow(this.hwnd, mouseMode, keyPadMode);
         GlobalVariable.DM_DDT_MAP.putIfAbsent(this.hwnd, this);
+        log.info("绑定 flash 窗口，句柄：{}", hwnd);
     }
 
     public void unbind() {

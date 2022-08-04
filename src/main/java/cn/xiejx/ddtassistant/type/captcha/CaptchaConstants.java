@@ -67,5 +67,5 @@ public class CaptchaConstants {
     public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.7;
     public static final double DEFAULT_FLOP_BONUS_PIC_THRESHOLD = 0.6;
 
-    public static final int MIN_ANSWER_TIME = 8;
+    public static final int MIN_ANSWER_TIME = 7;
 }

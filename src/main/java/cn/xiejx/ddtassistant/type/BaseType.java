@@ -36,8 +36,8 @@ public class BaseType implements Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends BaseType> T createInstance(DmDdt dm, Class<T> clazz) {
-        String key = clazz.getSimpleName() + "_" + dm.getHwnd();
+    public static <T extends BaseType> T createInstance(Integer hwnd, Class<T> clazz, Boolean bind) {
+        String key = clazz.getSimpleName() + "_" + hwnd;
         T t = (T) GlobalVariable.BASE_TYPE_MAP.get(key);
         if (t != null) {
             return t;
@@ -45,7 +45,11 @@ public class BaseType implements Serializable {
 
         try {
             t = clazz.getDeclaredConstructor().newInstance();
-            t.init(dm);
+            DmDdt dmDdt = DmDdt.createInstance(hwnd);
+            t.init(dmDdt);
+            if (Boolean.TRUE.equals(bind)) {
+                t.getDm().bind();
+            }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
                  NoSuchMethodException ignored) {
         }

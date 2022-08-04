@@ -225,3 +225,18 @@ class AuctionFilterButton {
         this.chosen = props.chosen === true;
     }
 }
+
+class RecaptureDomain {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.prefix = props.prefix;
+        this.msg = props.msg;
+        this.url = props.value;
+        if (this.url.startsWith("/")) {
+            this.url = this.url.slice(1);
+        }
+    }
+}

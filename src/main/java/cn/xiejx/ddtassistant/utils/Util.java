@@ -199,6 +199,12 @@ public class Util {
     }
 
     public static void delayDeleteFile(String path, Long delay) {
+        if (delay == null || delay <= 0) {
+            if (!new File(path).delete()) {
+                log.info("删除文件失败 {} 失败", path);
+            }
+            return;
+        }
         GlobalVariable.THREAD_POOL.execute(() -> {
             sleep(delay);
             if (!new File(path).delete()) {
@@ -261,5 +267,24 @@ public class Util {
             log.warn(e.getMessage(), e);
             return list;
         }
+    }
+
+    public static void openWithExplorer(String path, boolean select) {
+        File file = new File(path);
+        boolean b = file.exists();
+        String e1 = "explorer.exe ";
+        String e2 = "explorer.exe /select, ";
+        if (b) {
+            String cmd = select ? e2 : e1;
+            try {
+                Runtime.getRuntime().exec(cmd + file.getAbsolutePath());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        openWithExplorer("资源图片/模板/副本-验证码-倒计时-1.bmp", true);
     }
 }
