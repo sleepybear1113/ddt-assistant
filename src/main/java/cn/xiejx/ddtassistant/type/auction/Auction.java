@@ -636,7 +636,7 @@ public class Auction extends BaseType {
     }
 
     public void captureDropConfirmCancelSamplePic(String path) {
-        getDm().capturePicByRegion(path, AuctionConstants.SOLD_OUT_BOX_CONFIRM_SAMPLE_RECT);
+        getDm().capturePicByRegion(path, AuctionConstants.NUM_INPUT_OR_DROP_CONFIRM_CANCEL_SAMPLE_RECT);
     }
 
     public void captureNumInputConfirmCancelSamplePic(String path) {
@@ -656,7 +656,7 @@ public class Auction extends BaseType {
     }
 
     public void capturePropsTabSamplePic(String path) {
-        getDm().capturePicByRegion(path, AuctionConstants.EQUIPMENT_TAB_TEMPLATE_RECT);
+        getDm().capturePicByRegion(path, AuctionConstants.PROPS_TAB_TEMPLATE_RECT);
     }
 
     public void captureBagArea(String path) {

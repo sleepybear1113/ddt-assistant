@@ -4,7 +4,6 @@ import cn.xiejx.ddtassistant.type.auction.AuctionData;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.type.auction.Auction;
-import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;

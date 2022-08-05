@@ -18,7 +18,7 @@ import java.util.Map;
 public class TypeConstants {
 
     public static class TemplatePrefix {
-        public static final String TEMP_STR = "-临时模板";
+        public static final String TEMP_STR = "非正式模板-";
 
         public static final String PVE_CAPTCHA_COUNT_DOWN = "副本-验证码-倒计时-";
         public static final String PVE_FLOP_BONUS = "副本-翻牌-游戏结算-";

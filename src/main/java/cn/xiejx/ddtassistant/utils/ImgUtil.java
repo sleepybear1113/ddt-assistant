@@ -1,6 +1,5 @@
 package cn.xiejx.ddtassistant.utils;
 
-import cn.xiejx.ddtassistant.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -42,7 +41,7 @@ public class ImgUtil {
         return changeImgColor(img, colors, deltaInOut);
     }
 
-    public static BufferedImage changeImgColor(BufferedImage img, int[][][] colors, DeltaInOut deltaInOut) throws IOException {
+    public static BufferedImage changeImgColor(BufferedImage img, int[][][] colors, DeltaInOut deltaInOut) {
         if (colors == null || colors.length == 0) {
             return img;
         }

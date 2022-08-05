@@ -132,14 +132,6 @@
         <hr>
         <div>
             <button v-on:click="bindAll()">检测并添加所有窗口</button>
-            <hr>
-            <button v-on:click="captureCaptchaSampleRegion()">截图保存验证码模板区域图片</button>
-            <label for="checkbox-capture-sample"></label>
-            <input id="checkbox-capture-sample" v-model="captureSampleChecked"
-                   type="checkbox">勾选这个才能点击左边的按钮，防误触<br/>
-            <span>“截图保存验证码模板区域图片”作用：如果你这里运行的时候，出现了验证码但是程序没有识别到，那么可能是自带的通用的样例图片与你的游戏画面匹配不上，比如糖果截图的图片可能在 36 无法识别。这时候需要两种解决方法：</span><br/>
-            <span>1. 自行参考程序 资源图片/模板 文件夹下面的 副本-验证码-倒计时-xxx.bmp 的图片样例截图，保存为.png、.jpg、.bmp 其中一种格式，格式如 副本-验证码-倒计时-123.png，中间数字不能与别的重复，程序启动的时候会自动将不是 .bmp 的转为 .bmp 加入识图样例中。</span><br/>
-            <span>2. 出现验证码区域，点击上述按截图保存，然后去对应文件夹查看，删除多截图的图片或者不正确的图片。</span>
         </div>
     </div>
 
@@ -427,7 +419,16 @@
     <div class="tab" id="reCapture">
         <h3>补偿截图</h3>
         <hr>
-
+        <div>
+            <strong>什么是补偿截图</strong>
+            <br/>
+            <span>
+                某些人的电脑可能由于设置原因，游戏画面的图片样本和默认自带的图库有些许差别，导致找图无法找到。所以这个功能是在找图找不到的情况下，自行截图游戏画面的样图，作为自己的识别图片。
+            </span>
+            <hr>
+            <button v-on:click="openResourceDir()">打开模板图片文件夹</button>
+            <hr>
+        </div>
         <button v-on:click="getDdtHwnds()">刷新获取句柄</button>
         <br/>
         <div>
@@ -438,15 +439,25 @@
                 <br/>
             </span>
             <span v-show="hwnds.length === 0"><i>没有获取可运行的句柄，请点击“获取”</i></span>
-            <hr>
-            <button v-on:click="openResourceDir()">打开文件夹</button>
             <br/>
-            <span v-for="templateInfo in templateInfoList">
-                <span>模板名：{{templateInfo.msg}}</span>
-                <button v-on:click="reCaptureSampleImg(templateInfo.msg, templateInfo.url)">截图</button>
-                <button v-on:click="showTemplates(templateInfo.prefix)">查看已有样图</button>
-                <br/>
-            </span>
+            <table>
+                <thead>
+                <tr>
+                    <th>模板名</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+
+                <template v-for="templateInfo in templateInfoList">
+                    <tr>
+                        <td>{{templateInfo.msg}}</td>
+                        <td>
+                            <button v-on:click="reCaptureSampleImg(templateInfo.msg, templateInfo.url)">截图</button>
+                            <button v-on:click="showTemplates(templateInfo.prefix)">查看已有样图</button>
+                        </td>
+                    </tr>
+                </template>
+            </table>
             <hr>
             <h3>截图样例</h3>
             <span v-for="template in templates">
@@ -456,7 +467,7 @@
                 <br/>
                 <button v-on:click="openDir(template, true)">打开文件所在位置</button>
                 <button v-on:click="deleteSampleImg(template)">删除该截图</button>
-                <button v-show="template.indexOf('-临时模板') > 0"  v-on:click="convertToOfficialTemplate(template)">转为正式模板</button>
+                <button v-show="template.indexOf('非正式模板-') > 0" v-on:click="convertToOfficialTemplate(template)">转为正式模板</button>
                 <hr>
             </span>
         </div>
