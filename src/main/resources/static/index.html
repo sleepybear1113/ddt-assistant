@@ -477,7 +477,7 @@
     <div class="tab" id="test">
         <h3>以下为用户第一次使用前的自行测试</h3>
         <hr>
-        <span>若点击操作无反应，请启动 “运行-管理员权限.bat”，部分人的可能存在不提高权限不能点击的情况</span><br/>
+        <span>若点击操作无反应，请启动 “运行-管理员.exe”，部分人的可能存在不提高权限不能点击的情况</span><br/>
         <span class="red-font">如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
         <label for="input-testDelay">以下操作延迟时间(毫秒)</label>
         <input id="input-testDelay" v-model="test.testDelay" type="number" value="500" class="ms-input">
@@ -567,59 +567,96 @@
         <hr>
 
         <div v-show="selectedTab === '简介'">
+            <a class="red-font">本软件为免费软件！</a>
+            <a>本软件是个人出于兴趣爱好，在业余时间随性而作，可能会存在不少 bug，敬请谅解。</a>
             <h5>程序目录介绍</h5>
-            <ol>
-                <li>
-                    <a>“captcha”文件夹：验证码截图保存文件夹。</a>
-                </li>
-                <li>
-                    <a>“config”文件夹（重要）：个人配置文件数据的储存文件夹，请不要将此文件夹随意复制给他人。</a>
-                </li>
-                <li>
-                    <a>“img”文件夹：图片文件夹（关键），里面包含识别图片的样本。</a>
-                </li>
-                <li>
-                    <a>“jre”文件夹：Java 运行环境文件夹（关键），可以从 Oracle 官网自行下载 Java 8 x86 版本。</a>
-                </li>
-                <li>
-                    <a>“logs”文件夹：日志文件夹，每日形成一个 app.log 文件。</a>
-                </li>
-                <li>
-                    <a>“tessdata”文件夹：OCR 字库文件夹（关键），用来图片转文字、转数字的模型。</a>
-                </li>
-                <li>
-                    <a>“大漠插件注册”文件夹：如果大漠插件不起作用，那么进去双击注册到系统。</a>
-                </li>
-                <li>
-                    <a>“ddt-assistant.jar”文件：主 Java
-                        程序包（关键）。所有功能都集中于此，其他文件夹、文件都是附属依赖，唯独它是主程序。</a>
-                </li>
-            </ol>
-            <h5>已知问题</h5>
-            <ol>
-                <li>
-                    <a>在无显示器的电脑（服务器）运行时，若远程桌面断开，那么没有画面情况下，模拟按键会失效。需要特定断开连接方式才可用。</a>
-                </li>
-            </ol>
+            <table>
+                <thead>
+                <tr>
+                    <th>文件夹/文件名</th>
+                    <th></th>
+                    <th>说明</th>
+                </tr>
+                </thead>
+
+                <tr>
+                    <td>tessdata</td>
+                    <td></td>
+                    <td>OCR 的训练字库。</td>
+                </tr>
+                <tr>
+                    <td>大漠插件注册</td>
+                    <td></td>
+                    <td>如果大漠插件不起作用，那么进去双击注册到系统。</td>
+                </tr>
+                <tr>
+                    <td>临时文件</td>
+                    <td></td>
+                    <td>保存运行时的临时文件，如找图的图片等。</td>
+                </tr>
+                <tr>
+                    <td>图片</td>
+                    <td></td>
+                    <td>相关运行时产生的需要保存到本地的图片，如验证码截图、副本收益图等。</td>
+                </tr>
+                <tr>
+                    <td>日志文件</td>
+                    <td></td>
+                    <td>日志文件夹，每日形成一个 app.log 文件。</td>
+                </tr>
+                <tr>
+                    <td>用户配置文件</td>
+                    <td></td>
+                    <td>保存的是用户的各种配置信息，如账号密码、各种设置。</td>
+                </tr>
+                <tr>
+                    <td>资源图片</td>
+                    <td></td>
+                    <td>保存模板图片，用来匹配游戏画面；还有验证码测试图。</td>
+                </tr>
+                <tr>
+                    <td>资源文件</td>
+                    <td></td>
+                    <td>该文件夹暂无使用，先占位。</td>
+                </tr>
+                <tr>
+                    <td>ddt-assistant.jar</td>
+                    <td></td>
+                    <td>主 Java 文件。后缀为 .jar 是包含了所有功能的包。</td>
+                </tr>
+                <tr>
+                    <td>Java的运行版本.txt</td>
+                    <td></td>
+                    <td>指定当前需要运行的 ddt-assistant 的版本。如果当前目录有多个 jar
+                        包，那么第一行需要指定，否则不需要。
+                    </td>
+                </tr>
+            </table>
 
             <h5>软件更新相关</h5>
             <ol>
                 <li>
-                    <a>小更新：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，替换旧文件并且重命名为“ddt-assistant.jar”（不要版本号）。</a>
+                    <strong>小更新</strong>
+                    <br/>
+                    <a>方法一：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，删除旧版 jar 文件。</a>
+                    <br/>
+                    <a>方法二：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，打开“Java的运行版本.txt”记事本文件，第一行改为最新版的文件名。</a>
                 </li>
                 <li>
                     <a>中等更新：在“小更新”的替换 jar
-                        的基础上，可能会有一些资源文件的替换，比如在“img”文件夹添加几个文件，从群文件下载复制进去即可。</a>
+                        的基础上，可能会有一些资源文件的替换，比如在“资源图片”文件夹添加几个文件，从群文件下载复制进去即可。</a>
                 </li>
                 <li>
                     <a>大更新：需要全量下载完整包，在整个项目存在实质性底层架构改变才会使用，一般不会涉及。</a>
                 </li>
                 <li>
-                    <a>无脑更新：直接下载全量包，使用即可。不用考虑资源文件的额外下载。由于个人配置文件在脚本文件夹，所以可以把上一个版本的“config”文件夹复制过来，就能保持配置复用。</a>
+                    <a>无脑更新：直接下载全量包，使用即可。不用考虑资源文件的额外下载。由于个人配置文件在脚本文件夹，所以可以把上一个版本的“用户配置”文件夹复制过来，就能保持配置复用。</a>
                 </li>
                 <li>
-                    <a class="red-font">每次更新完成，第一次打开设置页面，切记，强制刷新浏览器，使用 Ctrl + F5 或者 Ctrl +
-                        点击刷新按钮，来避免旧版本页面的缓存。</a>
+                    <a class="red-font">
+                        每次更新完成，第一次打开设置页面，切记，强制刷新浏览器，使用 Ctrl + F5 或者 Ctrl +
+                        点击刷新按钮，来避免旧版本页面的缓存。
+                    </a>
                 </li>
             </ol>
         </div>
@@ -631,12 +668,13 @@
         </div>
 
         <div v-show="selectedTab === '工程介绍'">
-            <p>本项目后端使用 Spring Boot 2.6.7 基于 32 位 Java 8 开发。</p>
+            <p>本项目后端使用 Spring Boot 2.7.2 基于 32 位 Java 8 开发。</p>
             <p>本项目前端使用非 node 非 cli 的纯 vue.js 文件开发，不使用前端其他复杂框架。</p>
             <p>
                 本项目已开源（开放全部源代码），地址：
-                <a href="https://github.com/sleepybear1113/ddt-assistant" target="_blank">https://github.com/sleepybear1113/ddt-assistant</a>
+                <a href="https://github.com/sleepybear1113/ddt-assistant" target="_blank">https://github.com/sleepybear1113/ddt-assistant</a>。
             </p>
+            <p>可以直接 Maven package 打包成 可用 jar 来直接运行。</p>
             <hr>
             <p>本项目使用大漠插件作为后台操作游戏的插件，使用 tesseract 作为 OCR 工具。</p>
             <p>不对游戏做任何入侵、修改、增加、删除，不对游戏进行任何破坏，仅模拟人工点击等操作。</p>
