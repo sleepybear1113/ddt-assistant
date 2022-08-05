@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import net.sourceforge.tess4j.TesseractException;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -17,7 +19,7 @@ import java.util.Map;
  */
 public class SimpleTest {
     public static void main(String[] args) throws Exception {
-        testJson();
+        testAdmin();
 
     }
 
@@ -39,6 +41,19 @@ public class SimpleTest {
         mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
 
         System.out.println(mapper.readValue("{\"a\":\"\"}}", Aq.class));
+    }
+
+    public static boolean testAdmin() {
+        File file = new File("C:\\测试管理员空文件-1113.txt");
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            try {
+                return file.createNewFile();
+            } catch (IOException e) {
+                return false;
+            }
+        }
     }
 
     @Data

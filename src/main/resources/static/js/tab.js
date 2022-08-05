@@ -8,6 +8,7 @@ let tabApp = new Vue({
             {tabId: "capture", name: "截图功能"},
             {tabId: "reCapture", name: "补偿截图"},
             {tabId: "test", name: "测试功能正常"},
+            {tabId: "otherFunction", name: "其他功能"},
             {tabId: "setting", name: "设置"},
             {tabId: "introduction", name: "相关介绍"},
         ]

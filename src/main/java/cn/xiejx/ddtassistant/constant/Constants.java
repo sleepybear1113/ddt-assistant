@@ -43,6 +43,9 @@ public class Constants {
     public static final String JPG_SUFFIX = ".jpg";
     public static final String PNG_SUFFIX = ".png";
 
+    public static final String HOSTS_ICS_FILENAME = "C:\\Windows\\System32\\drivers\\etc\\hosts.ics";
+    public static final String HOSTS_NORMAL_FILENAME = "C:\\Windows\\System32\\drivers\\etc\\hosts";
+
     public static String[] firstDirList() {
         return new String[]{Constants.RESOURCE_PIC_DIR, Constants.RESOURCE_FILE_DIR, Constants.PIC_DIR, Constants.CONFIG_DIR, Constants.TEMP_DIR};
     }

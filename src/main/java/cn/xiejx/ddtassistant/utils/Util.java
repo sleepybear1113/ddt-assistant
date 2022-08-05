@@ -98,7 +98,7 @@ public class Util {
                 if (line == null) {
                     break;
                 }
-                s.append(line);
+                s.append(line).append(System.getProperty("line.separator"));
             }
             return s.toString();
         } catch (IOException e) {
@@ -121,6 +121,7 @@ public class Util {
         }
         ensureParentDir(path);
         try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(path)), StandardCharsets.UTF_8))) {
+//            bufferedWriter.write(s.replace("\\n", ""));
             bufferedWriter.write(s);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -280,6 +281,21 @@ public class Util {
                 Runtime.getRuntime().exec(cmd + file.getAbsolutePath());
             } catch (IOException e) {
                 throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static boolean testAdmin() {
+        File file = new File("C:\\测试管理员空文件-1113.txt");
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            try {
+                boolean newFile = file.createNewFile();
+                boolean delete = file.delete();
+                return newFile && delete;
+            } catch (IOException e) {
+                return false;
             }
         }
     }

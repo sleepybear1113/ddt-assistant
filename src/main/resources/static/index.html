@@ -500,6 +500,32 @@
     </div>
 
 
+    <div class="tab" id="otherFunction">
+        <h3>其他功能</h3>
+        <hr>
+        <span v-for="tab in tabs">
+             <button v-on:click="changeTab(tab)">{{tab.name}}</button>
+        </span>
+        <div v-show="selectedTab === 'host文件查看/修改'">
+            <h5>host文件查看/修改</h5>
+            <a class="red-font">修改 host 文件需要管理员权限</a>
+            <br/>
+            <span>当前权限：{{isAdmin? "已是": "非"}}管理员</span>
+            <br/>
+            <label for="otherFunction-textarea-host">host文件内容</label>
+            <button v-on:click="getHost()">重新载入</button>
+            <br/>
+            <textarea style="width: 100%; height: 400px;" id="otherFunction-textarea-host" v-model="host" :readonly="isAdmin? false :'readonly'"></textarea>
+            <br/>
+            <button v-on:click="updateHost()" v-show="isAdmin">确认修改host</button>
+        </div>
+
+        <div v-show="selectedTab === '自动刷点券'">
+            <h5>想屁吃？</h5>
+        </div>
+    </div>
+
+
     <div class="tab" id="setting">
         <h3>设置相关</h3>
         <hr>
@@ -688,7 +714,7 @@
         .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
 </script>
 <script type="text/javascript">
-    ["index", "offlineDetection", "captcha", "capture", "auction", "test", "tab", "setting", "introduction", "reCapture"]
+    ["index", "offlineDetection", "captcha", "capture", "auction", "test", "tab", "setting", "introduction", "reCapture", "otherFunction"]
         .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
 </script>
 </body>

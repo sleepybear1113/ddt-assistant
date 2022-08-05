@@ -19,6 +19,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class GlobalVariable {
 
+    public static boolean isAdmin = false;
+
     public static Map<String, List<String>> templateImgMap = new HashMap<>();
     public static final Map<String, String> GLOBAL_MAP = new ConcurrentHashMap<>();
     public static final Map<Integer, DmDdt> DM_DDT_MAP = new ConcurrentHashMap<>();
