@@ -299,9 +299,7 @@ public class AuctionConstants {
                 if (rect == null) {
                     return null;
                 }
-                BufferedImage subImage = img.getSubimage(rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1]);
-                ImageIO.write(subImage, "png", new File(Constants.AUCTION_TMP_DIR + "/7.png"));
-                return subImage;
+                return img.getSubimage(rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1]);
             } catch (IOException e) {
                 return null;
             }

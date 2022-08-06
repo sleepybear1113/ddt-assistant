@@ -42,7 +42,7 @@ public class OcrUtil {
                 return Integer.valueOf(res);
             }
         } catch (Exception e) {
-            log.warn("OCR 图像识别失败：{}", e.getMessage());
+            log.warn("OCR 图像识别失败：{}", e.getMessage(), e);
             return null;
         }
         return null;
@@ -76,7 +76,7 @@ public class OcrUtil {
             }
             return ocr.trim();
         } catch (Exception e) {
-            log.warn("OCR 图像识别失败：{}", e.getMessage());
+            log.warn("OCR 图像识别失败：{}", e.getMessage(), e);
             return null;
         }
     }
@@ -89,7 +89,6 @@ public class OcrUtil {
             BufferedImage bufferedImage = ImgUtil.changeImgColor(path, colors, ImgUtil.DeltaInOut.DELTA_OUT);
 
             String ocr = ocr(bufferedImage, END_LANGUAGE);
-            ImageIO.write(bufferedImage, "png", new File(Constants.AUCTION_TMP_DIR + "10.png"));
             if (StringUtils.isBlank(ocr)) {
                 return null;
             }
@@ -98,7 +97,7 @@ public class OcrUtil {
                 return Integer.valueOf(res);
             }
         } catch (Exception e) {
-            log.warn("OCR 图像识别失败：{}", e.getMessage());
+            log.warn("OCR 图像识别失败：{}", e.getMessage(), e);
             return null;
         }
         return null;
@@ -118,7 +117,7 @@ public class OcrUtil {
             }
             return null;
         } catch (Exception e) {
-            log.warn("OCR 图像识别失败：{}", e.getMessage());
+            log.warn("OCR 图像识别失败：{}", e.getMessage(), e);
             return null;
         }
     }
