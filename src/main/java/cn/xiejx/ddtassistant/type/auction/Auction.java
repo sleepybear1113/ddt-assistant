@@ -168,11 +168,24 @@ public class Auction extends BaseType {
         remove();
     }
 
+    /**
+     * 执行单次拍卖
+     *
+     * @param n 第几个位置，从 1-49
+     * @return true - 当前拍卖还需要继续当前格子。否则下一个。
+     */
     public Boolean go(int n) {
         getDm().clickCorner();
         Util.sleep(100L);
 
         testRunningWithException();
+
+        // 关闭出现的弹窗
+        List<String> templates = TypeConstants.TemplatePrefix.getAuctionPrefixList();
+        List<String> templateImgList = GlobalVariable.getTemplateImgList(templates);
+        List<DmDomains.PicEx> picExList = getDm().findPicExInFullGame(templateImgList, "020202", 0.7);
+        picExList = closeMsgBox1(picExList, templateImgList);
+        closeMsgBox2(picExList, templateImgList);
 
         // 获取第 n 个物品的坐标
         int[] point = AuctionConstants.AuctionPosition.getPoint(n);
@@ -259,12 +272,11 @@ public class Auction extends BaseType {
             return null;
         }
 
-        // 只输入部分数量
-        if (auctionPrice.getNumberLeft()) {
-            getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
-            getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
-            Integer inputNum = auctionPrice.getNum();
-            getDm().pressKeyChars(AuctionItem.priceToStr(inputNum));
+        // 输入数量
+        if (!ensureNumInput(auctionPrice)) {
+            log.info("[{}]数量输入错误，放回背包", itemName);
+            putItemBack(num);
+            return null;
         }
 
         // 物品数量大于 1 那么需要确认数量放入拍卖格子
@@ -275,9 +287,17 @@ public class Auction extends BaseType {
 
         log.info("[{}]：{}*{}={}, {}*{}={}, {}", auctionItem.getSuitableName(), auctionItem.getArgueUnitPrice(), auctionPrice.getNum(), auctionPrice.getArguePrice(), auctionItem.getMouthfulUnitPrice(), auctionPrice.getNum(), auctionPrice.getMouthfulPrice(), auctionItem.getAuctionTime());
 
-        ensureArguePrice(auctionPrice);
+        if (!ensureArguePrice(auctionPrice)) {
+            log.info("[{}]竞拍价价格输入失败，放回背包", itemName);
+            putItemBack(1);
+            return null;
+        }
         Util.sleep(100L);
-        ensureMouthfulPrice(auctionPrice);
+        if (ensureMouthfulPrice(auctionPrice)) {
+            log.info("[{}]一口价价格输入失败，放回背包", itemName);
+            putItemBack(1);
+            return null;
+        }
         Util.sleep(100L);
 
         // 选择拍卖时间
@@ -561,28 +581,61 @@ public class Auction extends BaseType {
         }
     }
 
-    public void ensureArguePrice(AuctionPrice auctionPrice) {
+    public boolean ensureNumInput(AuctionPrice auctionPrice) {
+        // 只输入部分数量
+        if (auctionPrice.getNumberLeft()) {
+            Integer ocrItemNum = ocrItemNum();
+            Integer inputNum = auctionPrice.getNum();
+            for (int i = 0; i < 3; i++) {
+                if (Objects.equals(ocrItemNum, inputNum)) {
+                    return true;
+                }
+                if (i > 0) {
+                    log.info("数量输入错误，重新输入");
+                }
+                getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
+                getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
+                getDm().pressKeyChars(AuctionItem.priceToStr(inputNum));
+                Util.sleep(100L);
+            }
+            return false;
+        }
+        return true;
+    }
+
+    public boolean ensureArguePrice(AuctionPrice auctionPrice) {
         Integer price = auctionPrice.getArguePrice();
-        Integer existPrice = ocrItemArguePrice();
-        if (Objects.equals(existPrice, price)) {
-            return;
+        for (int i = 0; i < 3; i++) {
+            Integer existPrice = ocrItemArguePrice();
+            if (Objects.equals(existPrice, price)) {
+                return true;
+            }
+            if (i > 0) {
+                log.info("竞拍价价格输入错误，重新输入");
+            }
+            inputPrice(price, AuctionConstants.ARGUE_PRICE_POINT);
+            Util.sleep(100L);
         }
-
-        ensurePrice(price, AuctionConstants.ARGUE_PRICE_POINT);
+        return false;
     }
 
-    public void ensureMouthfulPrice(AuctionPrice auctionPrice) {
+    public boolean ensureMouthfulPrice(AuctionPrice auctionPrice) {
         Integer price = auctionPrice.getMouthfulPrice();
-        Integer existPrice = ocrItemMouthfulPrice();
-        if (Objects.equals(existPrice, price)) {
-            return;
+        for (int i = 0; i < 3; i++) {
+            Integer existPrice = ocrItemMouthfulPrice();
+            if (Objects.equals(existPrice, price)) {
+                return true;
+            }
+            if (i > 0) {
+                log.info("一口价价格输入错误，重新输入");
+            }
+            inputPrice(price, AuctionConstants.MOUTHFUL_PRICE_POINT);
+            Util.sleep(100L);
         }
-
-        Util.sleep(100L);
-        ensurePrice(price, AuctionConstants.MOUTHFUL_PRICE_POINT);
+        return false;
     }
 
-    public void ensurePrice(Integer price, int[] xy) {
+    public void inputPrice(Integer price, int[] xy) {
         // 双击输入框
         getDm().leftDoubleClick(xy);
         getDm().leftDoubleClick(xy);
