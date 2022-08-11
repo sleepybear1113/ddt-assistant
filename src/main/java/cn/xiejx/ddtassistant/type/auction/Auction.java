@@ -293,7 +293,7 @@ public class Auction extends BaseType {
             return null;
         }
         Util.sleep(100L);
-        if (ensureMouthfulPrice(auctionPrice)) {
+        if (!ensureMouthfulPrice(auctionPrice)) {
             log.info("[{}]一口价价格输入失败，放回背包", itemName);
             putItemBack(1);
             return null;
@@ -584,9 +584,9 @@ public class Auction extends BaseType {
     public boolean ensureNumInput(AuctionPrice auctionPrice) {
         // 只输入部分数量
         if (auctionPrice.getNumberLeft()) {
-            Integer ocrItemNum = ocrItemNum();
             Integer inputNum = auctionPrice.getNum();
             for (int i = 0; i < 3; i++) {
+                Integer ocrItemNum = ocrItemNum();
                 if (Objects.equals(ocrItemNum, inputNum)) {
                     return true;
                 }
@@ -596,6 +596,8 @@ public class Auction extends BaseType {
                 getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
                 getDm().leftDoubleClick(AuctionConstants.NUM_INPUT_BOX_NUM_POINT);
                 getDm().pressKeyChars(AuctionItem.priceToStr(inputNum));
+                Util.sleep(100L);
+                getDm().clickCorner();
                 Util.sleep(100L);
             }
             return false;
@@ -615,6 +617,8 @@ public class Auction extends BaseType {
             }
             inputPrice(price, AuctionConstants.ARGUE_PRICE_POINT);
             Util.sleep(100L);
+            getDm().clickCorner();
+            Util.sleep(100L);
         }
         return false;
     }
@@ -630,6 +634,8 @@ public class Auction extends BaseType {
                 log.info("一口价价格输入错误，重新输入");
             }
             inputPrice(price, AuctionConstants.MOUTHFUL_PRICE_POINT);
+            Util.sleep(100L);
+            getDm().clickCorner();
             Util.sleep(100L);
         }
         return false;
