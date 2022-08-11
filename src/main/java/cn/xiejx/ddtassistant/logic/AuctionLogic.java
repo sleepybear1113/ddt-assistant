@@ -26,7 +26,7 @@ public class AuctionLogic {
     private DmDdt defaultDm;
 
     public AuctionData getAuctionData() {
-        this.auctionData = AuctionData.load();
+        this.auctionData.update(AuctionData.load());
         return this.auctionData;
     }
 
