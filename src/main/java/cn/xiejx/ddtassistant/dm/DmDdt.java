@@ -173,12 +173,7 @@ public class DmDdt extends Dm {
     }
 
     public boolean isDdtWindow(Integer hwnd) {
-        if (!isWindowClassFlashPlayerActiveX(hwnd)) {
-            return false;
-        }
-
-        int[] windowRect = this.getWindowRect(hwnd);
-        return Math.abs(windowRect[0] - windowRect[2]) == 1000 && Math.abs(windowRect[1] - windowRect[3]) == 600;
+        return isWindowClassFlashPlayerActiveX(hwnd);
     }
 
     public boolean isDdtWindow() {
