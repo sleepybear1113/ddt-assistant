@@ -47,7 +47,8 @@ let captureApp = new Vue({
         getImgPath: function (url, hwnd, imgQuality, msg) {
             this.msg = "";
             clearInterval(this.intervalRes);
-            axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
+            let params = {params: {hwnd: hwnd, imgQuality: imgQuality}};
+            axios.get(url, params).then((res) => {
                 this.src = res.data.result.string;
                 this.msg = hwnd == null ? msg : hwnd;
             });
@@ -55,12 +56,7 @@ let captureApp = new Vue({
                 return;
             }
             this.intervalRes = setInterval(() => {
-                axios.get(url, {
-                    params: {
-                        hwnd: hwnd,
-                        imgQuality: imgQuality,
-                    }
-                }).then((res) => {
+                axios.get(url, params).then((res) => {
                     this.src = res.data.result.string;
                     this.msg = hwnd == null ? msg : hwnd;
                 });
