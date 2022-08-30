@@ -42,3 +42,10 @@ function jumpToMailSettingPage() {
     tabApp.changeTab("setting");
     settingApp.selectedTab = '邮箱设置';
 }
+
+function showGameShot(hwnd, imgQuality) {
+    let url = "dm/getGameScreenPath";
+    axios.get(url, {params: {hwnd: hwnd, imgQuality: imgQuality}}).then((res) => {
+        showImg(res.data.result.string);
+    });
+}

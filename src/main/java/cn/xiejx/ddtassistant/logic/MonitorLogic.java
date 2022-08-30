@@ -133,7 +133,8 @@ public class MonitorLogic {
      */
     public void monitorFlopBonusAction() {
         String keyPress1 = userConfig.getKeyPressAfterPveFlopBonus();
-        if (StringUtils.isBlank(keyPress1)) {
+        Boolean pveFlopBonusCapture = userConfig.getPveFlopBonusCapture();
+        if (StringUtils.isBlank(keyPress1) && !Boolean.TRUE.equals(pveFlopBonusCapture)) {
             return;
         }
         // 出现大翻牌等待按下按键的时间
@@ -153,9 +154,11 @@ public class MonitorLogic {
             if (System.currentTimeMillis() - firstFoundTime < t) {
                 continue;
             }
-            log.info("[监控线程] 按下按键 {}", keyPress1);
-            defaultDm.keyPressChar(keyPress1);
-            if (Boolean.TRUE.equals(userConfig.getPveFlopBonusCapture())) {
+            if (StringUtils.isNotBlank(keyPress1)) {
+                log.info("[监控线程] 按下按键 {}", keyPress1);
+                defaultDm.keyPressChar(keyPress1);
+            }
+            if (Boolean.TRUE.equals(pveFlopBonusCapture)) {
                 log.info("截图游戏，使用线程 [{}]", dmDdt.getHwnd());
                 String dir = Constants.FLOP_BONUS_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT).replace("_", "") + "/";
                 File file = new File(dir);

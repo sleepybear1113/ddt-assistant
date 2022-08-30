@@ -8,6 +8,8 @@ let captureApp = new Vue({
         intervalList: [100, 200, 300, 500, 1000, 1500, 2000, 3000],
         interval: null,
         intervalRes: null,
+        imgQuality: 5,
+        imgQualityList: [1, 3, 5, 7, 9, 10],
     },
     created() {
     },
@@ -17,6 +19,9 @@ let captureApp = new Vue({
             if (this.interval <= 50) {
                 this.interval = 50;
             }
+        },
+        changeImgQuality: function (i) {
+            this.imgQuality = i;
         },
         getAllGamePicPath: function () {
             showInfo("功能未完待续...");
@@ -33,13 +38,13 @@ let captureApp = new Vue({
         },
         getGameShot: function (hwnd) {
             let url = "dm/getGameScreenPath";
-            this.getImgPath(url, hwnd);
+            this.getImgPath(url, hwnd, this.imgQuality);
         },
         getScreenshotPath: function () {
             let url = "capture/getScreenshotPath";
-            this.getImgPath(url, null, "屏幕截图");
+            this.getImgPath(url, null, this.imgQuality, "屏幕截图");
         },
-        getImgPath: function (url, hwnd, msg) {
+        getImgPath: function (url, hwnd, imgQuality, msg) {
             this.msg = "";
             clearInterval(this.intervalRes);
             axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
@@ -50,7 +55,12 @@ let captureApp = new Vue({
                 return;
             }
             this.intervalRes = setInterval(() => {
-                axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
+                axios.get(url, {
+                    params: {
+                        hwnd: hwnd,
+                        imgQuality: imgQuality,
+                    }
+                }).then((res) => {
                     this.src = res.data.result.string;
                     this.msg = hwnd == null ? msg : hwnd;
                 });

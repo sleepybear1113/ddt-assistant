@@ -9,6 +9,11 @@ let auctionApp = new Vue({
             confirm: false,
             sellType: "1",
         },
+        batchChangeItem: {
+            argueUnitPrice: "",
+            mouthfulUnitPrice: "",
+            minNum: "",
+        },
         hwnds: [],
         filterConditionButtonList: [],
         filterConditionSet: new Set(),
@@ -95,7 +100,7 @@ let auctionApp = new Vue({
                 minNum: "",
                 auctionTime: "48",
             };
-            this.auctionData.auctionItemList .push(new AuctionItem(itemSample));
+            this.auctionData.auctionItemList.push(new AuctionItem(itemSample));
         },
         deleteItem: function (index) {
             this.auctionData.auctionItemList.splice(index, 1);
@@ -108,6 +113,22 @@ let auctionApp = new Vue({
         },
         changeAuctionTime: function (item, time) {
             item.auctionTime = time;
+        },
+        batchChangeItemFunc: function () {
+            this.auctionData.auctionItemList.forEach(item => {
+                if (!item.shown) {
+                    return;
+                }
+                if (this.batchChangeItem.argueUnitPrice !== "") {
+                    item.argueUnitPrice = this.batchChangeItem.argueUnitPrice;
+                }
+                if (this.batchChangeItem.mouthfulUnitPrice !== "") {
+                    item.mouthfulUnitPrice = this.batchChangeItem.mouthfulUnitPrice;
+                }
+                if (this.batchChangeItem.minNum !== "") {
+                    item.minNum = this.batchChangeItem.minNum;
+                }
+            });
         },
         changeAuctionFilterList: function (button) {
             if (button.chosen === true) {
@@ -134,13 +155,14 @@ let auctionApp = new Vue({
                 }
 
                 let s = item.name + "@=@" + item.ocrName;
+                // 过滤的匹配数量
                 let match = 0;
-                let conditions = this.filterConditionSet.keys();
                 this.filterConditionSet.forEach((index, condition) => {
                     if (this.auctionStringMatch(s, condition)) {
                         match++;
                     }
                 });
+                // 全部 match 才能加入列表
                 item.shown = match === size;
             }
         },
@@ -221,11 +243,7 @@ let auctionApp = new Vue({
             });
         },
         getGameShot: function (hwnd) {
-            let url = "dm/getGameScreenPath";
-            axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
-                let src = res.data.result.string;
-                showImg(src);
-            });
+            showGameShot(hwnd, 5);
         },
         getDdtHwnds: function () {
             this.hwnds = [];
@@ -246,16 +264,27 @@ let auctionApp = new Vue({
                 return true;
             }
 
-            let split = match.replace("，", ",").split(",");
+            let split = match.replace("，", ",").replace("！", "!").split(",");
             for (let i = 0; i < split.length; i++) {
                 let sub = split[i];
                 let subSplit = sub.split("%");
+                // 总的筛选数量
                 let size = subSplit.length;
                 for (let j = 0; j < subSplit.length; j++) {
-                    if (s.indexOf(subSplit[j]) > -1) {
+                    // 筛选条件
+                    let str = subSplit[j];
+                    let isContainCondition = true;
+                    if (str.startsWith("!")) {
+                        // 非字符串包含
+                        str = str.slice(1);
+                        isContainCondition = false;
+                    }
+                    let contains = s.indexOf(str) > -1;
+                    if ((contains && isContainCondition) || (!contains && !isContainCondition)) {
                         size--;
                     }
                 }
+                // 全部匹配筛选条件才能 true
                 if (size <= 0) {
                     return true;
                 }

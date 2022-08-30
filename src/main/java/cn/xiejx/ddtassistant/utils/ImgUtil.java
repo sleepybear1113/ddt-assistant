@@ -5,11 +5,18 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.*;
 
 /**
@@ -218,8 +225,11 @@ public class ImgUtil {
     }
 
     public static void main(String[] args) {
-        String base = "D:\\XJXCode\\Java\\Spring\\ddt-assistant\\tmp\\ocr\\";
-        mergeImgInDir(base + "b", base + "res/3.png");
+//        ImgUtil.compress("图片/A@67200-12_59_39.png", "图片/5.png",0.5f);
+        long t0 = System.currentTimeMillis();
+        compress("图片/6.png", "图片/6.png", 0.3f);
+        long t1 = System.currentTimeMillis();
+        System.out.println(t1 - t0);
     }
 
     public static void mergeImgInDir(String dir, String outputPath) {
@@ -285,6 +295,37 @@ public class ImgUtil {
             e.printStackTrace();
         }
     }
+
+    public static void compress(String from, String dest, float quality) {
+        try {
+            compress(ImageIO.read(new File(from)), dest, quality);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void compress(BufferedImage image, String dest, float quality) {
+        try {
+            File compressedImageFile = new File(dest);
+            OutputStream os = Files.newOutputStream(compressedImageFile.toPath());
+            Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpg");
+
+            ImageWriter writer = writers.next();
+            ImageOutputStream ios = ImageIO.createImageOutputStream(os);
+            writer.setOutput(ios);
+            ImageWriteParam param = writer.getDefaultWriteParam();
+            param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            param.setCompressionQuality(quality);
+            writer.write(null, new IIOImage(image, null, null), param);
+
+            os.close();
+            ios.close();
+            writer.dispose();
+        } catch (IOException e) {
+            log.info("压缩图片失败，{}，{}", dest, e.getMessage());
+        }
+    }
+
 
     public enum DeltaInOut {
         /**

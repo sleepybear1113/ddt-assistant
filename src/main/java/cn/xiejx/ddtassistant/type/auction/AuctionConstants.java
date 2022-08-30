@@ -199,7 +199,6 @@ public class AuctionConstants {
      */
     public static final int[] ADD_TO_AUCTION_MEG_FIND_RECT = {320, 250, 720, 350};
 
-
     /**
      * 拍卖场右上角“拍卖说明”字样模板区域
      */

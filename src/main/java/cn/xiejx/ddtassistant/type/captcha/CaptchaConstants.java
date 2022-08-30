@@ -24,6 +24,18 @@ public class CaptchaConstants {
      * 验证码提问区域
      */
     public final static int[] CAPTCHA_QUESTION_REACT = {314, 180, 630, 430};
+    /**
+     * 验证码裁剪中下部，土黄色区域，来验证是不是验证码图片
+     */
+    public final static int[] CAPTCHA_SUB_VALID_RECT = {100, 190, 200, 250};
+    /**
+     * 验证码合法颜色
+     */
+    public static final int[] CAPTCHA_VALID_COLOR = {199, 159, 103};
+    /**
+     * 验证码合法颜色容差
+     */
+    public static final int[] CAPTCHA_VALID_DELTA_COLOR = {10, 10, 10};
 
     /**
      * 验证码倒计时区域

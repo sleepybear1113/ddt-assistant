@@ -9,6 +9,7 @@ import cn.xiejx.ddtassistant.logic.MonitorLogic;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.TypeConstants;
+import cn.xiejx.ddtassistant.utils.ImgUtil;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
@@ -21,6 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,6 +44,15 @@ public class Captcha extends BaseType {
     private final long[] errorTimeRange = {1000, 10000};
 
     private static boolean hasGetUserInfo = false;
+
+    /**
+     * 请求验证码次数
+     */
+    public static int captchaCount = 0;
+    /**
+     * 是否发送过低余额邮件通知
+     */
+    public static boolean hasSendLowBalanceEmail = false;
 
     public Captcha() {
     }
@@ -185,6 +200,12 @@ public class Captcha extends BaseType {
         // 截屏
         captureCaptchaQuestionPic(captchaName);
         log.info("[{}] 验证码保存到本地，文件名为：{}", getHwnd(), captchaName);
+        if (!captchaValid(captchaName)) {
+            getDm().clickCorner();
+            log.info("[{}] 保存验证码图片为非验证码内容，不予上传！", getHwnd());
+            return;
+        }
+
         // 倒计时时间
         Integer countDown = captureAndOcrCountDown();
 
@@ -208,6 +229,11 @@ public class Captcha extends BaseType {
                     log.info("[{}] 平台返回结果有误，但倒计时仍有 {} 毫秒，再次请求平台", getHwnd(), leftTime);
                     response = TjHttpUtil.waitToGetChoice(leftTime - 2000, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
                 }
+            }
+
+            // 每 10 次验证码请求一次余额
+            if (!hasSendLowBalanceEmail && ++captchaCount % 10 == 0) {
+                TjHttpUtil.getAccountInfo(userConfig.getUsername(), userConfig.getPassword(), userConfig.getLowBalanceRemind(), userConfig.getLowBalanceNum());
             }
         } else {
             log.info("[{}] 用户名或密码为空，无法提交打码平台", getHwnd());
@@ -263,7 +289,9 @@ public class Captcha extends BaseType {
     public void identifyPveFlopBonus(UserConfig userConfig) {
         Long pveFlopBonusAppearDelay = userConfig.getPveFlopBonusAppearDelay();
         if (pveFlopBonusAppearDelay == null || pveFlopBonusAppearDelay <= 0) {
-            return;
+            if (!Boolean.TRUE.equals(userConfig.getPveFlopBonusCapture())) {
+                return;
+            }
         }
         if (!findFlopBonus()) {
             return;
@@ -300,6 +328,24 @@ public class Captcha extends BaseType {
 
         this.lastRemoteCaptchaId = null;
         this.lastCaptchaFilePath = null;
+    }
+
+    public static boolean captchaValid(String path) {
+        try {
+            BufferedImage img = ImageIO.read(new File(path));
+            int[] rect = CaptchaConstants.CAPTCHA_SUB_VALID_RECT;
+            BufferedImage subImage = img.getSubimage(rect[0], rect[1], rect[2] - rect[0], rect[3] - rect[1]);
+            int[] avgColor = ImgUtil.getAvgColor(subImage);
+            for (int i = 0; i < CaptchaConstants.CAPTCHA_VALID_COLOR.length; i++) {
+                if (Math.abs(CaptchaConstants.CAPTCHA_VALID_COLOR[i] - avgColor[i]) > CaptchaConstants.CAPTCHA_VALID_DELTA_COLOR[i]) {
+                    return false;
+                }
+            }
+        } catch (Exception e) {
+            return false;
+        }
+
+        return true;
     }
 
     public static boolean startIdentifyCaptcha(Integer hwnd, UserConfig userConfig) {

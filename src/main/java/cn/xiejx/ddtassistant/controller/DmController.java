@@ -25,8 +25,8 @@ public class DmController {
     }
 
     @RequestMapping("/dm/getGameScreenPath")
-    public MyString getGameScreenPath(int hwnd) {
-        return new MyString(dmLogic.getGameScreenPath(hwnd));
+    public MyString getGameScreenPath(int hwnd, Integer imgQuality) {
+        return new MyString(dmLogic.getGameScreenPath(hwnd, imgQuality));
     }
 
 }

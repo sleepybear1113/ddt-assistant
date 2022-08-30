@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant.test;
 
 import cn.xiejx.ddtassistant.constant.Constants;
+import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.utils.ImageClean;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -19,8 +20,12 @@ import java.util.Map;
  */
 public class SimpleTest {
     public static void main(String[] args) throws Exception {
-        testAdmin();
+        captchaValid();
+    }
 
+    public static void captchaValid() {
+        System.out.println(Captcha.captchaValid("图片/A@67200-12_59_39.png"));
+        System.out.println(Captcha.captchaValid("图片/2.bmp"));
     }
 
     public static void clean1() {

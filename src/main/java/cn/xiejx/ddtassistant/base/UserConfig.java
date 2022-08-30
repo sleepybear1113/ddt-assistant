@@ -167,13 +167,6 @@ public class UserConfig extends BaseConfig implements Serializable {
         this.softId = softId;
     }
 
-    public Long getCaptureInterval() {
-        if (captureInterval == null || captureInterval <= 0) {
-            captureInterval = DEFAULT_CAPTURE_INTERVAL;
-        }
-        return captureInterval;
-    }
-
     public void setCaptureInterval(Long captureInterval) {
         this.captureInterval = captureInterval;
     }

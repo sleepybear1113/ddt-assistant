@@ -61,10 +61,7 @@ let reCaptureApp = new Vue({
             });
         },
         getGameShot: function (hwnd) {
-            let url = "dm/getGameScreenPath";
-            axios.get(url, {params: {hwnd: hwnd}}).then((res) => {
-                showImg(res.data.result.string);
-            });
+            showGameShot(hwnd, 5);
         },
         deleteSampleImg: function (template) {
             if (!confirm("确定要删除吗？")) {

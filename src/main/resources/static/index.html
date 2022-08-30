@@ -234,6 +234,30 @@
                     <th>操作</th>
                 </tr>
                 </thead>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><input v-model="batchChangeItem.argueUnitPrice" class="string-input"></td>
+                    <td><input v-model="batchChangeItem.mouthfulUnitPrice" class="string-input"></td>
+                    <td><input v-model="batchChangeItem.minNum" class="string-input"></td>
+                    <td></td>
+                    <td></td>
+                    <td>
+                        <button v-on:click="batchChangeItemFunc()">批量修改以下信息</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><hr></td>
+                    <td><hr></td>
+                    <td><hr></td>
+                    <td><hr></td>
+                    <td><hr></td>
+                    <td><hr></td>
+                    <td><hr></td>
+                    <td><hr></td>
+                    <td><hr></td>
+                </tr>
                 <template v-for="(item, index) in auctionData.auctionItemList">
                     <tr v-show="item.shown">
                         <td>
@@ -392,6 +416,13 @@
         <button v-on:click="changeInterval(interval + 100)">+100</button>
         <button v-on:click="clearIntervalFunc()">清空</button>
         <br/>
+        <br/>
+        <span>图片质量：{{imgQuality}}</span>
+        <br/>
+        <span v-for="i in imgQualityList"><button v-on:click="changeImgQuality(i)">{{i}}</button></span>
+        <br/>
+        <br/>
+
         <button v-on:click="getScreenshotPath()">查看屏幕截图</button>
         <button v-on:click="getAllGamePicPath()">查看所有句柄截图</button>
         <br/>
@@ -515,7 +546,8 @@
             <label for="otherFunction-textarea-host">host文件内容</label>
             <button v-on:click="getHost()">重新载入</button>
             <br/>
-            <textarea style="width: 100%; height: 400px;" id="otherFunction-textarea-host" v-model="host" :readonly="isAdmin? false :'readonly'"></textarea>
+            <textarea style="width: 100%; height: 400px;" id="otherFunction-textarea-host" v-model="host"
+                      :readonly="isAdmin? false :'readonly'"></textarea>
             <br/>
             <button v-on:click="updateHost()" v-show="isAdmin">确认修改host</button>
         </div>

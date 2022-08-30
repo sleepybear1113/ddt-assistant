@@ -2,6 +2,9 @@ package cn.xiejx.ddtassistant.type;
 
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
+import cn.xiejx.ddtassistant.exception.MyInterruptException;
+import cn.xiejx.ddtassistant.utils.Util;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -13,10 +16,12 @@ import java.util.*;
  * @author sleepybear
  * @date 2022/07/02 19:35
  */
+@Slf4j
 public class BaseType implements Serializable {
     private static final long serialVersionUID = 1162668435055453032L;
 
     private boolean running;
+    private boolean pause;
 
     private DmDdt dm;
 
@@ -32,6 +37,7 @@ public class BaseType implements Serializable {
     public void init(DmDdt dm) {
         this.dm = dm;
         this.running = false;
+        this.pause = false;
         BASE_TYPE_LIST.add(this);
     }
 
@@ -133,11 +139,34 @@ public class BaseType implements Serializable {
         this.running = running;
     }
 
+    public boolean isPause() {
+        return pause;
+    }
+
+    public void pause() {
+        log.info("[{}] 暂停运行", this.dm.getHwnd());
+        this.pause = true;
+    }
+
+    public void continueRun() {
+        log.info("[{}] 继续运行", this.dm.getHwnd());
+        this.pause = true;
+    }
+
     public DmDdt getDm() {
         return dm;
     }
 
     public Integer getHwnd() {
         return getDm().getHwnd();
+    }
+
+    public void stopOrPause() {
+        if (!this.running) {
+            throw new MyInterruptException("中止运行");
+        }
+        while (this.pause) {
+            Util.sleep(50L);
+        }
     }
 }

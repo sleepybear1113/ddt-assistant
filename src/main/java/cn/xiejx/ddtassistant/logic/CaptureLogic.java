@@ -24,7 +24,7 @@ public class CaptureLogic {
     @Resource
     private DmLogic dmLogic;
 
-    public String captureScreen() {
-        return dmLogic.captureScreen();
+    public String captureScreen(Integer imgQuality) {
+        return dmLogic.captureScreen(imgQuality);
     }
 }

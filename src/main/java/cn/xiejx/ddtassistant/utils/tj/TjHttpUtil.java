@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.logic.EmailLogic;
 import cn.xiejx.ddtassistant.logic.MonitorLogic;
+import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.Cacher;
@@ -173,6 +174,7 @@ public class TjHttpUtil {
                     SettingConfig settingConfig = SpringContextUtil.getBean(SettingConfig.class);
                     if (settingConfig != null) {
                         EmailLogic.sendLowBalanceNotify(settingConfig.getEmail(), realtimeBalance);
+                        Captcha.hasSendLowBalanceEmail = true;
                     }
                 }
             }

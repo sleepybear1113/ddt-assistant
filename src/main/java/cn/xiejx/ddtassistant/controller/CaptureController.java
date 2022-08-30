@@ -20,8 +20,8 @@ public class CaptureController {
     private CaptureLogic captureLogic;
 
     @RequestMapping("/capture/getScreenshotPath")
-    public MyString captureScreen() {
-        String path = captureLogic.captureScreen();
+    public MyString captureScreen(Integer imgQuality) {
+        String path = captureLogic.captureScreen(imgQuality);
         return new MyString(path);
     }
 }

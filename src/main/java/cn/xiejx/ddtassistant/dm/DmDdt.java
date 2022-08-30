@@ -114,6 +114,7 @@ public class DmDdt extends Dm {
         bind = false;
         super.unBindWindow();
         GlobalVariable.DM_DDT_MAP.remove(this.hwnd);
+        release();
     }
 
     public boolean isBind() {
