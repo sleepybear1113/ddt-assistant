@@ -173,7 +173,7 @@ public class MonitorLogic {
         // 大翻牌消失后的按键
         Long pveFlopBonusDisappearDelay = userConfig.getPveFlopBonusDisappearDelay();
         String keyPress2 = userConfig.getKeyPressAfterPveFlopBonusDisappear();
-        if (pveFlopBonusDisappearDelay != null && !StringUtils.isBlank(keyPress2)) {
+        if (pveFlopBonusDisappearDelay != null) {
             while (true) {
                 Util.sleep(100L);
                 if (FLOP_BONUS_CACHER.get(FLOP_BONUS_FOUND_KEY) != null) {
@@ -188,8 +188,10 @@ public class MonitorLogic {
                     continue;
                 }
 
-                defaultDm.keyPressChar(keyPress2);
-                log.info("[监控线程] 按下按键 {}", keyPress2);
+                if (StringUtils.isNotBlank(keyPress2)) {
+                    defaultDm.keyPressChar(keyPress2);
+                    log.info("[监控线程] 按下按键 {}", keyPress2);
+                }
                 break;
             }
         }
