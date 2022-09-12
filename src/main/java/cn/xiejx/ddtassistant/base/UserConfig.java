@@ -25,12 +25,19 @@ public class UserConfig extends BaseConfig implements Serializable {
     public static final long DEFAULT_TIMEOUT = 20000L;
     public static final String DEFAULT_SOFT_ID = "3b995690b1794ff08bad1abb88a3e451";
 
+    public static final String DEFAULT_TYPE_ID = "7";
+
     private String username;
     private String password;
     /**
      * 推荐码
      */
     private String softId;
+    /**
+     * 打码类型
+     */
+    private String typeId;
+
     /**
      * 是否开启低余额提醒
      */
@@ -165,6 +172,10 @@ public class UserConfig extends BaseConfig implements Serializable {
 
     public void setSoftId(String softId) {
         this.softId = softId;
+    }
+
+    public String getTypeId() {
+        return StringUtils.isEmpty(typeId) ? DEFAULT_TYPE_ID : typeId;
     }
 
     public void setCaptureInterval(Long captureInterval) {

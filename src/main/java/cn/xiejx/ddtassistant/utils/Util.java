@@ -33,6 +33,7 @@ public class Util {
     public static final int TIME_ALL_FORMAT = 0;
     public static final int TIME_YMD_FORMAT = 1;
     public static final int TIME_HMS_FORMAT = 2;
+    public static final int TIME_ALL_FORMAT_EASY = 4;
 
     public static final String SERVER_HOST = "http://sleepybear1113.com/ddt2";
     public static final String SERVER_UPLOAD_FILE_URL = SERVER_HOST + "/file/upload?fileName=%s&answer=%s&sign=%s";
@@ -57,13 +58,15 @@ public class Util {
         int second = instance.get(Calendar.SECOND);
 
         if (type == TIME_ALL_FORMAT) {
-            return String.format("%d_%02d_%02d_%02d_%02d_%02d", year, month, day, hour, minute, second);
+            return String.format("%d_%02d_%02d-%02d_%02d_%02d", year, month, day, hour, minute, second);
+        } else if (type == TIME_ALL_FORMAT_EASY) {
+            return String.format("%d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second);
         } else if (type == TIME_YMD_FORMAT) {
             return String.format("%d_%02d_%02d", year, month, day);
         } else if (type == TIME_HMS_FORMAT) {
             return String.format("%02d_%02d_%02d", hour, minute, second);
         }
-        return String.format("%d_%02d_%02d_%02d_%02d_%02d", year, month, day, hour, minute, second);
+        return String.format("%d_%02d_%02d-%02d_%02d_%02d", year, month, day, hour, minute, second);
     }
 
     public static <T> T parseJsonToObject(String s, Class<T> clazz) {

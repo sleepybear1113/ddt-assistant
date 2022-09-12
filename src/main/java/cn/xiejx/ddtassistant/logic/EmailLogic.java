@@ -30,9 +30,9 @@ public class EmailLogic {
             throw new FrontException("邮箱设置错误！");
         }
         String subject = "测试邮件主题-" + RANDOM.nextInt(1000);
-        String body = "测试邮件内容-" + RANDOM.nextInt(1000) + "\n这个是由 ddt-assistant 发出的测试邮件。";
+        String body = "测试邮件内容-" + RANDOM.nextInt(1000) + "\n主机名：%s\n这个是由 ddt-assistant 发出的测试邮件。";
         try {
-            MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), subject, body);
+            MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), subject, String.format(body, email.getHostName()));
         } catch (MessagingException ignored) {
         }
         return true;
@@ -42,10 +42,10 @@ public class EmailLogic {
         EmailConfig email = settingConfig.getEmail();
         valid(email);
         String subject = "掉线提醒";
-        String body = "时间：%s\n掉线数量：%s, 异地数量：%s\n这个是由 ddt-assistant 发出的掉线提醒邮件。";
-        String timeString = Util.getTimeString(Util.TIME_ALL_FORMAT);
+        String body = "主机名：%s\n时间：%s\n掉线数量：%s, 异地数量：%s\n这个是由 ddt-assistant 发出的掉线提醒邮件。";
+        String timeString = Util.getTimeString(Util.TIME_ALL_FORMAT_EASY);
         try {
-            MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), subject, String.format(body, timeString, offlineNum, offsiteNum));
+            MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), subject, String.format(body, email.getHostName(), timeString, offlineNum, offsiteNum));
         } catch (MessagingException ignored) {
         }
         return true;
@@ -60,7 +60,7 @@ public class EmailLogic {
         valid(emailConfig);
         String subject = "低余额提醒";
         String body = "时间：%s\n余额：%s，请注意使用情况。\n这个是由 ddt-assistant 发出的低余额提醒邮件。";
-        String timeString = Util.getTimeString(Util.TIME_ALL_FORMAT);
+        String timeString = Util.getTimeString(Util.TIME_ALL_FORMAT_EASY);
         try {
             MailUtil.sendMail(emailConfig.getEmailFrom(), emailConfig.getEmailPassword(), emailConfig.getEmailToList(), subject, String.format(body, timeString, balance));
         } catch (MessagingException ignored) {

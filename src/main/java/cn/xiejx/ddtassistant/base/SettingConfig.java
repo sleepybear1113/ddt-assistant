@@ -32,6 +32,7 @@ public class SettingConfig extends BaseConfig implements Serializable {
     public SettingConfig defaultConfig() {
         SettingConfig settingConfig = new SettingConfig();
         settingConfig.setKeyPadPressWay("dm");
+        settingConfig.setEmail(new EmailConfig());
         return settingConfig;
     }
 

@@ -12,6 +12,7 @@ let settingApp = new Vue({
                 emailFrom: "",
                 emailPassword: "",
                 emailTo: "",
+                hostName: "",
             }
         }
     },

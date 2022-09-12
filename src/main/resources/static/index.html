@@ -48,6 +48,8 @@
             <input id="input-password" v-model="userConfig.password" type="password"><br/>
             <label for="input-softId">softId </label>
             <input id="input-softId" v-model="userConfig.softId"><br/>
+            <label for="input-typeId">typeId </label>
+            <input id="input-typeId" v-model="userConfig.typeId"><br/>
             <input id="checkbox-lowBalanceRemind" type="checkbox" v-model="userConfig.lowBalanceRemind">
             <label for="checkbox-lowBalanceRemind">
                 余额低于
@@ -596,6 +598,9 @@
             <br/>
             <label for="input-emailTo">收件人邮箱列表</label>
             <input id="input-emailTo" v-model="settingConfig.email.emailTo" placeholder="若多邮箱 请逗号分隔">
+            <hr>
+            <label for="hostNameInput">主机名</label>
+            <input id="hostNameInput" v-model="settingConfig.email.hostName">
             <hr>
             <span>保存相关内容后，测试邮箱功能是否可用</span><br/>
             <button v-on:click="testEmailSend()">测试邮箱发送</button>

@@ -6,6 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * There is description
@@ -20,6 +22,7 @@ public class EmailConfig implements Serializable {
     private String emailFrom;
     private String emailPassword;
     private String emailTo;
+    private String hostName;
 
     public void update(EmailConfig emailConfig) {
         BeanUtils.copyProperties(emailConfig, this);
@@ -36,5 +39,13 @@ public class EmailConfig implements Serializable {
 
     public boolean valid() {
         return !StringUtils.isBlank(emailFrom) && !StringUtils.isBlank(emailPassword) && !StringUtils.isBlank(emailTo);
+    }
+
+    public String getHostName() {
+        try {
+            return StringUtils.isEmpty(hostName) ? InetAddress.getLocalHost().getHostName() : hostName;
+        } catch (UnknownHostException e) {
+            return "未知主机";
+        }
     }
 }

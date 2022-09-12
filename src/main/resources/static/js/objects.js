@@ -6,6 +6,7 @@ class UserConfig {
         this.username = props.username;
         this.password = props.password;
         this.softId = props.softId;
+        this.typeId = props.typeId;
         this.captureInterval = props.captureInterval;
         this.captchaAppearDelay = props.captchaAppearDelay;
         this.keyPressAfterCaptchaShow = props.keyPressAfterCaptchaShow;
@@ -201,6 +202,7 @@ class Email {
         this.emailFrom = props.emailFrom;
         this.emailPassword = props.emailPassword;
         this.emailTo = props.emailTo;
+        this.hostName = props.hostName;
     }
 }
 

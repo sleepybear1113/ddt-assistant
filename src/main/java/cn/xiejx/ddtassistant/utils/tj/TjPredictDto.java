@@ -56,7 +56,7 @@ public class TjPredictDto implements Serializable {
             throw new FrontException("用户名密码缺失");
         }
 
-       return new TjPredictDto(username, password, "7", "", userConfig.getSoftId(), path);
+       return new TjPredictDto(username, password, userConfig.getTypeId(), "", userConfig.getSoftId(), path);
     }
 
     public List<NameValuePair> buildPair() {

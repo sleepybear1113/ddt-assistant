@@ -13,6 +13,7 @@ import net.sourceforge.tess4j.TesseractException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.util.Map;
 
 /**
@@ -20,7 +21,8 @@ import java.util.Map;
  */
 public class SimpleTest {
     public static void main(String[] args) throws Exception {
-        captchaValid();
+        String hostName = InetAddress.getLocalHost().getHostName();
+        System.out.println(hostName);
     }
 
     public static void captchaValid() {
