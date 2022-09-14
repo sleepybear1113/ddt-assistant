@@ -12,7 +12,7 @@ import cn.xiejx.ddtassistant.type.captcha.CaptchaConstants;
 import cn.xiejx.ddtassistant.utils.ImgUtil;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
-import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
+import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.tess4j.TesseractException;
 import org.apache.commons.lang3.StringUtils;

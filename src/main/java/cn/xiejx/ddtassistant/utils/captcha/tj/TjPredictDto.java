@@ -1,10 +1,14 @@
-package cn.xiejx.ddtassistant.utils.tj;
+package cn.xiejx.ddtassistant.utils.captcha.tj;
 
 import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.exception.FrontException;
+import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
+import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.io.IOException;
@@ -22,27 +26,33 @@ import java.util.List;
  * @author sleepybear
  * @date 2022/05/10 09:55
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
-public class TjPredictDto implements Serializable {
+public class TjPredictDto extends BasePredictDto implements Serializable {
     private static final long serialVersionUID = 4340261310989122096L;
     private String username;
     private String password;
     private String typeId;
     private String typeName;
     private String softId;
-    private String imgFile;
 
     public TjPredictDto() {
     }
 
+    @Override
+    public String getUrl() {
+        return "http://api.ttshitu.com/predict";
+    }
+
     public TjPredictDto(String username, String password, String typeId, String typeName, String softId, String imgFile) {
+        super();
+        super.setImgFile(imgFile);
         this.username = username;
         this.password = password;
         this.typeId = typeId;
         this.typeName = typeName;
         this.softId = softId;
-        this.imgFile = imgFile;
     }
 
     public static TjPredictDto build(UserConfig userConfig, String path) {
@@ -56,9 +66,10 @@ public class TjPredictDto implements Serializable {
             throw new FrontException("用户名密码缺失");
         }
 
-       return new TjPredictDto(username, password, userConfig.getTypeId(), "", userConfig.getSoftId(), path);
+        return new TjPredictDto(username, password, userConfig.getTypeId(), "", userConfig.getSoftId(), path);
     }
 
+    @Override
     public List<NameValuePair> buildPair() {
         String base64Img = imgToBase64();
         if (base64Img == null) {
@@ -75,21 +86,17 @@ public class TjPredictDto implements Serializable {
         return pairs;
     }
 
-    public String imgToBase64() {
-        if (this.imgFile == null) {
-            return null;
-        }
-        InputStream in;
-        byte[] data = null;
-        //读取图片字节数组
-        try {
-            in = Files.newInputStream(Paths.get(this.imgFile));
-            data = new byte[in.available()];
-            int i = in.read(data);
-            in.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Base64.getEncoder().encodeToString(data);
+    @Override
+    public RequestConfig getRequestConfig() {
+        return RequestConfig.custom()
+                .setConnectionRequestTimeout(1000 * 5)
+                .setConnectTimeout(1000 * 5)
+                .setSocketTimeout(1000 * 62)
+                .build();
+    }
+
+    @Override
+    public <T extends BaseResponse> Class<T> getResponseClass() {
+        return (Class<T>) TjResponse.class;
     }
 }

@@ -1,7 +1,8 @@
 package cn.xiejx.ddtassistant.controller;
 
 import cn.xiejx.ddtassistant.logic.CaptchaLogic;
-import cn.xiejx.ddtassistant.utils.tj.TjResponse;
+import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
+import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
 import cn.xiejx.ddtassistant.vo.StringRet;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +19,7 @@ public class CaptchaController {
     private CaptchaLogic captchaLogic;
 
     @RequestMapping("/captcha/test")
-    public TjResponse testCaptcha() {
+    public BaseResponse testCaptcha() {
         return captchaLogic.testCaptcha();
     }
 

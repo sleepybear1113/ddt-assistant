@@ -7,9 +7,12 @@ import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.utils.Util;
-import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
-import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
-import cn.xiejx.ddtassistant.utils.tj.TjResponse;
+import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
+import cn.xiejx.ddtassistant.utils.captcha.CaptchaUtil;
+import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
+import cn.xiejx.ddtassistant.utils.captcha.tj.TjHttpUtil;
+import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
+import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
 import cn.xiejx.ddtassistant.vo.StringRet;
 import lombok.extern.slf4j.Slf4j;
@@ -36,9 +39,10 @@ public class CaptchaLogic {
     @Resource
     private DmDdt defaultDm;
 
-    public TjResponse testCaptcha() {
-        TjPredictDto build = TjPredictDto.build(userConfig, "资源图片/验证码测试/test-1.bmp");
-        TjResponse response = TjHttpUtil.getTjResponse(build);
+    public BaseResponse testCaptcha() {
+        TjPredictDto tjPredictDto = TjPredictDto.build(userConfig, "资源图片/验证码测试/test-1.bmp");
+        PcPredictDto basePredictDto = new PcPredictDto("资源图片/验证码测试/test-1.bmp");
+        BaseResponse response = CaptchaUtil.getResponse(tjPredictDto);
         log.info(String.valueOf(response));
         return response;
     }

@@ -1,4 +1,4 @@
-package cn.xiejx.ddtassistant.utils.tj;
+package cn.xiejx.ddtassistant.utils.captcha;
 
 import cn.xiejx.ddtassistant.type.captcha.CaptchaConstants;
 

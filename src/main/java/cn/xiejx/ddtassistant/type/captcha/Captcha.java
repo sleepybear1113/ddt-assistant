@@ -13,10 +13,12 @@ import cn.xiejx.ddtassistant.utils.ImgUtil;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
-import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
-import cn.xiejx.ddtassistant.utils.tj.TjHttpUtil;
-import cn.xiejx.ddtassistant.utils.tj.TjPredictDto;
-import cn.xiejx.ddtassistant.utils.tj.TjResponse;
+import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
+import cn.xiejx.ddtassistant.utils.captcha.CaptchaUtil;
+import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
+import cn.xiejx.ddtassistant.utils.captcha.tj.TjHttpUtil;
+import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
+import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -25,8 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 /**

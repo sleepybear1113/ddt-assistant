@@ -1,4 +1,4 @@
-package cn.xiejx.ddtassistant.utils.tj;
+package cn.xiejx.ddtassistant.utils.captcha.tj;
 
 import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
@@ -10,6 +10,7 @@ import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.Cacher;
 import cn.xiejx.ddtassistant.utils.cacher.CacherBuilder;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
+import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
@@ -79,9 +80,12 @@ public class TjHttpUtil {
             return res;
         }
         TjResponse tjResponse = Util.parseJsonToObject(responseBody, TjResponse.class);
-        TjResponse response = TjResponse.buildResponse(tjResponse);
-        response.setCost(end - start);
-        return response;
+        if (tjResponse == null) {
+            tjResponse = new TjResponse();
+        }
+        tjResponse.buildResponse();
+        tjResponse.setCost(end - start);
+        return tjResponse;
     }
 
     public static TjResponse waitToGetChoice(long maxDelay, Long afterDisappearDelay, TjPredictDto tjPredictDto) {
@@ -89,7 +93,10 @@ public class TjHttpUtil {
         CACHER.set(id, TjResponse.buildWaitingResponse(), 1000L * 60);
         GlobalVariable.THREAD_POOL.execute(() -> {
             TjResponse tjResponse = getTjResponse(tjPredictDto);
-            tjResponse = TjResponse.buildResponse(tjResponse);
+            if (tjResponse == null) {
+                tjResponse = new TjResponse();
+            }
+            tjResponse.buildResponse();
             if (tjResponse.getSuccess()) {
                 log.info("[{}] 请求结束，平台识别时间耗时 {} 毫秒", id, tjResponse.getCost());
             } else {

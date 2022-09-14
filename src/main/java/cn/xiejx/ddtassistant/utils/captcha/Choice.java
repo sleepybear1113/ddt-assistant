@@ -1,4 +1,4 @@
-package cn.xiejx.ddtassistant.utils.tj;
+package cn.xiejx.ddtassistant.utils.captcha;
 
 import lombok.Data;
 
@@ -7,6 +7,8 @@ import lombok.Data;
  */
 @Data
 public class Choice {
+    public static final String[] VALID_CHOICES = {"A", "B", "C", "D"};
+
     private ChoiceEnum choiceEnum;
     private boolean success;
     private String message;

@@ -3,7 +3,7 @@ package cn.xiejx.ddtassistant.utils;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
-import cn.xiejx.ddtassistant.utils.tj.ChoiceEnum;
+import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
