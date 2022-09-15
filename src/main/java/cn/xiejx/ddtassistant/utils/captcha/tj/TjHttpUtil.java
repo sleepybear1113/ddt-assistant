@@ -179,10 +179,8 @@ public class TjHttpUtil {
                 if (realtimeBalance < lowBalanceNum) {
                     log.warn("当前余额：{}，低于设定值 {}，请注意！", realtimeBalance, lowBalanceNum);
                     SettingConfig settingConfig = SpringContextUtil.getBean(SettingConfig.class);
-                    if (settingConfig != null) {
-                        EmailLogic.sendLowBalanceNotify(settingConfig.getEmail(), realtimeBalance);
-                        Captcha.hasSendLowBalanceEmail = true;
-                    }
+                    EmailLogic.sendLowBalanceNotify(settingConfig.getEmail(), realtimeBalance);
+                    Captcha.hasSendLowBalanceEmail = true;
                 }
             }
 

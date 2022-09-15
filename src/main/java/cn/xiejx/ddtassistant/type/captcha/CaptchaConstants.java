@@ -79,5 +79,12 @@ public class CaptchaConstants {
     public static final double DEFAULT_BRIGHT_PIC_THRESHOLD = 0.7;
     public static final double DEFAULT_FLOP_BONUS_PIC_THRESHOLD = 0.6;
 
-    public static final int MIN_ANSWER_TIME = 7;
+    /**
+     * 图鉴最低打码所需时间
+     */
+    public static final int TJ_MIN_ANSWER_TIME = 7;
+    /**
+     * 平川最低打码所需时间
+     */
+    public static final int PC_MIN_ANSWER_TIME = 3;
 }

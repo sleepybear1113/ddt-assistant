@@ -99,4 +99,9 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
     public <T extends BaseResponse> Class<T> getResponseClass() {
         return (Class<T>) TjResponse.class;
     }
+
+    @Override
+    public boolean testConnection() {
+        return true;
+    }
 }

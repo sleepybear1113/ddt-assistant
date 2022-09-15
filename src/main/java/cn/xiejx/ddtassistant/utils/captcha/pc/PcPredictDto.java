@@ -2,10 +2,14 @@ package cn.xiejx.ddtassistant.utils.captcha.pc;
 
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
+import cn.xiejx.ddtassistant.utils.http.HttpHelper;
+import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
+import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.message.BasicNameValuePair;
@@ -27,6 +31,8 @@ import java.util.List;
 public class PcPredictDto extends BasePredictDto implements Serializable {
     private static final long serialVersionUID = -3828083082254095381L;
 
+    public static final String HOST = "http://139.155.237.55:21000";
+
     public PcPredictDto(String imgFile) {
         super();
         super.setImgFile(imgFile);
@@ -34,7 +40,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
 
     @Override
     public String getUrl() {
-        return "http://139.155.237.55:21000/predict";
+        return HOST + "/predict";
     }
 
     @Override
@@ -52,14 +58,28 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
     @Override
     public RequestConfig getRequestConfig() {
         return RequestConfig.custom()
-                .setConnectionRequestTimeout(1000 * 5)
-                .setConnectTimeout(1000 * 5)
-                .setSocketTimeout(1000 * 62)
+                .setConnectionRequestTimeout(1000 * 3)
+                .setConnectTimeout(1000 * 3)
+                .setSocketTimeout(1000 * 10)
                 .build();
     }
 
     @Override
     public <T extends BaseResponse> Class<T> getResponseClass() {
         return (Class<T>) PcResponse.class;
+    }
+
+    @Override
+    public boolean testConnection() {
+        HttpRequestMaker requestMaker = HttpRequestMaker.makeGetHttpHelper(HOST + "/test");
+        requestMaker.setConfig(RequestConfig.custom()
+                .setConnectionRequestTimeout(2000)
+                .setConnectTimeout(2000)
+                .setSocketTimeout(2000)
+                .build());
+        HttpHelper httpHelper = new HttpHelper(requestMaker);
+        HttpResponseHelper request = httpHelper.request();
+        String responseBody = request.getResponseBody();
+        return !StringUtils.isBlank(responseBody) && responseBody.contains("OK");
     }
 }

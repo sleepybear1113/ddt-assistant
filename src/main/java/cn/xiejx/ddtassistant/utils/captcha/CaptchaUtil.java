@@ -101,6 +101,12 @@ public class CaptchaUtil {
 
         // 异步发送请求
         GlobalVariable.THREAD_POOL.execute(() -> {
+            if (!basePredictDto.testConnection()) {
+                log.info("[{}] 请求失败！ 原因：{}", id, "无法连接到打码平台！");
+                CACHER.set(id, BaseResponse.buildEmptyResponse(), 1000L * 60);
+                return;
+            }
+
             BaseResponse response = getResponse(basePredictDto);
             if (response == null) {
                 log.info("[{}] 请求失败！ 原因：{}", id, "结果为空！");
@@ -144,9 +150,9 @@ public class CaptchaUtil {
     }
 
     public static void main(String[] args) {
-        String file = "C:\\Users\\xjx\\Desktop\\ddt\\captcha\\20220527\\B@132252-21_21_10.png";
-//        String file = "D:\\XJXCode\\Java\\Spring\\ddt-assistant\\target\\classes\\application.yml";
-        tj2(file);
+//        String file = "C:\\Users\\xjx\\Desktop\\ddt\\captcha\\20220527\\B@132252-21_21_10.png";
+        String file = "图片/2.bmp";
+        pc(file);
     }
 
     public static void pc(String file) {

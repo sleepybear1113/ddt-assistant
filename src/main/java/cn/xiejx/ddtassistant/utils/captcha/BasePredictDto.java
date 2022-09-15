@@ -1,18 +1,15 @@
 package cn.xiejx.ddtassistant.utils.captcha;
 
-import cn.xiejx.ddtassistant.utils.captcha.pc.PcResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.message.BasicNameValuePair;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -39,6 +36,8 @@ public abstract class BasePredictDto implements Serializable {
     public abstract RequestConfig getRequestConfig();
 
     public abstract <T extends BaseResponse> Class<T> getResponseClass();
+
+    public abstract boolean testConnection();
 
     public String imgToBase64() {
         if (this.imgFile == null) {

@@ -1,8 +1,6 @@
 package cn.xiejx.ddtassistant.config;
 
-import cn.xiejx.ddtassistant.base.OfflineDetectionConfig;
-import cn.xiejx.ddtassistant.base.SettingConfig;
-import cn.xiejx.ddtassistant.base.UserConfig;
+import cn.xiejx.ddtassistant.base.*;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.type.auction.AuctionData;
@@ -20,6 +18,13 @@ public class Ioc {
     @Bean
     public UserConfig initUserConfig() {
         return new UserConfig().load();
+    }
+
+    @Bean
+    public CaptchaConfig initCaptchaConfig() {
+        CaptchaConfig captchaConfig = new CaptchaConfig().load();
+        captchaConfig.userConfigToCaptchaConfig(new UserConfig().load());
+        return captchaConfig;
     }
 
     @Bean

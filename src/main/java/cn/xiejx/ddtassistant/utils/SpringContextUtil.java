@@ -20,15 +20,15 @@ public class SpringContextUtil {
     }
 
     public static Object getBean(String name) {
-        return applicationContext == null ? null : applicationContext.getBean(name);
+        return applicationContext.getBean(name);
     }
 
     public static <T> T getBean(Class<T> clazz) {
-        return applicationContext == null ? null : getApplicationContext().getBean(clazz);
+        return getApplicationContext().getBean(clazz);
     }
 
     public static <T> T getBean(String name, Class<T> clazz) {
-        return applicationContext == null ? null : getApplicationContext().getBean(name, clazz);
+        return getApplicationContext().getBean(name, clazz);
     }
 
 }
