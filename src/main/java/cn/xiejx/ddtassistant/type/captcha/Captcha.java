@@ -257,6 +257,10 @@ public class Captcha extends BaseType {
 
                 TjPredictDto tjPredictDto = TjPredictDto.build(captchaConfig, captchaName);
                 response = CaptchaUtil.waitToGetChoice(countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
+                if (!(response instanceof TjResponse)) {
+                    // 解析错误直接返回
+                    continue;
+                }
                 String captchaId = ((TjResponse) response).getData().getId();
 
                 if (!ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
