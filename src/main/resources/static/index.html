@@ -265,9 +265,17 @@
                 </tr>
                 </thead>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td>
+                        <label>
+                            <select v-model="batchChangeItem.enabled">
+                                <option :value="null">不变</option>
+                                <option :value="true">选中</option>
+                                <option :value="false">不选</option>
+                            </select>
+                        </label>
+                    </td>
+                    <td><hr></td>
+                    <td><hr></td>
                     <td>
                         <label>
                             <input v-model="batchChangeItem.argueUnitPrice" class="string-input">
@@ -283,8 +291,8 @@
                             <input v-model="batchChangeItem.minNum" class="string-input">
                         </label>
                     </td>
-                    <td></td>
-                    <td></td>
+                    <td><hr></td>
+                    <td><hr></td>
                     <td>
                         <button v-on:click="batchChangeItemFunc()">批量修改以下信息</button>
                     </td>

@@ -46,8 +46,8 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
         CaptchaConfig captchaConfig = new CaptchaConfig();
 
         List<Integer> way = new ArrayList<>();
-        way.add(CaptchaChoiceEnum.TJ.getChoice());
         way.add(CaptchaChoiceEnum.PC.getChoice());
+        way.add(CaptchaChoiceEnum.TJ.getChoice());
         way.add(CaptchaChoiceEnum.NONE.getChoice());
         way.add(CaptchaChoiceEnum.NONE.getChoice());
         way.add(CaptchaChoiceEnum.NONE.getChoice());

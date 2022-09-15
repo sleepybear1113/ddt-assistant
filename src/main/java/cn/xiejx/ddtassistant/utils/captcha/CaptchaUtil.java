@@ -151,8 +151,8 @@ public class CaptchaUtil {
 
     public static void main(String[] args) {
 //        String file = "C:\\Users\\xjx\\Desktop\\ddt\\captcha\\20220527\\B@132252-21_21_10.png";
-        String file = "图片/2.bmp";
-        pc(file);
+        String file = "图片/A@67200-12_59_39.png";
+        pc2(file);
     }
 
     public static void pc(String file) {

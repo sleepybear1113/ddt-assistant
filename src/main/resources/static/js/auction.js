@@ -13,6 +13,7 @@ let auctionApp = new Vue({
             argueUnitPrice: "",
             mouthfulUnitPrice: "",
             minNum: "",
+            enabled: null,
         },
         hwnds: [],
         filterConditionButtonList: [],
@@ -118,6 +119,9 @@ let auctionApp = new Vue({
             this.auctionData.auctionItemList.forEach(item => {
                 if (!item.shown) {
                     return;
+                }
+                if (this.batchChangeItem.enabled !== null) {
+                    item.enabled = this.batchChangeItem.enabled;
                 }
                 if (this.batchChangeItem.argueUnitPrice !== "") {
                     item.argueUnitPrice = this.batchChangeItem.argueUnitPrice;
