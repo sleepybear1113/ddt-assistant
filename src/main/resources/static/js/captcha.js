@@ -5,6 +5,7 @@ let captchaApp = new Vue({
             username: "",
             password: "",
             softId: "",
+            typeId: "",
             captureInterval: "",
             timeout: "",
             captchaAppearDelay: "",
@@ -23,6 +24,14 @@ let captchaApp = new Vue({
             lowBalanceRemind: "",
             lowBalanceNum: "",
         },
+        captchaConfig: {
+            lowBalanceRemind: "",
+            lowBalanceNum: "",
+            captchaWay: [],
+            tj: {},
+            pc: {},
+        },
+        captchaWayTabIndex: 1,
 
         captureSampleChecked: "",
 
@@ -36,12 +45,40 @@ let captchaApp = new Vue({
     },
     created() {
         this.initUserConfig();
+        this.initCaptchaConfig();
     },
     methods: {
         initUserConfig: function () {
             let url = "config/get"
             axios.get(url).then((res) => {
                 this.userConfig = new UserConfig(res.data.result);
+            });
+        },
+
+        initCaptchaConfig: function () {
+            let url = "captchaConfig/get"
+            axios.get(url).then((res) => {
+                this.captchaConfig = new CaptchaConfig(res.data.result);
+            });
+        },
+
+        changeCaptchaWayTabIndex: function (index) {
+            this.captchaWayTabIndex = index;
+        },
+        updateCaptchaWaySetting: function () {
+            let url = "captchaConfig/update"
+            axios.post(url, this.captchaConfig).then(() => {
+                showInfo("成功");
+            });
+        },
+        resetCaptchaWaySetting: function () {
+            if (!confirm("确定要重置？")) {
+                return;
+            }
+            let url = "captchaConfig/reset";
+            axios.get(url).then((res) => {
+                this.userConfig = new UserConfig(res.data.result);
+                showInfo("成功");
             });
         },
 
@@ -75,10 +112,10 @@ let captchaApp = new Vue({
                 showInfo(`新增线程数：${bindResultVo.newAddCount}，维持运行线程数：${bindResultVo.runningCount}`);
             });
         },
-        testCaptcha: function () {
+        testCaptcha: function (captchaWay) {
             let url = "captcha/test";
             showInfo("识别中，请稍后...");
-            axios.get(url).then((res) => {
+            axios.get(url, {params: {captchaWay}}).then((res) => {
                 let tjResponse = new TjResponse(res.data.result);
                 if (tjResponse == null) {
                     showInfo("失败：接口返回内容为空");

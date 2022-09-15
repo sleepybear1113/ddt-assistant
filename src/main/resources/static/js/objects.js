@@ -27,6 +27,42 @@ class UserConfig {
     }
 }
 
+class CaptchaConfig {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.tj = new CaptchaTj(props.tj);
+        this.pc = new CaptchaPc(props.pc);
+        this.lowBalanceRemind = props.lowBalanceRemind;
+        this.lowBalanceNum = props.lowBalanceNum;
+        this.captchaWay = props.captchaWay;
+        this.captchaChoiceEnumList = props.captchaChoiceEnumList;
+    }
+}
+
+class CaptchaTj {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+        this.username = props.username;
+        this.password = props.password;
+        this.softId = props.softId;
+        this.typeId = props.typeId;
+    }
+}
+
+class CaptchaPc {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+        this.username = props.username;
+    }
+}
+
 class BindResultVo {
     constructor(props) {
         if (props == null) {

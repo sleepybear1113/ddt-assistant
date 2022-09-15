@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.utils.captcha.tj;
 
+import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
@@ -55,18 +56,18 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
         this.softId = softId;
     }
 
-    public static TjPredictDto build(UserConfig userConfig, String path) {
-        if (userConfig == null) {
+    public static TjPredictDto build(CaptchaConfig captchaConfig, String path) {
+        if (captchaConfig == null) {
             throw new FrontException("用户信息不存在");
         }
 
-        String username = userConfig.getUsername();
-        String password = userConfig.getPassword();
+        String username = captchaConfig.getTj().getUsername();
+        String password = captchaConfig.getTj().getPassword();
         if (username == null || username.length() == 0 || password == null || password.length() == 0) {
             throw new FrontException("用户名密码缺失");
         }
 
-        return new TjPredictDto(username, password, userConfig.getTypeId(), "", userConfig.getSoftId(), path);
+        return new TjPredictDto(username, password, captchaConfig.getTj().getTypeId(), "", captchaConfig.getTj().getSoftId(), path);
     }
 
     @Override

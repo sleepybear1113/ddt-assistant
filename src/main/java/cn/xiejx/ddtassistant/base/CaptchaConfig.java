@@ -36,8 +36,6 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
 
     private List<Integer> captchaWay;
 
-    private final Integer captchaApiCount = 2;
-
     @Override
     public String getFileName() {
         return "验证码配置.json";
@@ -50,6 +48,11 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
         List<Integer> way = new ArrayList<>();
         way.add(CaptchaChoiceEnum.TJ.getChoice());
         way.add(CaptchaChoiceEnum.PC.getChoice());
+        way.add(CaptchaChoiceEnum.NONE.getChoice());
+        way.add(CaptchaChoiceEnum.NONE.getChoice());
+        way.add(CaptchaChoiceEnum.NONE.getChoice());
+        way.add(CaptchaChoiceEnum.NONE.getChoice());
+        way.add(CaptchaChoiceEnum.NONE.getChoice());
         captchaConfig.setCaptchaWay(way);
 
         Tj tj = new Tj();
@@ -75,7 +78,7 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
         /**
          * 平川打码
          */
-        PC(2, "平川打码", CaptchaConstants.PC_MIN_ANSWER_TIME),
+        PC(2, "服务器打码", CaptchaConstants.PC_MIN_ANSWER_TIME),
         ;
         private final Integer choice;
         private final String name;

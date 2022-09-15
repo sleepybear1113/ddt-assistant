@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.logic;
 
+import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
@@ -7,6 +8,7 @@ import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.utils.Util;
+import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaUtil;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
@@ -37,20 +39,27 @@ public class CaptchaLogic {
     @Resource
     private UserConfig userConfig;
     @Resource
+    private CaptchaConfig captchaConfig;
+    @Resource
     private DmDdt defaultDm;
 
-    public BaseResponse testCaptcha() {
-        TjPredictDto tjPredictDto = TjPredictDto.build(userConfig, "资源图片/验证码测试/test-1.bmp");
-        PcPredictDto basePredictDto = new PcPredictDto("资源图片/验证码测试/test-1.bmp");
-        BaseResponse response = CaptchaUtil.getResponse(tjPredictDto);
+    public BaseResponse testCaptcha(Integer captchaWay) {
+        BasePredictDto basePredictDto;
+        String picPath = "资源图片/验证码测试/test-1.bmp";
+        if (CaptchaConfig.CaptchaChoiceEnum.PC.equals(CaptchaConfig.CaptchaChoiceEnum.getChoice(captchaWay))) {
+            basePredictDto = new PcPredictDto(picPath);
+        } else if (CaptchaConfig.CaptchaChoiceEnum.TJ.equals(CaptchaConfig.CaptchaChoiceEnum.getChoice(captchaWay))) {
+            basePredictDto = TjPredictDto.build(captchaConfig, picPath);
+        } else {
+            return BaseResponse.buildEmptyResponse();
+        }
+
+        BaseResponse response = CaptchaUtil.getResponse(basePredictDto);
         log.info(String.valueOf(response));
         return response;
     }
 
     public Boolean addNewBind(Long delay) {
-        if (!userConfig.validUserInfo()) {
-            throw new FrontException("用户名或密码为空");
-        }
         if (delay != null && delay > 0) {
             Util.sleep(delay);
         }
@@ -59,7 +68,7 @@ public class CaptchaLogic {
             throw new FrontException("当前窗口 " + pointWindowHwnd + " 不是 flash 窗口！");
         }
 
-        boolean create = Captcha.startIdentifyCaptcha(pointWindowHwnd, userConfig);
+        boolean create = Captcha.startIdentifyCaptcha(pointWindowHwnd, captchaConfig);
         if (!create) {
             throw new FrontException("当前窗口" + pointWindowHwnd + "已在列表中运行！");
         }
@@ -69,10 +78,6 @@ public class CaptchaLogic {
     }
 
     public BindResultVo bindAll() {
-        if (!userConfig.validUserInfo()) {
-            throw new FrontException("用户名或密码为空");
-        }
-
         List<Integer> ddtWindowHwnd = defaultDm.enumDdtWindowHwnd();
         if (CollectionUtils.isEmpty(ddtWindowHwnd)) {
             throw new FrontException("没有 flash 窗口");
@@ -86,7 +91,7 @@ public class CaptchaLogic {
                 bindResultVo.increaseRunningCount();
             } else {
                 bindResultVo.increaseNewAddCount();
-                Captcha.startIdentifyCaptcha(hwnd, userConfig);
+                Captcha.startIdentifyCaptcha(hwnd, captchaConfig);
             }
         }
         Util.sleep(300L);
@@ -111,10 +116,24 @@ public class CaptchaLogic {
     }
 
     public StringRet getTjAccountInfo() {
-        String username = userConfig.getUsername();
-        String password = userConfig.getPassword();
-        Boolean lowBalanceRemind = userConfig.getLowBalanceRemind();
-        Double lowBalanceNum = userConfig.getLowBalanceNum();
+        String username = captchaConfig.getTj().getUsername();
+        String password = captchaConfig.getTj().getPassword();
+        Boolean lowBalanceRemind = captchaConfig.getLowBalanceRemind();
+        Double lowBalanceNum = captchaConfig.getLowBalanceNum();
         return StringRet.buildSuccess(TjHttpUtil.getAccountInfo(username, password, lowBalanceRemind, lowBalanceNum));
+    }
+
+    public CaptchaConfig getCaptchaConfig() {
+        return captchaConfig;
+    }
+
+    public Boolean updateCaptchaConfig(CaptchaConfig captchaConfig) {
+        this.captchaConfig.update(captchaConfig);
+        this.captchaConfig.save();
+        return true;
+    }
+
+    public Boolean resetCaptchaConfig() {
+        return updateCaptchaConfig((CaptchaConfig) this.captchaConfig.defaultConfig());
     }
 }

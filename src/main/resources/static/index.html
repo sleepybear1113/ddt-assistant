@@ -39,28 +39,56 @@
     <div class="tab" id="captcha">
         <h3>副本验证码功能</h3>
         <hr>
-        <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
         <div class="area">
-            <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
-            <label for="input-username">用户名</label>
-            <input id="input-username" v-model="userConfig.username"><br/>
-            <label for="input-password">密码　</label>
-            <input id="input-password" v-model="userConfig.password" type="password"><br/>
-            <label for="input-softId">softId </label>
-            <input id="input-softId" v-model="userConfig.softId"><br/>
-            <label for="input-typeId">typeId </label>
-            <input id="input-typeId" v-model="userConfig.typeId"><br/>
-            <input id="checkbox-lowBalanceRemind" type="checkbox" v-model="userConfig.lowBalanceRemind">
+            <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
+            <button v-on:click="changeCaptchaWayTabIndex(1)">图鉴打码</button>
+            <button v-on:click="changeCaptchaWayTabIndex(2)">服务器打码</button>
+            <hr>
+
+            <div v-show="captchaWayTabIndex === 1">
+                <h3>图鉴打码</h3>
+                <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
+                <label for="input-username">用户名</label>
+                <input id="input-username" v-model="captchaConfig.tj.username"><br/>
+                <label for="input-password">密码　</label>
+                <input id="input-password" v-model="captchaConfig.tj.password" type="password"><br/>
+                <label for="input-softId">softId </label>
+                <input id="input-softId" v-model="captchaConfig.tj.softId"><br/>
+                <label for="input-typeId">typeId </label>
+                <input id="input-typeId" v-model="captchaConfig.tj.typeId"><br/>
+                <button v-on:click="testCaptcha(1)">测试验证码</button>
+                <button v-on:click="showTjAccountInfo()">查看余额</button>
+            </div>
+
+            <div v-show="captchaWayTabIndex === 2">
+                <h3>服务器打码</h3>
+                <button v-on:click="testCaptcha(2)">测试验证码</button>
+            </div>
+            <hr>
+
+            <input id="checkbox-lowBalanceRemind" type="checkbox" v-model="captchaConfig.tj.lowBalanceRemind">
             <label for="checkbox-lowBalanceRemind">
                 余额低于
                 <label for="input-lowBalanceNum"></label>
-                <input id="input-lowBalanceNum" v-model="userConfig.lowBalanceNum" class="ms-input-small">
+                <input id="input-lowBalanceNum" v-model="captchaConfig.tj.lowBalanceNum" class="ms-input-small">
                 开启邮件提醒（每次启动时判断）
-            </label><br/>
+            </label>
+            <br/>
+            <span>打码次序</span>
+            <template v-for="(way, index) in captchaConfig.captchaWay">
+                <label for="select-captchaWay"></label>
+                <select id="select-captchaWay" v-model="captchaConfig.captchaWay[index]">
+                    <option value="0">不打码</option>
+                    <option value="1">图鉴打码</option>
+                    <option value="2">服务器打码</option>
+                </select>
+            </template>
 
-            <button v-on:click="testCaptcha()">测试验证码</button>
-            <button v-on:click="showTjAccountInfo()">查看余额</button>
+            <hr>
+            <button v-on:click="updateCaptchaWaySetting()">保存打码设置</button>
+            <button v-on:click="resetCaptchaWaySetting()">重置打码设置</button>
         </div>
+
 
         <ul>
             <li>
@@ -73,8 +101,6 @@
                 <select id="select-defaultChoiceAnswer" v-model="userConfig.defaultChoiceAnswer">
                     <option v-for="item in answerChoices" :value="item.title">{{item.option}}</option>
                 </select>
-                <label for="input-timeout">，识别超时时间(毫秒)</label>
-                <input id="input-timeout" v-model="userConfig.timeout" type="number" class="ms-input"><br/>
             </li>
             <li>
                 <label for="input-captchaAppearDelay">当出现验证码后经过</label>
@@ -171,7 +197,9 @@
             <div>
                 <span v-for="hwnd in hwnds">
                     <label :for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
-                    <input :id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                    <label>
+                        <input :id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                    </label>
                     <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
                     <button v-on:click="sell(hwnd.hwnd)">运行</button>
                     <button v-on:click="stop(hwnd.hwnd)">停止</button>
@@ -190,7 +218,7 @@
                 <button v-on:click="saveFilterConditionList()">保存</button>
                 <br/>
                 <span v-for="button in filterConditionButtonList">
-                <button :class="button.chosen == true? 'button-chosen': ''"
+                <button :class="button.chosen === true? 'button-chosen': ''"
                         v-on:click="changeAuctionFilterList(button)">{{button.condition}}</button>
             </span>
             </div>
@@ -240,9 +268,21 @@
                     <td></td>
                     <td></td>
                     <td></td>
-                    <td><input v-model="batchChangeItem.argueUnitPrice" class="string-input"></td>
-                    <td><input v-model="batchChangeItem.mouthfulUnitPrice" class="string-input"></td>
-                    <td><input v-model="batchChangeItem.minNum" class="string-input"></td>
+                    <td>
+                        <label>
+                            <input v-model="batchChangeItem.argueUnitPrice" class="string-input">
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input v-model="batchChangeItem.mouthfulUnitPrice" class="string-input">
+                        </label>
+                    </td>
+                    <td>
+                        <label>
+                            <input v-model="batchChangeItem.minNum" class="string-input">
+                        </label>
+                    </td>
                     <td></td>
                     <td></td>
                     <td>
@@ -265,44 +305,58 @@
                         <td>
                             <label :for="'checkbox-auction-item-enabled-'+index">{{(index < 9? "0": "") + (index +
                                 1)}}</label>
-                            <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox" v-model="item.enabled">
+                            <label>
+                                <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox" v-model="item.enabled">
+                            </label>
                         </td>
 
                         <td>
-                            <input :id="'input-auction-item-name-'+index" v-model="item.name"
-                                   class="string-input-large">
+                            <label>
+                                <input :id="'input-auction-item-name-'+index" v-model="item.name"
+                                       class="string-input-large">
+                            </label>
                         </td>
 
                         <td>
-                            <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName"
-                                   class="string-input-large">
+                            <label>
+                                <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName"
+                                       class="string-input-large">
+                            </label>
                         </td>
 
                         <td>
-                            <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
-                                   class="string-input">
+                            <label>
+                                <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
+                                       class="string-input">
+                            </label>
                         </td>
 
                         <td>
-                            <input :id="'input-auction-item-mouthful-unit-price-'+index"
-                                   v-model="item.mouthfulUnitPrice"
-                                   class="string-input">
+                            <label>
+                                <input :id="'input-auction-item-mouthful-unit-price-'+index"
+                                       v-model="item.mouthfulUnitPrice"
+                                       class="string-input">
+                            </label>
                         </td>
 
                         <td>
-                            <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum" class="string-input">
+                            <label>
+                                <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum" class="string-input">
+                            </label>
                         </td>
 
                         <td>
-                            <button v-show="item.auctionTime == 8" v-on:click="changeAuctionTime(item, 24)">&nbsp;&nbsp;8
+                            <button v-show="item.auctionTime === 8" v-on:click="changeAuctionTime(item, 24)">&nbsp;&nbsp;8
                             </button>
-                            <button v-show="item.auctionTime == 24" v-on:click="changeAuctionTime(item, 48)">24</button>
-                            <button v-show="item.auctionTime == 48" v-on:click="changeAuctionTime(item, 8)">48</button>
+                            <button v-show="item.auctionTime === 24" v-on:click="changeAuctionTime(item, 48)">24</button>
+                            <button v-show="item.auctionTime === 48" v-on:click="changeAuctionTime(item, 8)">48</button>
                         </td>
 
                         <td>
                             <label :for="'checkbox-auction-item-drop-'+index">&nbsp;&nbsp;</label>
-                            <input :id="'checkbox-auction-item-drop-'+index" type="checkbox" v-model="item.drop">
+                            <label>
+                                <input :id="'checkbox-auction-item-drop-'+index" type="checkbox" v-model="item.drop">
+                            </label>
                         </td>
 
                         <td>
@@ -467,7 +521,9 @@
         <div>
             <span v-for="hwnd in hwnds">
                 <label :for="'reCapture-hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
-                <input :id="'reCapture-hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                <label>
+                    <input :id="'reCapture-hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                </label>
                 <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
                 <br/>
             </span>
@@ -496,7 +552,7 @@
             <span v-for="template in templates">
                 <span>{{template}}</span>
                 <br/>
-                <img :src="template">
+                <img :src="template" alt="">
                 <br/>
                 <button v-on:click="openDir(template, true)">打开文件所在位置</button>
                 <button v-on:click="deleteSampleImg(template)">删除该截图</button>

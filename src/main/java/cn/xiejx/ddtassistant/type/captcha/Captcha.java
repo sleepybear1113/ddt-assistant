@@ -255,14 +255,14 @@ public class Captcha extends BaseType {
                     continue;
                 }
 
-                TjPredictDto tjPredictDto = TjPredictDto.build(userConfig, captchaName);
+                TjPredictDto tjPredictDto = TjPredictDto.build(captchaConfig, captchaName);
                 response = CaptchaUtil.waitToGetChoice(countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
                 String captchaId = ((TjResponse) response).getData().getId();
 
                 if (!ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
                     if (!hasSendLowBalanceEmail && ++captchaCount % 10 == 0) {
                         // 每 10 次验证码请求一次余额
-                        Runnable runnable = () -> TjHttpUtil.getAccountInfo(userConfig.getUsername(), userConfig.getPassword(), userConfig.getLowBalanceRemind(), userConfig.getLowBalanceNum());
+                        Runnable runnable = () -> TjHttpUtil.getAccountInfo(captchaConfig.getTj().getUsername(), captchaConfig.getTj().getPassword(), captchaConfig.getLowBalanceRemind(), captchaConfig.getLowBalanceNum());
                         GlobalVariable.THREAD_POOL.execute(runnable);
                     }
                     // 设置图鉴的报错
@@ -392,11 +392,11 @@ public class Captcha extends BaseType {
         return true;
     }
 
-    public static boolean startIdentifyCaptcha(Integer hwnd, UserConfig userConfig) {
+    public static boolean startIdentifyCaptcha(Integer hwnd, CaptchaConfig captchaConfig) {
         GlobalVariable.THREAD_POOL.execute(() -> {
             if (!hasGetUserInfo) {
                 hasGetUserInfo = true;
-                String accountInfo = TjHttpUtil.getAccountInfo(userConfig.getUsername(), userConfig.getPassword(), userConfig.getLowBalanceRemind(), userConfig.getLowBalanceNum());
+                String accountInfo = TjHttpUtil.getAccountInfo(captchaConfig.getTj().getUsername(), captchaConfig.getTj().getPassword(), captchaConfig.getLowBalanceRemind(), captchaConfig.getLowBalanceNum());
                 log.info(accountInfo);
             }
         });
