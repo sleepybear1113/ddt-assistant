@@ -56,7 +56,7 @@ public class CaptchaController {
     }
 
     @RequestMapping("/captchaConfig/reset")
-    public Boolean resetCaptchaConfig() {
+    public CaptchaConfig resetCaptchaConfig() {
         return captchaLogic.resetCaptchaConfig();
     }
 }

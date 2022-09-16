@@ -133,7 +133,9 @@ public class CaptchaLogic {
         return true;
     }
 
-    public Boolean resetCaptchaConfig() {
-        return updateCaptchaConfig((CaptchaConfig) this.captchaConfig.defaultConfig());
+    public CaptchaConfig resetCaptchaConfig() {
+        CaptchaConfig defaultConfig = (CaptchaConfig) this.captchaConfig.defaultConfig();
+        updateCaptchaConfig(defaultConfig);
+        return defaultConfig;
     }
 }

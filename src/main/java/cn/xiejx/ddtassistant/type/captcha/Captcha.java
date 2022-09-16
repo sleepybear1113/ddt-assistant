@@ -146,38 +146,42 @@ public class Captcha extends BaseType {
         setRunning(true);
 
         long lastLogTime = System.currentTimeMillis();
-        // 开始运行
-        while (isRunning()) {
-            // 每次识屏间隔
-            Long captureInterval = userConfig.getCaptureInterval();
-            if (captureInterval == null || captureInterval <= 0) {
-                // 未设置则不管
-                Util.sleep(500L);
-                continue;
-            }
-
-            // 输出日志
-            long now = System.currentTimeMillis();
-            Long logPrintInterval = userConfig.getLogPrintInterval();
-            if (logPrintInterval != null && logPrintInterval > 0) {
-                if (now - lastLogTime > logPrintInterval) {
-                    log.info("[{}] 窗口正在运行", hwnd);
-                    lastLogTime = System.currentTimeMillis();
+        try {
+            // 开始运行
+            while (isRunning()) {
+                // 每次识屏间隔
+                Long captureInterval = userConfig.getCaptureInterval();
+                if (captureInterval == null || captureInterval <= 0) {
+                    // 未设置则不管
+                    Util.sleep(500L);
+                    continue;
                 }
-            }
 
-            Util.sleep(captureInterval);
-            // 判断是否还是 flash
-            if (!getDm().isWindowClassFlashPlayerActiveX()) {
-                log.info("[{}] 当前句柄不为 flash 窗口，解绑！", hwnd);
-                unbindAndRemove();
-                break;
-            }
+                // 输出日志
+                long now = System.currentTimeMillis();
+                Long logPrintInterval = userConfig.getLogPrintInterval();
+                if (logPrintInterval != null && logPrintInterval > 0) {
+                    if (now - lastLogTime > logPrintInterval) {
+                        log.info("[{}] 窗口正在运行", hwnd);
+                        lastLogTime = System.currentTimeMillis();
+                    }
+                }
 
-            // 检测副本大翻牌
-            identifyPveFlopBonus();
-            // 检测验证码的代码
-            identifyCaptcha();
+                Util.sleep(captureInterval);
+                // 判断是否还是 flash
+                if (!getDm().isWindowClassFlashPlayerActiveX()) {
+                    log.info("[{}] 当前句柄不为 flash 窗口，解绑！", hwnd);
+                    unbindAndRemove();
+                    break;
+                }
+
+                // 检测副本大翻牌
+                identifyPveFlopBonus();
+                // 检测验证码的代码
+                identifyCaptcha();
+            }
+        } catch (Exception e) {
+            log.warn(e.getMessage(), e);
         }
         setRunning(false);
         remove();
@@ -256,7 +260,7 @@ public class Captcha extends BaseType {
                 }
 
                 TjPredictDto tjPredictDto = TjPredictDto.build(captchaConfig, captchaName);
-                response = CaptchaUtil.waitToGetChoice(countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
+                response = CaptchaUtil.waitToGetChoice(getHwnd(), countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
                 if (!(response instanceof TjResponse)) {
                     // 解析错误直接返回
                     continue;
@@ -283,7 +287,7 @@ public class Captcha extends BaseType {
             // 平川打码
             if (CaptchaConfig.CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
                 PcPredictDto basePredictDto = new PcPredictDto(captchaName);
-                response = CaptchaUtil.waitToGetChoice(countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), basePredictDto);
+                response = CaptchaUtil.waitToGetChoice(getHwnd(), countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), basePredictDto);
                 if (!ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
                     // 获取到正常选项，退出
                     break;

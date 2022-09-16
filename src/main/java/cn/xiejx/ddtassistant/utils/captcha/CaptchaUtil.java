@@ -93,7 +93,8 @@ public class CaptchaUtil {
     }
 
 
-    public static <T extends BaseResponse> BaseResponse waitToGetChoice(long maxDelay, Long afterDisappearDelay, BasePredictDto basePredictDto) {
+    public static <T extends BaseResponse> BaseResponse waitToGetChoice(Integer hwnd, long maxDelay, Long afterDisappearDelay, BasePredictDto basePredictDto) {
+        final int hwndFinal = hwnd == null ? 0 : hwnd;
         // 识别 id
         int id = RANDOM.nextInt(100000);
         // 设置初始缓存
@@ -102,20 +103,20 @@ public class CaptchaUtil {
         // 异步发送请求
         GlobalVariable.THREAD_POOL.execute(() -> {
             if (!basePredictDto.testConnection()) {
-                log.info("[{}] 请求失败！ 原因：{}", id, "无法连接到打码平台！");
+                log.info("[{}] 请求失败！ 原因：{}", hwndFinal, "无法连接到打码平台！");
                 CACHER.set(id, BaseResponse.buildEmptyResponse(), 1000L * 60);
                 return;
             }
 
             BaseResponse response = getResponse(basePredictDto);
             if (response == null) {
-                log.info("[{}] 请求失败！ 原因：{}", id, "结果为空！");
+                log.info("[{}] 请求失败！ 原因：{}", hwndFinal, "结果为空！");
                 CACHER.set(id, BaseResponse.buildEmptyResponse(), 1000L * 60);
             } else {
                 if (response.getSuccess()) {
-                    log.info("[{}] 请求结束，平台识别时间耗时 {} 毫秒", id, response.getCost());
+                    log.info("[{}] 请求结束，平台识别时间耗时 {} 毫秒", hwndFinal, response.getCost());
                 } else {
-                    log.info("[{}] 请求失败！ 原因：{}", id, response.getMessage());
+                    log.info("[{}] 请求失败！ 原因：{}", hwndFinal, response.getMessage());
                 }
                 CACHER.set(id, response, 1000L * 60);
             }
@@ -129,7 +130,9 @@ public class CaptchaUtil {
             }
 
             if (System.currentTimeMillis() - startTime > maxDelay) {
-                log.warn("[{}] 验证码识别超时，超时时间：{} 毫秒", id, maxDelay);
+                log.warn("[{}] 验证码识别超时，超时时间：{} 毫秒", hwndFinal, maxDelay);
+                response.setChoiceEnum(ChoiceEnum.UNDEFINED);
+                response.setMessage("超时未返回答案");
                 break;
             }
 
@@ -145,7 +148,7 @@ public class CaptchaUtil {
         }
 
         long cost = System.currentTimeMillis() - startTime;
-        log.info("[{}] 总识别耗时 {} 毫秒，答案为：{}，全部结果为：{}", id, cost, response.getChoiceEnum().getChoice(), response);
+        log.info("[{}] 总识别耗时 {} 毫秒，答案为：{}，全部结果为：{}", hwndFinal, cost, response.getChoiceEnum().getChoice(), response);
         return response;
     }
 
@@ -165,7 +168,7 @@ public class CaptchaUtil {
     public static void pc2(String file) {
         PcPredictDto basePredictDto = new PcPredictDto();
         basePredictDto.setImgFile(file);
-        BaseResponse response = waitToGetChoice(10000L, null, basePredictDto);
+        BaseResponse response = waitToGetChoice(null, 10000L, null, basePredictDto);
         System.out.println(response);
     }
 
@@ -187,7 +190,7 @@ public class CaptchaUtil {
         basePredictDto.setPassword("tj123456");
         basePredictDto.setTypeId("7");
         basePredictDto.setSoftId("");
-        BaseResponse response = waitToGetChoice(10000L, null, basePredictDto);
+        BaseResponse response = waitToGetChoice(null, 10000L, null, basePredictDto);
         System.out.println(response);
     }
 

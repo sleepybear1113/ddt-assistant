@@ -77,7 +77,7 @@ let captchaApp = new Vue({
             }
             let url = "captchaConfig/reset";
             axios.get(url).then((res) => {
-                this.userConfig = new UserConfig(res.data.result);
+                this.captchaConfig = new CaptchaConfig(res.data.result);
                 showInfo("成功");
             });
         },
