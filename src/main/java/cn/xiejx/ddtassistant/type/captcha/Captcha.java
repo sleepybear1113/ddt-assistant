@@ -273,6 +273,7 @@ public class Captcha extends BaseType {
             basePredictDto.build(captchaConfig, captchaName);
             response = CaptchaUtil.waitToGetChoice(getHwnd(), countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), basePredictDto);
             if (!basePredictDto.getResponseClass().isInstance(response)) {
+                log.info("[{}] 解析返回结果失败", getHwnd());
                 // 解析错误直接返回
                 continue;
             }
