@@ -79,10 +79,8 @@ public class CaptchaUtil {
             T response = Util.parseJsonToObject(responseBody.replace("\"\"", "null"), basePredictDto.getResponseClass());
             if (response != null) {
                 response.buildResponse();
-                res.setChoiceEnum(response.getChoiceEnum());
-                res.setSuccess(response.getSuccess());
-                res.setMessage(response.getMessage());
-                res.setCost(end - start);
+                response.setCost(end - start);
+                return response;
             }
         } catch (Exception e) {
             log.warn(e.getMessage(), e);
@@ -153,7 +151,7 @@ public class CaptchaUtil {
     public static void main(String[] args) {
 //        String file = "C:\\Users\\xjx\\Desktop\\ddt\\captcha\\20220527\\B@132252-21_21_10.png";
         String file = "图片/A@67200-12_59_39.png";
-        pc2(file);
+        tj2(file);
     }
 
     public static void pc(String file) {
@@ -184,11 +182,12 @@ public class CaptchaUtil {
     public static void tj2(String file) {
         TjPredictDto basePredictDto = new TjPredictDto();
         basePredictDto.setImgFile(file);
-        basePredictDto.setUsername("sleepybear1100");
-        basePredictDto.setPassword("tj123456");
+        basePredictDto.setUsername("sleepybear1");
+        basePredictDto.setPassword("");
         basePredictDto.setTypeId("7");
         basePredictDto.setSoftId("");
         BaseResponse response = waitToGetChoice(null, 10000L, null, basePredictDto);
+        System.out.println(basePredictDto.getResponseClass().isInstance(response));
         System.out.println(response);
     }
 

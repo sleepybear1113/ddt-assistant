@@ -31,8 +31,6 @@ public class BaseResponse implements Serializable {
 
     public static long[] errorTimeRange = {1000, 10000};
 
-    private String url;
-
     private Boolean success;
     private ChoiceEnum choiceEnum;
     private Long cost;
