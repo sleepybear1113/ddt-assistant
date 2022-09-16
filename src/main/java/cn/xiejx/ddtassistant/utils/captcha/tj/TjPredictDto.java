@@ -1,7 +1,6 @@
 package cn.xiejx.ddtassistant.utils.captcha.tj;
 
 import cn.xiejx.ddtassistant.base.CaptchaConfig;
-import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
@@ -12,13 +11,8 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.message.BasicNameValuePair;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 /**
@@ -46,17 +40,8 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
         return "http://api.ttshitu.com/predict";
     }
 
-    public TjPredictDto(String username, String password, String typeId, String typeName, String softId, String imgFile) {
-        super();
-        super.setImgFile(imgFile);
-        this.username = username;
-        this.password = password;
-        this.typeId = typeId;
-        this.typeName = typeName;
-        this.softId = softId;
-    }
-
-    public static TjPredictDto build(CaptchaConfig captchaConfig, String path) {
+    @Override
+    public void build(CaptchaConfig captchaConfig, String path) {
         if (captchaConfig == null) {
             throw new FrontException("用户信息不存在");
         }
@@ -67,7 +52,12 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
             throw new FrontException("用户名密码缺失");
         }
 
-        return new TjPredictDto(username, password, captchaConfig.getTj().getTypeId(), "", captchaConfig.getTj().getSoftId(), path);
+        this.setSoftId(captchaConfig.getTj().getSoftId());
+        this.setTypeId(captchaConfig.getTj().getTypeId());
+        this.setImgFile(path);
+        this.setUsername(username);
+        this.setPassword(password);
+        this.setTypeName("");
     }
 
     @Override

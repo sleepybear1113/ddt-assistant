@@ -1,10 +1,15 @@
 package cn.xiejx.ddtassistant.utils.captcha.tj;
 
+import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.type.captcha.CaptchaInfo;
+import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.captcha.Choice;
 import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -13,13 +18,31 @@ import java.io.Serializable;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Slf4j
 public class TjResponse extends BaseResponse implements Serializable {
     private static final long serialVersionUID = -5428070169210657190L;
+
 
     private String code;
     private TjPicResult data;
 
     public TjResponse() {
+    }
+
+    public static void reportError(Integer hwnd, CaptchaInfo captchaInfo, boolean force) {
+        String lastCaptchaId = captchaInfo.getLastCaptchaId();
+        String lastCaptchaFilePath = captchaInfo.getLastCaptchaFilePath();
+        GlobalVariable.THREAD_POOL.execute(() -> {
+            try {
+                TjHttpUtil.reportError(lastCaptchaId);
+            } catch (Exception e) {
+                log.info(e.getMessage());
+            }
+        });
+
+        GlobalVariable.THREAD_POOL.execute(() -> Util.deleteFileFromServer(lastCaptchaFilePath));
+
+        captchaInfo.clear();
     }
 
     public static boolean validChoice(TjResponse tjResponse) {
@@ -81,5 +104,8 @@ public class TjResponse extends BaseResponse implements Serializable {
             setChoiceEnum(ChoiceEnum.UNDEFINED);
         }
         setData(tjPicResult);
+        if (tjPicResult != null) {
+            this.setCaptchaId(tjPicResult.getId());
+        }
     }
 }

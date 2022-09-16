@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.utils.captcha.pc;
 
+import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
@@ -62,6 +63,11 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
                 .setConnectTimeout(1000 * 3)
                 .setSocketTimeout(1000 * 10)
                 .build();
+    }
+
+    @Override
+    public void build(CaptchaConfig captchaConfig, String imgFilePath) {
+        setImgFile(imgFilePath);
     }
 
     @Override

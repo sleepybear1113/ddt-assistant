@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.utils.captcha.pc;
 
+import cn.xiejx.ddtassistant.type.captcha.CaptchaInfo;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.captcha.Choice;
 import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
@@ -28,6 +29,10 @@ public class PcResponse extends BaseResponse implements Serializable {
     private ChoiceEnum choiceEnum;
     private Long cost;
     public PcResponse() {
+    }
+
+    public static void reportError(Integer hwnd, CaptchaInfo captchaInfo, boolean force) {
+
     }
 
     public static boolean validChoice(PcResponse pcResponse) {

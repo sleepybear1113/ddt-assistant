@@ -9,7 +9,6 @@ import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcResponse;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
-import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
@@ -92,7 +91,6 @@ public class CaptchaUtil {
         return res;
     }
 
-
     public static <T extends BaseResponse> BaseResponse waitToGetChoice(Integer hwnd, long maxDelay, Long afterDisappearDelay, BasePredictDto basePredictDto) {
         final int hwndFinal = hwnd == null ? 0 : hwnd;
         // 识别 id
@@ -113,7 +111,7 @@ public class CaptchaUtil {
                 log.info("[{}] 请求失败！ 原因：{}", hwndFinal, "结果为空！");
                 CACHER.set(id, BaseResponse.buildEmptyResponse(), 1000L * 60);
             } else {
-                if (response.getSuccess()) {
+                if (Boolean.TRUE.equals(response.getSuccess())) {
                     log.info("[{}] 请求结束，平台识别时间耗时 {} 毫秒", hwndFinal, response.getCost());
                 } else {
                     log.info("[{}] 请求失败！ 原因：{}", hwndFinal, response.getMessage());

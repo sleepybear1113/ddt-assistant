@@ -10,11 +10,11 @@ import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
+import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaUtil;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjHttpUtil;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
-import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
 import cn.xiejx.ddtassistant.vo.StringRet;
 import lombok.extern.slf4j.Slf4j;
@@ -46,13 +46,16 @@ public class CaptchaLogic {
     public BaseResponse testCaptcha(Integer captchaWay) {
         BasePredictDto basePredictDto;
         String picPath = "资源图片/验证码测试/test-1.bmp";
-        if (CaptchaConfig.CaptchaChoiceEnum.PC.equals(CaptchaConfig.CaptchaChoiceEnum.getChoice(captchaWay))) {
-            basePredictDto = new PcPredictDto(picPath);
-        } else if (CaptchaConfig.CaptchaChoiceEnum.TJ.equals(CaptchaConfig.CaptchaChoiceEnum.getChoice(captchaWay))) {
-            basePredictDto = TjPredictDto.build(captchaConfig, picPath);
+        CaptchaChoiceEnum choiceEnum = CaptchaChoiceEnum.getChoice(captchaWay);
+        log.info("开始测试{}", choiceEnum.getName());
+        if (CaptchaChoiceEnum.PC.equals(choiceEnum)) {
+            basePredictDto = new PcPredictDto();
+        } else if (CaptchaChoiceEnum.TJ.equals(choiceEnum)) {
+            basePredictDto = new TjPredictDto();
         } else {
             return BaseResponse.buildEmptyResponse();
         }
+        basePredictDto.build(captchaConfig, picPath);
 
         BaseResponse response = CaptchaUtil.getResponse(basePredictDto);
         log.info(String.valueOf(response));

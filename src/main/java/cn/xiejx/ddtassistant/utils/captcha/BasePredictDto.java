@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.utils.captcha;
 
+import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
@@ -34,6 +35,8 @@ public abstract class BasePredictDto implements Serializable {
     public abstract List<NameValuePair> buildPair();
 
     public abstract RequestConfig getRequestConfig();
+
+    public abstract void build(CaptchaConfig captchaConfig, String imgFilePath);
 
     public abstract <T extends BaseResponse> Class<T> getResponseClass();
 

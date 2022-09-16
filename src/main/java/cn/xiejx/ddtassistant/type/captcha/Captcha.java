@@ -5,9 +5,9 @@ import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmConstants;
+import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.dm.DmDomains;
 import cn.xiejx.ddtassistant.logic.MonitorLogic;
-import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.TypeConstants;
 import cn.xiejx.ddtassistant.utils.ImgUtil;
@@ -15,13 +15,10 @@ import cn.xiejx.ddtassistant.utils.OcrUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
-import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
-import cn.xiejx.ddtassistant.utils.captcha.CaptchaUtil;
-import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
-import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
+import cn.xiejx.ddtassistant.utils.captcha.*;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjHttpUtil;
-import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
+import cn.xiejx.ddtassistant.utils.captcha.way.BaseCaptchaWay;
 import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -30,7 +27,9 @@ import org.apache.commons.lang3.StringUtils;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author sleepybear
@@ -40,11 +39,7 @@ public class Captcha extends BaseType {
 
     private static final long serialVersionUID = -2259938240133602111L;
 
-    private long lastTjCaptchaTime;
-    private String lastTjRemoteCaptchaId;
-    private String lastCaptchaFilePath;
-
-    private final long[] errorTimeRange = {1000, 10000};
+    private final Map<CaptchaChoiceEnum, CaptchaInfo> captchaInfoMap = new HashMap<>();
 
     private static boolean hasGetUserInfo = false;
 
@@ -67,9 +62,6 @@ public class Captcha extends BaseType {
     @Override
     public void init(DmDdt dm) {
         super.init(dm);
-        lastTjCaptchaTime = 0;
-        lastTjRemoteCaptchaId = null;
-        lastCaptchaFilePath = null;
     }
 
     public void captureCaptchaAllRegionPic(String path) {
@@ -190,8 +182,8 @@ public class Captcha extends BaseType {
     public void identifyCaptcha() {
         UserConfig userConfig = SpringContextUtil.getBean(UserConfig.class);
         CaptchaConfig captchaConfig = SpringContextUtil.getBean(CaptchaConfig.class);
-        CaptchaConfig.CaptchaChoiceEnum captchaChoiceEnumTest = CaptchaConfig.CaptchaChoiceEnum.getChoice(captchaConfig.getCaptchaWay().get(0));
-        if (CaptchaConfig.CaptchaChoiceEnum.NONE.equals(captchaChoiceEnumTest)) {
+        CaptchaChoiceEnum captchaChoiceEnumTest = CaptchaChoiceEnum.getChoice(captchaConfig.getCaptchaWay().get(0));
+        if (CaptchaChoiceEnum.NONE.equals(captchaChoiceEnumTest)) {
             // 未设置打码
             return;
         }
@@ -203,7 +195,20 @@ public class Captcha extends BaseType {
         log.info("[{}] 发现副本验证码！", getHwnd());
 
         // 上报错误，如果有
-        reportErrorResult(this.lastTjRemoteCaptchaId, false);
+        CaptchaInfo lastErrorCaptchaInfo = null;
+        if (captchaInfoMap.size() > 0) {
+            for (CaptchaInfo captchaInfo : captchaInfoMap.values()) {
+                if (lastErrorCaptchaInfo == null) {
+                    lastErrorCaptchaInfo = captchaInfo;
+                    continue;
+                }
+
+                if (lastErrorCaptchaInfo.getLastCaptchaTime() < captchaInfo.getLastCaptchaTime()) {
+                    lastErrorCaptchaInfo = captchaInfo;
+                }
+            }
+        }
+        BaseResponse.reportError(getHwnd(), lastErrorCaptchaInfo, false);
 
         // 设置按钮缓存
         MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), MonitorLogic.CAPTCHA_DELAY, ExpireWayEnum.AFTER_UPDATE);
@@ -211,7 +216,6 @@ public class Captcha extends BaseType {
         // 验证码保存路径
         String captchaDir = Constants.CAPTCHA_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT) + "/";
         String captchaName = captchaDir + getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
-        this.lastCaptchaFilePath = captchaName;
 
         // 截屏
         captureCaptchaQuestionPic(captchaName);
@@ -227,10 +231,10 @@ public class Captcha extends BaseType {
 
         // 遍历所有的打码方式
         for (Integer captchaWay : captchaConfig.getCaptchaWay()) {
-            CaptchaConfig.CaptchaChoiceEnum captchaChoiceEnum = CaptchaConfig.CaptchaChoiceEnum.getChoice(captchaWay);
+            CaptchaChoiceEnum captchaChoiceEnum = CaptchaChoiceEnum.getChoice(captchaWay);
 
             // 未选择直接退出
-            if (CaptchaConfig.CaptchaChoiceEnum.NONE.equals(captchaChoiceEnum)) {
+            if (CaptchaChoiceEnum.NONE.equals(captchaChoiceEnum)) {
                 break;
             }
 
@@ -250,49 +254,48 @@ public class Captcha extends BaseType {
             log.info("[{}] 准备提交[{}]识别...倒计时还剩下 {} 秒", getHwnd(), captchaChoiceEnum.getName(), countDown);
 
             // 单个打码
-            // 图鉴打码
-            if (CaptchaConfig.CaptchaChoiceEnum.TJ.equals(captchaChoiceEnum)) {
-                CaptchaConfig.Tj configTj = captchaConfig.getTj();
-                if (!configTj.validUserInfo()) {
-                    log.info("[{}] 用户名或密码填写错误，无法提交打码平台", captchaChoiceEnum.getName());
-                    response.setChoiceEnum(ChoiceEnum.UNDEFINED);
-                    continue;
-                }
+            BaseCaptchaWay baseCaptchaWay = null;
+            if (CaptchaChoiceEnum.TJ.equals(captchaChoiceEnum)) {
+                baseCaptchaWay = captchaConfig.getTj();
+            } else if (CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
+                baseCaptchaWay = captchaConfig.getPc();
+            }
 
-                TjPredictDto tjPredictDto = TjPredictDto.build(captchaConfig, captchaName);
-                response = CaptchaUtil.waitToGetChoice(getHwnd(), countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), tjPredictDto);
-                if (!(response instanceof TjResponse)) {
-                    // 解析错误直接返回
-                    continue;
-                }
-                String captchaId = ((TjResponse) response).getData().getId();
-
-                if (!ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
-                    if (!hasSendLowBalanceEmail && ++captchaCount % 10 == 0) {
-                        // 每 10 次验证码请求一次余额
-                        Runnable runnable = () -> TjHttpUtil.getAccountInfo(captchaConfig.getTj().getUsername(), captchaConfig.getTj().getPassword(), captchaConfig.getLowBalanceRemind(), captchaConfig.getLowBalanceNum());
-                        GlobalVariable.THREAD_POOL.execute(runnable);
-                    }
-                    // 设置图鉴的报错
-                    this.lastTjRemoteCaptchaId = captchaId;
-                    this.lastTjCaptchaTime = System.currentTimeMillis();
-                    // 获取到正常选项，退出
-                    break;
-                }
-                // 非 ABCD 选项，报错
-                reportErrorResult(captchaId, true);
+            // 验证身份
+            if (!baseCaptchaWay.validUserInfo()) {
+                log.info("[{}] 用户名或密码填写错误，无法提交打码平台", captchaChoiceEnum.getName());
+                response.setChoiceEnum(ChoiceEnum.UNDEFINED);
                 continue;
             }
 
-            // 平川打码
-            if (CaptchaConfig.CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
-                PcPredictDto basePredictDto = new PcPredictDto(captchaName);
-                response = CaptchaUtil.waitToGetChoice(getHwnd(), countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), basePredictDto);
-                if (!ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
-                    // 获取到正常选项，退出
-                    break;
-                }
+            // 打码请求体
+            BasePredictDto basePredictDto = baseCaptchaWay.getBasePredictDto();
+            basePredictDto.build(captchaConfig, captchaName);
+            response = CaptchaUtil.waitToGetChoice(getHwnd(), countDownTime, userConfig.getKeyPressDelayAfterCaptchaDisappear(), basePredictDto);
+            if (!basePredictDto.getResponseClass().isInstance(response)) {
+                // 解析错误直接返回
+                continue;
             }
+
+            // 打码 id
+            String captchaId = response.getCaptchaId();
+            CaptchaInfo captchaInfo = captchaInfoMap.get(captchaChoiceEnum);
+            if (captchaInfo == null) {
+                captchaInfo = new CaptchaInfo(captchaChoiceEnum, System.currentTimeMillis(), captchaId, captchaName);
+                captchaInfoMap.put(captchaChoiceEnum, captchaInfo);
+            }
+
+            if (!ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
+                if (!hasSendLowBalanceEmail && ++captchaCount % 10 == 0) {
+                    // 每 10 次验证码请求一次余额
+                    Runnable runnable = () -> TjHttpUtil.getAccountInfo(captchaConfig.getTj().getUsername(), captchaConfig.getTj().getPassword(), captchaConfig.getLowBalanceRemind(), captchaConfig.getLowBalanceNum());
+                    GlobalVariable.THREAD_POOL.execute(runnable);
+                }
+                // 获取到正常选项，退出
+                break;
+            }
+            // 非 ABCD 选项，报错
+            BaseResponse.reportError(getHwnd(), captchaInfo, true);
         }
 
         // 获取结果
@@ -333,7 +336,6 @@ public class Captcha extends BaseType {
         Util.sleep(300L);
         getDm().leftClick(CaptchaConstants.SUBMIT_BUTTON_POINT, 100);
 
-        this.lastTjCaptchaTime = System.currentTimeMillis();
         Util.sleep(1000L);
     }
 
@@ -353,33 +355,6 @@ public class Captcha extends BaseType {
         }
 
         MonitorLogic.FLOP_BONUS_CACHER.set(MonitorLogic.FLOP_BONUS_FOUND_KEY, new Pair<>(pveFlopBonusAppearDelay, getDm()), userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
-    }
-
-    public void reportErrorResult(String id, boolean force) {
-        if (StringUtils.isBlank(id)) {
-            return;
-        }
-        if (!force) {
-            long timeSub = System.currentTimeMillis() - this.lastTjCaptchaTime;
-            if (timeSub < this.errorTimeRange[0] || timeSub > this.errorTimeRange[1]) {
-                return;
-            }
-        }
-
-        log.info("[{}] [报错] 对上一次错误打码报错给平台，id = {}", getHwnd(), id);
-
-        GlobalVariable.THREAD_POOL.execute(() -> {
-            try {
-                TjHttpUtil.reportError(id);
-            } catch (Exception e) {
-                log.info(e.getMessage());
-            }
-        });
-
-        GlobalVariable.THREAD_POOL.execute(() -> Util.deleteFileFromServer(this.lastCaptchaFilePath));
-
-        this.lastTjRemoteCaptchaId = null;
-        this.lastCaptchaFilePath = null;
     }
 
     public static boolean captchaValid(String path) {
