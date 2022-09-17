@@ -31,7 +31,7 @@ public class PcResponse extends BaseResponse implements Serializable {
     public PcResponse() {
     }
 
-    public static void reportError(Integer hwnd, CaptchaInfo captchaInfo, boolean force) {
+    public static void reportError(CaptchaInfo captchaInfo) {
 
     }
 

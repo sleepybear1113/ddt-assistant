@@ -125,9 +125,9 @@ let captchaApp = new Vue({
                 showInfo(tjResponse.info());
             });
         },
-        showTjAccountInfo: function () {
+        showTjAccountInfo: function (way) {
             let url = "captcha/getTjAccountInfo";
-            axios.get(url).then((res) => {
+            axios.get(url, {params: {way}}).then((res) => {
                 let testRes = new TestRes(res.data.result);
                 if (testRes == null) {
                     showInfo("失败：接口返回内容为空");

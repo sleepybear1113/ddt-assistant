@@ -3,7 +3,6 @@ package cn.xiejx.ddtassistant.controller;
 import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import cn.xiejx.ddtassistant.logic.CaptchaLogic;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
-import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
 import cn.xiejx.ddtassistant.vo.StringRet;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,8 +25,8 @@ public class CaptchaController {
     }
 
     @RequestMapping("/captcha/getTjAccountInfo")
-    public StringRet getTjAccountInfo() {
-        return captchaLogic.getTjAccountInfo();
+    public StringRet getTjAccountInfo(Integer way) {
+        return captchaLogic.getTjAccountInfo(way);
     }
 
     @RequestMapping("/captcha/addNewCaptcha")

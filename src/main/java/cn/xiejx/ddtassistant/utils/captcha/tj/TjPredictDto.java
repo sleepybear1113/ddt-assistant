@@ -1,12 +1,24 @@
 package cn.xiejx.ddtassistant.utils.captcha.tj;
 
 import cn.xiejx.ddtassistant.base.CaptchaConfig;
+import cn.xiejx.ddtassistant.base.SettingConfig;
+import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.exception.FrontException;
+import cn.xiejx.ddtassistant.logic.EmailLogic;
+import cn.xiejx.ddtassistant.type.captcha.Captcha;
+import cn.xiejx.ddtassistant.utils.SpringContextUtil;
+import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
+import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
+import cn.xiejx.ddtassistant.utils.http.HttpHelper;
+import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.message.BasicNameValuePair;
@@ -26,6 +38,9 @@ import java.util.List;
 @Slf4j
 public class TjPredictDto extends BasePredictDto implements Serializable {
     private static final long serialVersionUID = 4340261310989122096L;
+    public static final String HOST = "http://api.ttshitu.com";
+    private static final String TJ_ACCOUNT_INFO_URL = HOST + "/queryAccountInfo.json?username=%s&password=%s";
+
     private String username;
     private String password;
     private String typeId;
@@ -37,7 +52,7 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
 
     @Override
     public String getUrl() {
-        return "http://api.ttshitu.com/predict";
+        return HOST + "/predict";
     }
 
     @Override
@@ -95,4 +110,63 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
     public boolean testConnection() {
         return true;
     }
+
+    @Override
+    public void lowBalanceRemind(CaptchaConfig captchaConfig) {
+        Runnable runnable = () -> getAccountInfo(captchaConfig);
+        GlobalVariable.THREAD_POOL.execute(runnable);
+    }
+
+    @Override
+    public String getAccountInfo(CaptchaConfig captchaConfig) {
+        String username = captchaConfig.getTj().getUsername();
+        String password = captchaConfig.getTj().getPassword();
+        Boolean lowBalanceRemind = captchaConfig.getLowBalanceRemind();
+        Double lowBalanceNum = captchaConfig.getLowBalanceNum();
+
+        StringBuilder sb = new StringBuilder(CaptchaChoiceEnum.TJ.getName());
+
+        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+            return sb.append("无可用用户信息").toString();
+        }
+        try {
+            String url = String.format(TJ_ACCOUNT_INFO_URL, username, password);
+            HttpHelper httpHelper = HttpHelper.makeDefaultGetHttpHelper(url);
+            HttpResponseHelper responseHelper = httpHelper.request();
+            String responseBody = responseHelper.getResponseBody();
+
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper.configure(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT, true);
+            TjAccountInfo tjAccountInfo = Util.parseJsonToObject(responseBody, TjAccountInfo.class, mapper);
+            if (tjAccountInfo == null) {
+                return sb.append("解析平台返回内容失败").toString();
+            }
+            if (!Boolean.TRUE.equals(tjAccountInfo.getSuccess())) {
+                return sb.append("获取用户信息失败，").append(tjAccountInfo.getMessage()).toString();
+            }
+            TjConsumption tjConsumption = tjAccountInfo.getData();
+            if (tjConsumption == null) {
+                return sb.append("解析平台返回内容失败").toString();
+            }
+
+            // 低余额提醒
+            String balance = tjConsumption.getBalance();
+            if (Util.isNumber(balance) && Boolean.TRUE.equals(lowBalanceRemind) && lowBalanceNum != null && lowBalanceNum > 0) {
+                double realtimeBalance = Double.parseDouble(balance);
+                if (realtimeBalance < lowBalanceNum) {
+                    log.warn(CaptchaChoiceEnum.TJ.getName() + "当前余额：{}，低于设定值 {}，请注意！", realtimeBalance, lowBalanceNum);
+                    SettingConfig settingConfig = SpringContextUtil.getBean(SettingConfig.class);
+                    EmailLogic.sendLowBalanceNotify(settingConfig.getEmail(), realtimeBalance);
+                    Captcha.hasSendLowBalanceEmail = true;
+                }
+            }
+            return String.format(CaptchaChoiceEnum.TJ.getName() + " 当前余额：%s，总消费：%s，总成功：%s，总失败：%s", balance, tjConsumption.getConsumed(), tjConsumption.getSuccessNum(), tjConsumption.getFailNum());
+        } catch (Exception e) {
+            String s = sb.append("获取用户信息失败：").append(e.getMessage()).toString();
+            log.warn(s, e);
+            return "";
+        }
+    }
+
 }

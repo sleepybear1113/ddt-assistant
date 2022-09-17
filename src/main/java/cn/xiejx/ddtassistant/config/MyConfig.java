@@ -15,5 +15,10 @@ public class MyConfig implements WebMvcConfigurer {
         for (String s : Constants.firstDirList()) {
             registry.addResourceHandler(s + "**").addResourceLocations("file:" + s);
         }
+
+        String[] disks = new String[]{"C", "D", "E", "F"};
+        for (String disk : disks) {
+            registry.addResourceHandler(disk + "/**").addResourceLocations("file:" + disk + ":/");
+        }
     }
 }

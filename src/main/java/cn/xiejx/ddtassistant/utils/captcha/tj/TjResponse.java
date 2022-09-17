@@ -6,10 +6,12 @@ import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.captcha.Choice;
 import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
+import cn.xiejx.ddtassistant.utils.http.HttpHelper;
+import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.http.client.config.RequestConfig;
 
 import java.io.Serializable;
 
@@ -22,6 +24,8 @@ import java.io.Serializable;
 public class TjResponse extends BaseResponse implements Serializable {
     private static final long serialVersionUID = -5428070169210657190L;
 
+    private static final String TJ_REPORT_ERROR_URL = TjPredictDto.HOST + "/reporterror.json?id=";
+
 
     private String code;
     private TjPicResult data;
@@ -29,18 +33,17 @@ public class TjResponse extends BaseResponse implements Serializable {
     public TjResponse() {
     }
 
-    public static void reportError(Integer hwnd, CaptchaInfo captchaInfo, boolean force) {
+    public static void reportError(CaptchaInfo captchaInfo) {
         String lastCaptchaId = captchaInfo.getLastCaptchaId();
         String lastCaptchaFilePath = captchaInfo.getLastCaptchaFilePath();
         GlobalVariable.THREAD_POOL.execute(() -> {
             try {
-                TjHttpUtil.reportError(lastCaptchaId);
+                reportError(lastCaptchaId);
             } catch (Exception e) {
                 log.info(e.getMessage());
             }
+            Util.deleteFileFromServer(lastCaptchaFilePath);
         });
-
-        GlobalVariable.THREAD_POOL.execute(() -> Util.deleteFileFromServer(lastCaptchaFilePath));
 
         captchaInfo.clear();
     }
@@ -107,5 +110,18 @@ public class TjResponse extends BaseResponse implements Serializable {
         if (tjPicResult != null) {
             this.setCaptchaId(tjPicResult.getId());
         }
+    }
+
+    public static void reportError(String id) {
+        RequestConfig requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(1000 * 5)
+                .setConnectTimeout(1000 * 5)
+                .setSocketTimeout(1000 * 5)
+                .build();
+
+        HttpRequestMaker requestMaker = HttpRequestMaker.makeGetHttpHelper(TJ_REPORT_ERROR_URL + id);
+        requestMaker.setConfig(requestConfig);
+        HttpHelper httpHelper = new HttpHelper(requestMaker);
+        httpHelper.request();
     }
 }

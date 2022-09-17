@@ -1,10 +1,6 @@
 package cn.xiejx.ddtassistant.utils.captcha;
 
-import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import cn.xiejx.ddtassistant.type.captcha.CaptchaConstants;
-import lombok.Data;
-
-import java.io.Serializable;
 
 /**
  * There is description
@@ -24,7 +20,7 @@ public enum CaptchaChoiceEnum {
     /**
      * 平川打码
      */
-    PC(2, "服务器打码", CaptchaConstants.PC_MIN_ANSWER_TIME),
+    PC(2, "平川服务器打码", CaptchaConstants.PC_MIN_ANSWER_TIME),
     ;
     private final Integer choice;
     private final String name;

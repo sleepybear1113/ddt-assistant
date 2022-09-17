@@ -16,7 +16,8 @@ import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
 import cn.xiejx.ddtassistant.utils.captcha.*;
-import cn.xiejx.ddtassistant.utils.captcha.tj.TjHttpUtil;
+import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
+import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
 import cn.xiejx.ddtassistant.utils.captcha.way.BaseCaptchaWay;
 import javafx.util.Pair;
@@ -284,13 +285,14 @@ public class Captcha extends BaseType {
             if (captchaInfo == null) {
                 captchaInfo = new CaptchaInfo(captchaChoiceEnum, System.currentTimeMillis(), captchaId, captchaName);
                 captchaInfoMap.put(captchaChoiceEnum, captchaInfo);
+            } else {
+                captchaInfo.renew(System.currentTimeMillis(), captchaId, captchaName);
             }
 
             if (!ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
-                if (!hasSendLowBalanceEmail && ++captchaCount % 10 == 0) {
+                if (captchaInfo.getCount() % 10 == 0) {
                     // 每 10 次验证码请求一次余额
-                    Runnable runnable = () -> TjHttpUtil.getAccountInfo(captchaConfig.getTj().getUsername(), captchaConfig.getTj().getPassword(), captchaConfig.getLowBalanceRemind(), captchaConfig.getLowBalanceNum());
-                    GlobalVariable.THREAD_POOL.execute(runnable);
+                    basePredictDto.lowBalanceRemind(captchaConfig);
                 }
                 // 获取到正常选项，退出
                 break;
@@ -380,8 +382,20 @@ public class Captcha extends BaseType {
         GlobalVariable.THREAD_POOL.execute(() -> {
             if (!hasGetUserInfo) {
                 hasGetUserInfo = true;
-                String accountInfo = TjHttpUtil.getAccountInfo(captchaConfig.getTj().getUsername(), captchaConfig.getTj().getPassword(), captchaConfig.getLowBalanceRemind(), captchaConfig.getLowBalanceNum());
-                log.info(accountInfo);
+                for (Integer way : captchaConfig.getCaptchaWay()) {
+                    BasePredictDto basePredictDto = null;
+                    CaptchaChoiceEnum captchaChoiceEnum = CaptchaChoiceEnum.getChoice(way);
+                    if (CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
+                        basePredictDto = new PcPredictDto();
+                    } else if (CaptchaChoiceEnum.TJ.equals(captchaChoiceEnum)) {
+                        basePredictDto = new TjPredictDto();
+                    }
+
+                    if (basePredictDto != null) {
+                        String accountInfo = basePredictDto.getAccountInfo(captchaConfig);
+                        log.info(accountInfo);
+                    }
+                }
             }
         });
 

@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.utils.captcha.pc;
 import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
+import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
@@ -35,8 +36,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
     public static final String HOST = "http://139.155.237.55:21000";
 
     public PcPredictDto(String imgFile) {
-        super();
-        super.setImgFile(imgFile);
+        setImgFile(imgFile);
     }
 
     @Override
@@ -87,5 +87,15 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
         HttpResponseHelper request = httpHelper.request();
         String responseBody = request.getResponseBody();
         return !StringUtils.isBlank(responseBody) && responseBody.contains("OK");
+    }
+
+    @Override
+    public void lowBalanceRemind(CaptchaConfig captchaConfig) {
+
+    }
+
+    @Override
+    public String getAccountInfo(CaptchaConfig captchaConfig) {
+        return CaptchaChoiceEnum.PC.getName() + "平台无余额功能";
     }
 }

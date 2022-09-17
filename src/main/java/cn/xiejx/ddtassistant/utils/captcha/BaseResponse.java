@@ -1,20 +1,13 @@
 package cn.xiejx.ddtassistant.utils.captcha;
 
 import cn.xiejx.ddtassistant.type.captcha.CaptchaInfo;
-import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcResponse;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
-import cn.xiejx.ddtassistant.utils.http.HttpHelper;
-import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
-import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NameValuePair;
 
 import java.io.Serializable;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -62,9 +55,9 @@ public class BaseResponse implements Serializable {
 
         CaptchaChoiceEnum captchaChoiceEnum = captchaInfo.getCaptchaChoiceEnum();
         if (CaptchaChoiceEnum.TJ.equals(captchaChoiceEnum)) {
-            TjResponse.reportError(hwnd, captchaInfo, force);
+            TjResponse.reportError(captchaInfo);
         } else if (CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
-            PcResponse.reportError(hwnd, captchaInfo, force);
+            PcResponse.reportError(captchaInfo);
         }
     }
 

@@ -13,7 +13,6 @@ import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaUtil;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
-import cn.xiejx.ddtassistant.utils.captcha.tj.TjHttpUtil;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
 import cn.xiejx.ddtassistant.vo.StringRet;
@@ -118,12 +117,18 @@ public class CaptchaLogic {
         return StringRet.buildSuccess(StringUtils.join(pathList, "\n"));
     }
 
-    public StringRet getTjAccountInfo() {
-        String username = captchaConfig.getTj().getUsername();
-        String password = captchaConfig.getTj().getPassword();
-        Boolean lowBalanceRemind = captchaConfig.getLowBalanceRemind();
-        Double lowBalanceNum = captchaConfig.getLowBalanceNum();
-        return StringRet.buildSuccess(TjHttpUtil.getAccountInfo(username, password, lowBalanceRemind, lowBalanceNum));
+    public StringRet getTjAccountInfo(Integer way) {
+        BasePredictDto basePredictDto;
+        CaptchaChoiceEnum choiceEnum = CaptchaChoiceEnum.getChoice(way);
+        if (CaptchaChoiceEnum.PC.equals(choiceEnum)) {
+            basePredictDto = new PcPredictDto();
+        } else if (CaptchaChoiceEnum.TJ.equals(choiceEnum)) {
+            basePredictDto = new TjPredictDto();
+        } else {
+            return StringRet.buildSuccess("无该类型账户信息");
+        }
+
+        return StringRet.buildSuccess(basePredictDto.getAccountInfo(captchaConfig));
     }
 
     public CaptchaConfig getCaptchaConfig() {

@@ -30,33 +30,77 @@ public abstract class BasePredictDto implements Serializable {
     public BasePredictDto() {
     }
 
+    /**
+     * 获取打码平台 URL
+     *
+     * @return String
+     */
     public abstract String getUrl();
 
+    /**
+     * 构建打码请求体
+     *
+     * @return List<NameValuePair>
+     */
     public abstract List<NameValuePair> buildPair();
 
+    /**
+     * 返回 RequestConfig
+     *
+     * @return RequestConfig
+     */
     public abstract RequestConfig getRequestConfig();
 
+    /**
+     * 构建对应 BasePredictDto
+     *
+     * @param captchaConfig captchaConfig
+     * @param imgFilePath   imgFilePath
+     */
     public abstract void build(CaptchaConfig captchaConfig, String imgFilePath);
 
+    /**
+     * 对应的 ResponseClass
+     *
+     * @param <T> BaseResponse
+     * @return BaseResponse
+     */
     public abstract <T extends BaseResponse> Class<T> getResponseClass();
 
+    /**
+     * 测试平台连通性
+     *
+     * @return boolean
+     */
     public abstract boolean testConnection();
+
+    /**
+     * 低余额提醒
+     *
+     * @param captchaConfig captchaConfig
+     */
+    public abstract void lowBalanceRemind(CaptchaConfig captchaConfig);
+
+    /**
+     * 获取账户信息
+     *
+     * @param captchaConfig captchaConfig
+     * @return String
+     */
+    public abstract String getAccountInfo(CaptchaConfig captchaConfig);
 
     public String imgToBase64() {
         if (this.imgFile == null) {
             return null;
         }
-        InputStream in;
-        byte[] data = null;
         //读取图片字节数组
-        try {
-            in = Files.newInputStream(Paths.get(this.imgFile));
-            data = new byte[in.available()];
+        try (InputStream in = Files.newInputStream(Paths.get(this.imgFile))) {
+            byte[] data = new byte[in.available()];
             int i = in.read(data);
-            in.close();
+            return Base64.getEncoder().encodeToString(data);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.warn(e.getMessage(), e);
+            return null;
         }
-        return Base64.getEncoder().encodeToString(data);
     }
 }

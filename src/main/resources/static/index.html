@@ -57,12 +57,13 @@
                 <label for="input-typeId">typeId </label>
                 <input id="input-typeId" v-model="captchaConfig.tj.typeId"><br/>
                 <button v-on:click="testCaptcha(1)">测试验证码</button>
-                <button v-on:click="showTjAccountInfo()">查看余额</button>
+                <button v-on:click="showTjAccountInfo(1)">查看余额</button>
             </div>
 
             <div v-show="captchaWayTabIndex === 2">
                 <h3>服务器打码</h3>
                 <button v-on:click="testCaptcha(2)">测试验证码</button>
+                <button v-on:click="showTjAccountInfo(2)">查看余额</button>
             </div>
             <hr>
 
@@ -80,7 +81,7 @@
                 <select id="select-captchaWay" v-model="captchaConfig.captchaWay[index]">
                     <option value="0">不打码</option>
                     <option value="1">图鉴打码</option>
-                    <option value="2">服务器打码</option>
+                    <option value="2">平川服务器打码</option>
                 </select>
             </template>
 

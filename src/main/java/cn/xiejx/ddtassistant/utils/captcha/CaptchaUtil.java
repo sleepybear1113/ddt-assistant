@@ -7,7 +7,6 @@ import cn.xiejx.ddtassistant.utils.cacher.Cacher;
 import cn.xiejx.ddtassistant.utils.cacher.CacherBuilder;
 import cn.xiejx.ddtassistant.utils.cacher.cache.ExpireWayEnum;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
-import cn.xiejx.ddtassistant.utils.captcha.pc.PcResponse;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
@@ -34,13 +33,6 @@ public class CaptchaUtil {
             .scheduleName("cacher")
             .delay(20, TimeUnit.SECONDS)
             .build();
-
-
-    public static ChoiceEnum getChoice(long maxDelay, Long afterDisappearDelay, BasePredictDto basePredictDto) {
-        BaseResponse baseResponse = new PcResponse();
-//        BaseResponse response = baseResponse.getResponse(basePredictDto);
-        return null;
-    }
 
     public static <T extends BaseResponse> BaseResponse getResponse(BasePredictDto basePredictDto) {
         BaseResponse res = BaseResponse.buildEmptyResponse();

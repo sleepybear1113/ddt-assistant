@@ -17,9 +17,18 @@ public class CaptchaInfo {
     private long lastCaptchaTime;
     private String lastCaptchaId;
     private String lastCaptchaFilePath;
+    private Integer count;
 
     public CaptchaInfo(CaptchaChoiceEnum captchaChoiceEnum, long lastCaptchaTime, String lastCaptchaId, String lastCaptchaFilePath) {
         this.captchaChoiceEnum = captchaChoiceEnum;
+        this.lastCaptchaTime = lastCaptchaTime;
+        this.lastCaptchaId = lastCaptchaId;
+        this.lastCaptchaFilePath = lastCaptchaFilePath;
+        this.count = 0;
+    }
+
+    public void renew(long lastCaptchaTime, String lastCaptchaId, String lastCaptchaFilePath) {
+        this.count++;
         this.lastCaptchaTime = lastCaptchaTime;
         this.lastCaptchaId = lastCaptchaId;
         this.lastCaptchaFilePath = lastCaptchaFilePath;
