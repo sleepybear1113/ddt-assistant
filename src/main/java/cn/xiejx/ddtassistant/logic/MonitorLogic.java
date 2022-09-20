@@ -70,6 +70,7 @@ public class MonitorLogic {
      * 开始循环监控
      */
     public void startMonitorActionLoopThread() {
+        Util.sleep(3000L);
         log.info("监控线程启动！");
         GlobalVariable.THREAD_POOL.execute(this::monitorKeyPressActionLoop);
         GlobalVariable.THREAD_POOL.execute(this::monitorActionLoop);

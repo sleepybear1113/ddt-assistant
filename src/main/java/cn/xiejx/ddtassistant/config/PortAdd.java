@@ -45,8 +45,20 @@ public class PortAdd {
         // 端口按,分割
         List<Connector> result = new ArrayList<>();
         for (int port : ports) {
+            if (port < 0 || port > 65535) {
+                log.error("======================================");
+                log.error("======================================");
+                log.error("端口开启失败，端口号：{} 不在 [0, 65535]之间，输入错误，无法开启", port);
+                log.error("======================================");
+                log.error("======================================");
+                continue;
+            }
             if (!Util.portAvailable(port)) {
+                log.error("======================================");
+                log.error("======================================");
                 log.error("端口开启失败，端口号：{} 被占用，无法开启", port);
+                log.error("======================================");
+                log.error("======================================");
                 continue;
             }
             Connector connector = new Connector("org.apache.coyote.http11.Http11NioProtocol");

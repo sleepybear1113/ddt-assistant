@@ -29,6 +29,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -382,7 +383,7 @@ public class Captcha extends BaseType {
         GlobalVariable.THREAD_POOL.execute(() -> {
             if (!hasGetUserInfo) {
                 hasGetUserInfo = true;
-                for (Integer way : captchaConfig.getCaptchaWay()) {
+                for (Integer way : new HashSet<>(captchaConfig.getCaptchaWay())) {
                     BasePredictDto basePredictDto = null;
                     CaptchaChoiceEnum captchaChoiceEnum = CaptchaChoiceEnum.getChoice(way);
                     if (CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {

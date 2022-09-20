@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant.utils.captcha;
 
 import cn.xiejx.ddtassistant.base.CaptchaConfig;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
@@ -35,6 +36,7 @@ public abstract class BasePredictDto implements Serializable {
      *
      * @return String
      */
+    @JsonIgnore
     public abstract String getUrl();
 
     /**
@@ -49,6 +51,7 @@ public abstract class BasePredictDto implements Serializable {
      *
      * @return RequestConfig
      */
+    @JsonIgnore
     public abstract RequestConfig getRequestConfig();
 
     /**
@@ -65,6 +68,7 @@ public abstract class BasePredictDto implements Serializable {
      * @param <T> BaseResponse
      * @return BaseResponse
      */
+    @JsonIgnore
     public abstract <T extends BaseResponse> Class<T> getResponseClass();
 
     /**
@@ -87,6 +91,7 @@ public abstract class BasePredictDto implements Serializable {
      * @param captchaConfig captchaConfig
      * @return String
      */
+    @JsonIgnore
     public abstract String getAccountInfo(CaptchaConfig captchaConfig);
 
     public String imgToBase64() {

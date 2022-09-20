@@ -222,7 +222,7 @@ public class HttpHelper implements Serializable {
                 response = httpClient.execute(httpHost, httpRequestMaker, context);
             }
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            log.error("[HttpHelper]: " + e.getMessage(), e);
             ee = e;
         } finally {
             httpResponseHelper = new HttpResponseHelper(httpCookieStore, response, ee, context);

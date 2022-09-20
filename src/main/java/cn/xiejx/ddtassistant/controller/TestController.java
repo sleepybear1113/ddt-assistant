@@ -3,7 +3,10 @@ package cn.xiejx.ddtassistant.controller;
 import cn.xiejx.ddtassistant.annotation.LogAppInfo;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
+import cn.xiejx.ddtassistant.logic.MonitorLogic;
 import cn.xiejx.ddtassistant.utils.Util;
+import cn.xiejx.ddtassistant.utils.captcha.CaptchaUtil;
+import cn.xiejx.ddtassistant.vo.MyString;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -60,6 +63,17 @@ public class TestController {
         testRes.setSuccess(true);
         testRes.setMsg(String.format("一共%s线程，点击位置为 x = %s，y = %s", dmDdts.size(), x, y));
         return testRes;
+    }
+
+    @LogAppInfo("查看缓存大小")
+    @RequestMapping("/test/getCacherSize")
+    public MyString getCacherSize() {
+        int monitorTimeSize = MonitorLogic.TIME_CACHER.size();
+        int monitorBonusSize = MonitorLogic.FLOP_BONUS_CACHER.size();
+        int captchaSize = CaptchaUtil.CACHER.size();
+        String s = "monitorTimeSize = " + monitorTimeSize + ", monitorBonusSize = " + monitorBonusSize + ", captchaSize = " + captchaSize;
+        log.info(s);
+        return new MyString(s);
     }
 
     @Data

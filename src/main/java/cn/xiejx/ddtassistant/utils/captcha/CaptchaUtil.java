@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
 public class CaptchaUtil {
     public static final Random RANDOM = new Random();
 
-    private static final Cacher<Integer, BaseResponse> CACHER = new CacherBuilder<Integer, BaseResponse>()
+    public static final Cacher<Integer, BaseResponse> CACHER = new CacherBuilder<Integer, BaseResponse>()
             .scheduleName("cacher")
             .delay(20, TimeUnit.SECONDS)
             .build();
@@ -90,16 +90,19 @@ public class CaptchaUtil {
 
         // 异步发送请求
         GlobalVariable.THREAD_POOL.execute(() -> {
+            BaseResponse emptyResponse = BaseResponse.buildEmptyResponse();
             if (!basePredictDto.testConnection()) {
                 log.info("[{}] 请求失败！ 原因：{}", hwndFinal, "无法连接到打码平台！");
-                CACHER.set(id, BaseResponse.buildEmptyResponse(), 1000L * 60);
+                emptyResponse.setMessage("无法连接到打码平台");
+                CACHER.set(id, emptyResponse, 1000L * 60);
                 return;
             }
 
             BaseResponse response = getResponse(basePredictDto);
             if (response == null) {
                 log.info("[{}] 请求失败！ 原因：{}", hwndFinal, "结果为空！");
-                CACHER.set(id, BaseResponse.buildEmptyResponse(), 1000L * 60);
+                emptyResponse.setMessage("结果为空");
+                CACHER.set(id, emptyResponse, 1000L * 60);
             } else {
                 if (Boolean.TRUE.equals(response.getSuccess())) {
                     log.info("[{}] 请求结束，平台识别时间耗时 {} 毫秒", hwndFinal, response.getCost());
@@ -143,7 +146,7 @@ public class CaptchaUtil {
     public static void main(String[] args) {
 //        String file = "C:\\Users\\xjx\\Desktop\\ddt\\captcha\\20220527\\B@132252-21_21_10.png";
         String file = "图片/A@67200-12_59_39.png";
-        tj2(file);
+        pc2(file);
     }
 
     public static void pc(String file) {
