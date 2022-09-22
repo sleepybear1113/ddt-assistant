@@ -190,11 +190,27 @@ public class Captcha extends BaseType {
             return;
         }
 
-        // 没找到
         if (!findCaptcha()) {
+            // 没找到验证码
+            return;
+        }
+
+        // 验证码保存路径
+        String captchaDir = Constants.CAPTCHA_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT) + "/";
+        String captchaName = captchaDir + getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
+
+        // 截屏
+        captureCaptchaQuestionPic(captchaName);
+        log.info("[{}] 验证码保存到本地，文件名为：{}", getHwnd(), captchaName);
+        if (!captchaValid(captchaName)) {
+            getDm().clickCorner();
+            log.info("[{}] 保存验证码图片为非验证码内容，不予上传！", getHwnd());
             return;
         }
         log.info("[{}] 发现副本验证码！", getHwnd());
+
+        // 设置验证码出现的按钮缓存
+        MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), MonitorLogic.CAPTCHA_DELAY, ExpireWayEnum.AFTER_UPDATE);
 
         // 上报错误，如果有
         CaptchaInfo lastErrorCaptchaInfo = null;
@@ -209,29 +225,14 @@ public class Captcha extends BaseType {
                     lastErrorCaptchaInfo = captchaInfo;
                 }
             }
-        }
-        BaseResponse.reportError(getHwnd(), lastErrorCaptchaInfo, false);
-
-        // 设置按钮缓存
-        MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), MonitorLogic.CAPTCHA_DELAY, ExpireWayEnum.AFTER_UPDATE);
-
-        // 验证码保存路径
-        String captchaDir = Constants.CAPTCHA_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT) + "/";
-        String captchaName = captchaDir + getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
-
-        // 截屏
-        captureCaptchaQuestionPic(captchaName);
-        log.info("[{}] 验证码保存到本地，文件名为：{}", getHwnd(), captchaName);
-        if (!captchaValid(captchaName)) {
-            getDm().clickCorner();
-            log.info("[{}] 保存验证码图片为非验证码内容，不予上传！", getHwnd());
-            return;
+            BaseResponse.reportError(getHwnd(), lastErrorCaptchaInfo, false);
         }
 
         // 空结果
         BaseResponse response = TjResponse.buildEmptyResponse();
 
         // 遍历所有的打码方式
+        boolean first = true;
         for (Integer captchaWay : captchaConfig.getCaptchaWay()) {
             CaptchaChoiceEnum captchaChoiceEnum = CaptchaChoiceEnum.getChoice(captchaWay);
 
@@ -239,6 +240,12 @@ public class Captcha extends BaseType {
             if (CaptchaChoiceEnum.NONE.equals(captchaChoiceEnum)) {
                 break;
             }
+
+            if (!first && !findCaptcha()) {
+                // 没找到验证码（二次验证是否有验证码）
+                return;
+            }
+            first = false;
 
             // 倒计时时间
             Integer countDown = captureAndOcrCountDown();

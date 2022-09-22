@@ -33,7 +33,7 @@ import java.util.List;
 public class PcPredictDto extends BasePredictDto implements Serializable {
     private static final long serialVersionUID = -3828083082254095381L;
 
-    public static final String HOST = "http://139.155.237.55:21001";
+    public static final String HOST = "http://139.155.237.55:21000";
 
     public PcPredictDto(String imgFile) {
         setImgFile(imgFile);

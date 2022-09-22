@@ -26,7 +26,7 @@ public class GlobalVariable {
     public static final Map<Integer, DmDdt> DM_DDT_MAP = new ConcurrentHashMap<>();
     public static final Map<String, BaseType> BASE_TYPE_MAP = new ConcurrentHashMap<>();
 
-    public static final ThreadPoolExecutor THREAD_POOL = new ThreadPoolExecutor(10, 60, 10, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> {
+    public static final ThreadPoolExecutor THREAD_POOL = new ThreadPoolExecutor(10, 100, 10, TimeUnit.SECONDS, new SynchronousQueue<>(), r -> {
         Thread t = new Thread(r);
         t.setUncaughtExceptionHandler((t1, e) -> log.error(e.getMessage(), e));
         return t;
