@@ -60,6 +60,8 @@ class CaptchaPc {
             return;
         }
         this.username = props.username;
+        this.cami = props.cami;
+        this.author = props.author;
     }
 }
 

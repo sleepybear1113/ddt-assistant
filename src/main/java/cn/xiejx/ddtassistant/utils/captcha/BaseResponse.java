@@ -30,6 +30,7 @@ public class BaseResponse implements Serializable {
     private String captchaId;
 
     private String message;
+    private String balance;
 
     public void buildResponse() {
     }

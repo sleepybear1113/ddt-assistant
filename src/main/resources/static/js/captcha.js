@@ -42,6 +42,8 @@ let captchaApp = new Vue({
             {title: "D", option: "D"},
             {title: "", option: "无"},
         ],
+        pcAuthorShow: false,
+        showPcCami: false,
     },
     created() {
         this.initUserConfig();
@@ -136,6 +138,9 @@ let captchaApp = new Vue({
 
                 showInfo(testRes.msg);
             });
+        },
+        changePcCamiShow: function () {
+            this.showPcCami = !this.showPcCami;
         },
 
         captureCaptchaSampleRegion: function () {

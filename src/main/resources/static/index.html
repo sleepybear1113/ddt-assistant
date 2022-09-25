@@ -63,6 +63,14 @@
 
             <div v-show="captchaWayTabIndex === 2">
                 <h3>服务器打码</h3>
+                <label for="input-pc-cami">卡密</label>
+                <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
+                <label for="input-pc-cami-1"></label>
+                <input type="text" id="input-pc-cami-1" v-model="captchaConfig.pc.cami" v-show="showPcCami">
+                <label for="input-pc-author" v-show="pcAuthorShow">author</label>
+                <input id="input-pc-author" v-show="pcAuthorShow" v-model="captchaConfig.pc.cami">
+                <button v-on:click="changePcCamiShow()">显示/隐藏</button>
+                <br/>
                 <button v-on:click="testCaptcha(2)">测试验证码</button>
                 <button v-on:click="showTjAccountInfo(2)">查看余额</button>
             </div>

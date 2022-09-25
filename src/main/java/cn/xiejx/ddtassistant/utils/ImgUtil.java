@@ -33,6 +33,14 @@ public class ImgUtil {
     public static final int[] BLACK = {0, 0, 0};
     public static final int[] WHITE = {255, 255, 255};
 
+    public static BufferedImage read(String path) {
+        try {
+            return ImageIO.read(new File(path));
+        } catch (IOException e) {
+            return null;
+        }
+    }
+
     public static void cleanImg(String from, String to) {
         cleanImg(from, to, ImageClean.Type.CAPTCHA_NORMAL);
     }

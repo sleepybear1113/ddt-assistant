@@ -28,6 +28,8 @@ public class PcResponse extends BaseResponse implements Serializable {
     private Boolean success;
     private ChoiceEnum choiceEnum;
     private Long cost;
+    private String balance;
+
     public PcResponse() {
     }
 

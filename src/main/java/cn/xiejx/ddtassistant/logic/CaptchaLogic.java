@@ -57,6 +57,12 @@ public class CaptchaLogic {
         basePredictDto.build(captchaConfig, picPath);
 
         BaseResponse response = CaptchaUtil.getResponse(basePredictDto);
+        if (response == null) {
+            return null;
+        }
+        if (StringUtils.isNotBlank(response.getBalance())) {
+            response.setMessage(response.getMessage() + "-" + response.getBalance());
+        }
         log.info(String.valueOf(response));
         return response;
     }

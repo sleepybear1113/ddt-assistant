@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -18,13 +19,16 @@ import java.io.Serializable;
 public class PcCaptcha extends BaseCaptchaWay implements Serializable {
     private static final long serialVersionUID = 3701573224665113223L;
 
-    private String username;
-    private String password;
-    private String code;
+    private String cami;
+    private String author;
 
     @Override
     public boolean validUserInfo() {
-        return true;
+        return StringUtils.isBlank(cami);
+    }
+
+    public String getAuthor() {
+        return StringUtils.isBlank(author) ? "sleepy" : author;
     }
 
     @Override

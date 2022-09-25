@@ -46,9 +46,10 @@ public class Captcha extends BaseType {
     private static boolean hasGetUserInfo = false;
 
     /**
-     * 请求验证码次数
+     * 上一张验证码图
      */
-    public static int captchaCount = 0;
+    private BufferedImage lastCaptchaImg;
+
     /**
      * 是否发送过低余额邮件通知
      */
@@ -208,6 +209,13 @@ public class Captcha extends BaseType {
             return;
         }
         log.info("[{}] 发现副本验证码！", getHwnd());
+
+        BufferedImage current = ImgUtil.read(captchaName);
+        if (isSameCaptcha(lastCaptchaImg, current)) {
+            log.info("[{}] 验证码重复！！", getHwnd());
+            return;
+        }
+        lastCaptchaImg = current;
 
         // 设置验证码出现的按钮缓存
         MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), MonitorLogic.CAPTCHA_DELAY, ExpireWayEnum.AFTER_UPDATE);
@@ -384,6 +392,30 @@ public class Captcha extends BaseType {
         }
 
         return true;
+    }
+
+    public static boolean isSameCaptcha(BufferedImage last, BufferedImage current) {
+        if (last == null) {
+            return false;
+        }
+        if (current == null) {
+            return true;
+        }
+
+        int w = 30;
+        int h = 30;
+        int[][] points = {{30, 30}, {30, 90}, {90, 30}, {90, 90}};
+        int delta = 10;
+        for (int[] point : points) {
+            int[] avgColor0 = ImgUtil.getAvgColor(last.getSubimage(point[0], point[1], w, h));
+            int[] avgColor1 = ImgUtil.getAvgColor(current.getSubimage(point[0], point[1], w, h));
+            for (int i = 0; i < avgColor0.length; i++) {
+                if (Math.abs(avgColor0[i] - avgColor1[i]) > delta) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static boolean startIdentifyCaptcha(Integer hwnd, CaptchaConfig captchaConfig) {
