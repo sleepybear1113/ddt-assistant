@@ -24,7 +24,7 @@ public class PcCaptcha extends BaseCaptchaWay implements Serializable {
 
     @Override
     public boolean validUserInfo() {
-        return StringUtils.isBlank(cami);
+        return StringUtils.isNotBlank(cami);
     }
 
     public String getAuthor() {

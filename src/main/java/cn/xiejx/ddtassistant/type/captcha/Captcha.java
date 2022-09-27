@@ -410,7 +410,7 @@ public class Captcha extends BaseType {
             int[] avgColor0 = ImgUtil.getAvgColor(last.getSubimage(point[0], point[1], w, h));
             int[] avgColor1 = ImgUtil.getAvgColor(current.getSubimage(point[0], point[1], w, h));
             for (int i = 0; i < avgColor0.length; i++) {
-                if (Math.abs(avgColor0[i] - avgColor1[i]) > delta) {
+                if (Math.abs(avgColor0[i] - avgColor1[i]) < delta) {
                     return true;
                 }
             }

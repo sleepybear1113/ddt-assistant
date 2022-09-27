@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.3</version>
+        <version>2.7.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.xiejx</groupId>
     <artifactId>ddt-assistant</artifactId>
-    <version>2.1.0.4</version>
+    <version>2.1.1</version>
     <name>ddt-assistant</name>
     <description>ddt-assistant</description>
     <properties>

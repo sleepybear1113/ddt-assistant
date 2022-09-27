@@ -33,7 +33,25 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        testAuction();
+        angle();
+    }
+
+    public static void angle() {
+        int hwnd = 594094;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.clickCorner();
+        System.out.println("等待1秒，然后向下-10度");
+        Util.sleep(1000L);
+        for (int i = 0; i < 10; i++) {
+            dm.keyPressChar("down");
+        }
+
+        System.out.println("等待1秒，然后向上+20度");
+        Util.sleep(1000L);
+        for (int i = 0; i < 20; i++) {
+            dm.keyPressChar("up");
+        }
     }
 
     public static void capWind() {

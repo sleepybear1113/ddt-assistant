@@ -135,11 +135,11 @@ public class DmDdt extends Dm {
 
     @Override
     public void keyPressChar(String key) {
-        SettingConfig settingConfig = SpringContextUtil.getBean(SettingConfig.class);
-        if (settingConfig == null) {
+        if (SpringContextUtil.getApplicationContext() == null) {
             super.keyPressChar(key);
             return;
         }
+        SettingConfig settingConfig = SpringContextUtil.getBean(SettingConfig.class);
         SettingConfig.KeyPressWayEnum keyPadPressWayEnum = settingConfig.getKeyPadPressWayEnum();
         if (SettingConfig.KeyPressWayEnum.DM.equals(keyPadPressWayEnum)) {
             super.keyPressChar(key);
