@@ -307,6 +307,6 @@ public class Util {
     }
 
     public static void main(String[] args) {
-        openWithExplorer("资源图片/模板/副本-验证码-倒计时-1.bmp", true);
+        openWithExplorer("资源图片/模板/副本-验证码-倒计时-1.png", true);
     }
 }
