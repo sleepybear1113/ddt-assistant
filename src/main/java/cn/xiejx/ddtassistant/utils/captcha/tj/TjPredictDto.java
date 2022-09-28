@@ -11,6 +11,7 @@ import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
+import cn.xiejx.ddtassistant.utils.captcha.way.TjCaptcha;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -61,17 +62,16 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
             throw new FrontException("用户信息不存在");
         }
 
-        String username = captchaConfig.getTj().getUsername();
-        String password = captchaConfig.getTj().getPassword();
-        if (username == null || username.length() == 0 || password == null || password.length() == 0) {
-            throw new FrontException("用户名密码缺失");
+        TjCaptcha tj = captchaConfig.getTj();
+        if (!tj.validUserInfo()) {
+            throw new FrontException("用户名密码信息有误！");
         }
 
-        this.setSoftId(captchaConfig.getTj().getSoftId());
-        this.setTypeId(captchaConfig.getTj().getTypeId());
         this.setImgFile(path);
-        this.setUsername(username);
-        this.setPassword(password);
+        this.setSoftId(tj.getSoftId());
+        this.setTypeId(tj.getTypeId());
+        this.setUsername(tj.getUsername());
+        this.setPassword(tj.getPassword());
         this.setTypeName("");
     }
 

@@ -43,7 +43,7 @@
         <div class="area">
             <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
             <button v-on:click="changeCaptchaWayTabIndex(1)">图鉴打码</button>
-            <button v-on:click="changeCaptchaWayTabIndex(2)">服务器打码</button>
+            <button v-on:click="changeCaptchaWayTabIndex(2)">平川服务器打码</button>
             <hr>
 
             <div v-show="captchaWayTabIndex === 1">
@@ -62,7 +62,7 @@
             </div>
 
             <div v-show="captchaWayTabIndex === 2">
-                <h3>服务器打码</h3>
+                <h3>平川服务器打码</h3>
                 <label for="input-pc-cami">卡密</label>
                 <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
                 <label for="input-pc-cami-1"></label>
@@ -100,76 +100,78 @@
         </div>
 
 
-        <ul>
-            <li>
-                <label for="input-captureInterval">识屏间隔(毫秒)</label>
-                <input type="number" id="input-captureInterval" v-model="userConfig.captureInterval"
-                       class="ms-input"><br/>
-            </li>
-            <li>
-                <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
-                <select id="select-defaultChoiceAnswer" v-model="userConfig.defaultChoiceAnswer">
-                    <option v-for="item in answerChoices" :value="item.title">{{item.option}}</option>
-                </select>
-            </li>
-            <li>
-                <label for="input-captchaAppearDelay">当出现验证码后经过</label>
-                <input id="input-captchaAppearDelay" v-model="userConfig.captchaAppearDelay" type="number"
-                       class="ms-input">
-                <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
-                <input id="input-keyPressAfterCaptchaShow" v-model="userConfig.keyPressAfterCaptchaShow"
-                       class="string-input">
-                <br/>
-                <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后经过</label>
-                <input id="input-keyPressDelayAfterCaptchaDisappear"
-                       v-model="userConfig.keyPressDelayAfterCaptchaDisappear"
-                       type="number" class="ms-input">
-                <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
-                <input id="input-keyPressAfterCaptchaDisappear" v-model="userConfig.keyPressAfterCaptchaDisappear"
-                       class="string-input">
-            </li>
-            <li>
-                <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
-                <input id="input-pveFlopBonusAppearDelay" v-model="userConfig.pveFlopBonusAppearDelay" type="number"
-                       class="ms-input">
-                <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
-                <input id="input-keyPressAfterPveFlopBonus" v-model="userConfig.keyPressAfterPveFlopBonus"
-                       class="string-input">
-                <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
-                <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture" type="checkbox">
-                <br/>
-                <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
-                <input id="input-pveFlopBonusDisappearDelay" v-model="userConfig.pveFlopBonusDisappearDelay"
-                       type="number"
-                       class="ms-input">
-                <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
-                <input id="input-keyPressAfterPveFlopBonusDisappear"
-                       v-model="userConfig.keyPressAfterPveFlopBonusDisappear"
-                       class="string-input">
-            </li>
-            <li>
-                <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label>
-                <input id="input-logPrintInterval" v-model="userConfig.logPrintInterval" type="number"
-                       class="ms-input"><br/>
-            </li>
-            <li>
-                <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
-                <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval" type="number"
-                       class="ms-input">
-            </li>
-            <li>
-                <label for="input-extraPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
-                <input id="input-extraPorts" v-model="userConfig.extraPorts" class="string-input"
-                       placeholder="例：80,20400">
-            </li>
-        </ul>
+        <div style="border: black solid 1px">
+            <ul>
+                <li>
+                    <label for="input-captureInterval">识屏间隔(毫秒)</label>
+                    <input type="number" id="input-captureInterval" v-model="userConfig.captureInterval"
+                           class="ms-input"><br/>
+                </li>
+                <li>
+                    <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
+                    <select id="select-defaultChoiceAnswer" v-model="userConfig.defaultChoiceAnswer">
+                        <option v-for="item in answerChoices" :value="item.title">{{item.option}}</option>
+                    </select>
+                </li>
+                <li>
+                    <label for="input-captchaAppearDelay">当出现验证码后经过</label>
+                    <input id="input-captchaAppearDelay" v-model="userConfig.captchaAppearDelay" type="number"
+                           class="ms-input">
+                    <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
+                    <input id="input-keyPressAfterCaptchaShow" v-model="userConfig.keyPressAfterCaptchaShow"
+                           class="string-input">
+                    <br/>
+                    <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后经过</label>
+                    <input id="input-keyPressDelayAfterCaptchaDisappear"
+                           v-model="userConfig.keyPressDelayAfterCaptchaDisappear"
+                           type="number" class="ms-input">
+                    <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
+                    <input id="input-keyPressAfterCaptchaDisappear" v-model="userConfig.keyPressAfterCaptchaDisappear"
+                           class="string-input">
+                </li>
+                <li>
+                    <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
+                    <input id="input-pveFlopBonusAppearDelay" v-model="userConfig.pveFlopBonusAppearDelay" type="number"
+                           class="ms-input">
+                    <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
+                    <input id="input-keyPressAfterPveFlopBonus" v-model="userConfig.keyPressAfterPveFlopBonus"
+                           class="string-input">
+                    <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
+                    <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture" type="checkbox">
+                    <br/>
+                    <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
+                    <input id="input-pveFlopBonusDisappearDelay" v-model="userConfig.pveFlopBonusDisappearDelay"
+                           type="number"
+                           class="ms-input">
+                    <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
+                    <input id="input-keyPressAfterPveFlopBonusDisappear"
+                           v-model="userConfig.keyPressAfterPveFlopBonusDisappear"
+                           class="string-input">
+                </li>
+                <li>
+                    <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label>
+                    <input id="input-logPrintInterval" v-model="userConfig.logPrintInterval" type="number"
+                           class="ms-input"><br/>
+                </li>
+                <li>
+                    <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
+                    <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval" type="number"
+                           class="ms-input">
+                </li>
+                <li>
+                    <label for="input-extraPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
+                    <input id="input-extraPorts" v-model="userConfig.extraPorts" class="string-input"
+                           placeholder="例：80,20400">
+                </li>
+            </ul>
 
-        <label>其中 1000 毫秒 = 1 秒</label><br/>
-        <button v-on:click="saveUserConfig()">保存</button>
-        <button v-on:click="resetUserConfig()">重置</button>
-        <hr>
-        <div>
-            <button v-on:click="bindAll()">检测并添加所有窗口</button>
+            <label>其中 1000 毫秒 = 1 秒</label><br/>
+            <button v-on:click="saveUserConfig()">保存</button>
+            <button v-on:click="resetUserConfig()">重置</button>
+            <hr>
+            <div>
+                <button v-on:click="bindAll()">检测并添加所有窗口</button>
+            </div>
         </div>
     </div>
 

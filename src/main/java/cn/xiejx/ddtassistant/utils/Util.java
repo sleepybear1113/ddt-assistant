@@ -232,6 +232,9 @@ public class Util {
     }
 
     public static boolean isNumber(String s) {
+        if (StringUtils.isBlank(s)) {
+            return false;
+        }
         try {
             new BigDecimal(s);
             return true;

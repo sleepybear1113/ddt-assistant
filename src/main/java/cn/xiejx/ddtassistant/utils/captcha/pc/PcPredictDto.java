@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.utils.captcha.pc;
 import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.logic.EmailLogic;
 import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
@@ -91,8 +92,12 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
     @Override
     public void build(CaptchaConfig captchaConfig, String imgFilePath) {
         setImgFile(imgFilePath);
-        setAuthor(captchaConfig.getPc().getAuthor());
-        setCami(captchaConfig.getPc().getCami());
+        PcCaptcha pc = captchaConfig.getPc();
+        if (!pc.validUserInfo()) {
+            throw new FrontException("用户卡密信息错误！");
+        }
+        setAuthor(pc.getAuthor());
+        setCami(pc.getCami());
     }
 
     @Override

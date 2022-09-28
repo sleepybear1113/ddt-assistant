@@ -1,7 +1,7 @@
 package cn.xiejx.ddtassistant.logic;
 
 import cn.xiejx.ddtassistant.base.CaptchaConfig;
-import cn.xiejx.ddtassistant.base.UserConfig;
+import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.type.BaseType;
@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,15 +37,25 @@ public class CaptchaLogic {
     private static final Random RANDOM = new Random();
 
     @Resource
-    private UserConfig userConfig;
-    @Resource
     private CaptchaConfig captchaConfig;
     @Resource
     private DmDdt defaultDm;
 
     public BaseResponse testCaptcha(Integer captchaWay) {
+        String[] picPaths = {Constants.CAPTCHA_TEST_DIR + "test-1.png", Constants.CAPTCHA_TEST_DIR + "test-1.bmp"};
+        String picPath = null;
+
+        for (String path : picPaths) {
+            if (new File(path).exists()) {
+                picPath = path;
+                break;
+            }
+        }
+        if (picPath == null) {
+            throw new FrontException("找不到验证码测试图片");
+        }
+
         BasePredictDto basePredictDto;
-        String picPath = "资源图片/验证码测试/test-1.bmp";
         CaptchaChoiceEnum choiceEnum = CaptchaChoiceEnum.getChoice(captchaWay);
         log.info("开始测试{}", choiceEnum.getName());
         if (CaptchaChoiceEnum.PC.equals(choiceEnum)) {
