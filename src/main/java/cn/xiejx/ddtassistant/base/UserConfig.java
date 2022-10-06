@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.base;
 
+import cn.xiejx.ddtassistant.config.PortAdd;
 import cn.xiejx.ddtassistant.dm.Dm;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -106,7 +107,9 @@ public class UserConfig extends BaseConfig implements Serializable {
     private String mouseMode;
     private String keyPadMode;
 
-    private String extraPorts;
+    private String extPorts;
+
+    private Boolean showExtPorts;
 
     @Override
     @JsonIgnore
@@ -134,8 +137,12 @@ public class UserConfig extends BaseConfig implements Serializable {
         userConfig.setLogPrintInterval(30000L);
         userConfig.setMouseMode(Dm.DEFAULT_MOUSE_MODE);
         userConfig.setKeyPadMode(Dm.DEFAULT_KEY_PAD_MODE);
-        userConfig.setExtraPorts(null);
+        userConfig.setExtPorts(null);
         return userConfig;
+    }
+
+    public Boolean getShowExtPorts() {
+        return PortAdd.isSelf();
     }
 
     public void setUserConfig(UserConfig userConfig) {
@@ -249,18 +256,18 @@ public class UserConfig extends BaseConfig implements Serializable {
         this.keyPadMode = keyPadMode;
     }
 
-    public String getExtraPorts() {
-        return extraPorts;
+    public String getExtPorts() {
+        return extPorts;
     }
 
     @JsonIgnore
     public List<Integer> getPortArray() {
-        if (StringUtils.isBlank(this.extraPorts)) {
+        if (StringUtils.isBlank(this.extPorts)) {
             return null;
         }
 
         List<Integer> res = new ArrayList<>();
-        String[] ps = extraPorts.replace("，", ",").split(",");
+        String[] ps = extPorts.replace("，", ",").split(",");
         for (String p : ps) {
             if (StringUtils.isNumeric(p)) {
                 res.add(Integer.valueOf(p));
@@ -270,19 +277,19 @@ public class UserConfig extends BaseConfig implements Serializable {
         return res;
     }
 
-    public void setExtraPorts(String extraPorts) {
-        if (StringUtils.isBlank(extraPorts)) {
-            this.extraPorts = null;
+    public void setExtPorts(String extPorts) {
+        if (StringUtils.isBlank(extPorts)) {
+            this.extPorts = null;
             return;
         }
 
         StringBuilder s = new StringBuilder();
-        String[] ps = extraPorts.replace("，", ",").split(",");
+        String[] ps = extPorts.replace("，", ",").split(",");
         for (String p : ps) {
             if (StringUtils.isNumeric(p)) {
                 s.append(p).append(",");
             }
         }
-        this.extraPorts = s.toString();
+        this.extPorts = s.toString();
     }
 }

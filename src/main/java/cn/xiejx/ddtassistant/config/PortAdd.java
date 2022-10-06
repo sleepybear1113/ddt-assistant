@@ -5,11 +5,13 @@ import cn.xiejx.ddtassistant.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.Connector;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +44,10 @@ public class PortAdd {
             return null;
         }
 
+        if (!isSelf()) {
+            return null;
+        }
+
         // 端口按,分割
         List<Connector> result = new ArrayList<>();
         for (int port : ports) {
@@ -69,4 +75,20 @@ public class PortAdd {
         return result;
     }
 
+    public static boolean isSelf() {
+        File file = new File("sleepybear.txt");
+        if (!file.exists()) {
+            return false;
+        }
+        try {
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
+            String s = bufferedReader.readLine();
+            if (StringUtils.isBlank(s)) {
+                return false;
+            }
+            return s.contains("1113");
+        } catch (IOException ignored) {
+            return false;
+        }
+    }
 }

@@ -21,7 +21,8 @@ class UserConfig {
         this.timeout = props.timeout;
         this.logPrintInterval = props.logPrintInterval;
         this.detectNewWindowInterval = props.detectNewWindowInterval;
-        this.extraPorts = props.extraPorts;
+        this.extPorts = props.extPorts;
+        this.showExtPorts = props.showExtPorts;
         this.lowBalanceRemind = props.lowBalanceRemind;
         this.lowBalanceNum = props.lowBalanceNum;
     }

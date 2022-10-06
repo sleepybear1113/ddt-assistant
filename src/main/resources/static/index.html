@@ -158,9 +158,10 @@
                     <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval" type="number"
                            class="ms-input">
                 </li>
-                <li>
-                    <label for="input-extraPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
-                    <input id="input-extraPorts" v-model="userConfig.extraPorts" class="string-input"
+                <li v-show="userConfig.showExtPorts">
+                    <label for="input-extPorts"
+                           v-show="userConfig.showExtPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
+                    <input id="input-extPorts" v-model="userConfig.extPorts" class="string-input"
                            placeholder="例：80,20400">
                 </li>
             </ul>
@@ -286,8 +287,12 @@
                             </select>
                         </label>
                     </td>
-                    <td><hr></td>
-                    <td><hr></td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
                     <td>
                         <label>
                             <input v-model="batchChangeItem.argueUnitPrice" class="string-input">
@@ -303,30 +308,53 @@
                             <input v-model="batchChangeItem.minNum" class="string-input">
                         </label>
                     </td>
-                    <td><hr></td>
-                    <td><hr></td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
                     <td>
                         <button v-on:click="batchChangeItemFunc()">批量修改以下信息</button>
                     </td>
                 </tr>
                 <tr>
-                    <td><hr></td>
-                    <td><hr></td>
-                    <td><hr></td>
-                    <td><hr></td>
-                    <td><hr></td>
-                    <td><hr></td>
-                    <td><hr></td>
-                    <td><hr></td>
-                    <td><hr></td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
+                    <td>
+                        <hr>
+                    </td>
                 </tr>
                 <template v-for="(item, index) in auctionData.auctionItemList">
                     <tr v-show="item.shown">
                         <td>
-                            <label :for="'checkbox-auction-item-enabled-'+index">{{(index < 9? "0": "") + (index +
-                                1)}}</label>
+                            <label :for="'checkbox-auction-item-enabled-'+index">{{(index < 9 ? "0" : "") + (index +
+                                    1)}}</label>
                             <label>
-                                <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox" v-model="item.enabled">
+                                <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox"
+                                       v-model="item.enabled">
                             </label>
                         </td>
 
@@ -361,14 +389,16 @@
 
                         <td>
                             <label>
-                                <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum" class="string-input">
+                                <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum"
+                                       class="string-input">
                             </label>
                         </td>
 
                         <td>
                             <button v-show="item.auctionTime === 8" v-on:click="changeAuctionTime(item, 24)">&nbsp;&nbsp;8
                             </button>
-                            <button v-show="item.auctionTime === 24" v-on:click="changeAuctionTime(item, 48)">24</button>
+                            <button v-show="item.auctionTime === 24" v-on:click="changeAuctionTime(item, 48)">24
+                            </button>
                             <button v-show="item.auctionTime === 48" v-on:click="changeAuctionTime(item, 8)">48</button>
                         </td>
 
@@ -485,7 +515,7 @@
     <div class="tab" id="capture">
         <h3>截屏查看</h3>
         <hr>
-        <span>刷新频率：{{interval == null? "无": (interval + "毫秒")}}</span>
+        <span>刷新频率：{{interval == null ? "无" : (interval + "毫秒")}}</span>
         <br/>
         <span v-for="i in intervalList"><button v-on:click="changeInterval(i)">{{i}}</button></span>
         <button v-on:click="changeInterval(interval - 100)">-100</button>
@@ -619,7 +649,7 @@
             <h5>host文件查看/修改</h5>
             <a class="red-font">修改 host 文件需要管理员权限</a>
             <br/>
-            <span>当前权限：{{isAdmin? "已是": "非"}}管理员</span>
+            <span>当前权限：{{isAdmin ? "已是" : "非"}}管理员</span>
             <br/>
             <label for="otherFunction-textarea-host">host文件内容</label>
             <button v-on:click="getHost()">重新载入</button>

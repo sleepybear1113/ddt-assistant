@@ -88,6 +88,7 @@ public class MonitorLogic {
     }
 
     public void monitorActionLoop() {
+        Util.sleep(5000L);
         MonitorVariable newCaptchaVariable = new MonitorVariable();
         MonitorVariable monitorOfflineDetectVariable = new MonitorVariable();
         while (true) {

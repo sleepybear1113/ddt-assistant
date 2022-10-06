@@ -76,6 +76,9 @@ public class Util {
     }
 
     public static <T> T parseJsonToObject(String s, Class<T> clazz, ObjectMapper mapper) {
+        if (StringUtils.isBlank(s)) {
+            return null;
+        }
         try {
             return mapper.readValue(s, clazz);
         } catch (Exception e) {

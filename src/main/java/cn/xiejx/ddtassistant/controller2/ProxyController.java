@@ -76,7 +76,7 @@ public class ProxyController {
 
     @RequestMapping("/v1/af/call_remote_func2")
     public String func2(HttpServletRequest request, String app_key, String func_name, String params, String nonce, String timestamp, String sign) {
-        if (StringUtils.isBlank(params) ) {
+        if (StringUtils.isBlank(params)) {
             log.warn("call_remote_func2 失败，参数为空");
             return "0";
         }
