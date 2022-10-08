@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import net.sourceforge.tess4j.TesseractException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,9 +22,14 @@ import java.util.Map;
  * @author sleepybear
  */
 public class SimpleTest {
+    private static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
+
     public static void main(String[] args) throws Exception {
         String hostName = InetAddress.getLocalHost().getHostName();
         System.out.println(hostName);
+        log.info(hostName);
+        int[] x = {1, 2};
+        log.info("{}", x);
     }
 
     public static void captchaValid() {

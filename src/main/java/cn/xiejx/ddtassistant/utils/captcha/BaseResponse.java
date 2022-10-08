@@ -40,16 +40,17 @@ public class BaseResponse implements Serializable {
             return;
         }
 
-        String lastCaptchaId = captchaInfo.getLastCaptchaId();
-        if (StringUtils.isBlank(lastCaptchaId)) {
-            return;
-        }
-
         if (!force) {
             long timeSub = System.currentTimeMillis() - captchaInfo.getLastCaptchaTime();
             if (timeSub < BaseResponse.errorTimeRange[0] || timeSub > BaseResponse.errorTimeRange[1]) {
                 return;
             }
+        }
+
+        String lastCaptchaId = captchaInfo.getLastCaptchaId();
+        if (StringUtils.isBlank(lastCaptchaId)) {
+            log.info("[{}] [报错] {}打码错误，但是没有打码id进行上报平台", hwnd, captchaInfo.getCaptchaChoiceEnum().getName());
+            return;
         }
 
         log.info("[{}] [报错] 对上一次错误打码报错给[{}]平台，id = {}", hwnd, captchaInfo.getCaptchaChoiceEnum().getName(), lastCaptchaId);

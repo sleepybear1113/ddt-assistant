@@ -339,7 +339,7 @@ public class Captcha extends BaseType {
             }
             log.info("[{}] 平台返回结果格式不正确，进行用户自定义选择，{}", getHwnd(), choiceEnum);
         } else {
-            log.info("[{}] 选择结果 {}", getHwnd(), choiceEnum.getChoice());
+            log.info("[{}] 选择结果 {}, 坐标={}", getHwnd(), choiceEnum.getChoice(), choiceEnum.getXy());
 
             // 上传结果到服务器
             final ChoiceEnum answer = choiceEnum;
@@ -347,6 +347,7 @@ public class Captcha extends BaseType {
         }
 
         // 点击选项
+        log.info("[{}] 点击坐标位置={}", getHwnd(), choiceEnum.getXy());
         getDm().leftClick(choiceEnum.getXy(), 100);
         Util.sleep(300L);
         getDm().leftClick(choiceEnum.getXy(), 100);
