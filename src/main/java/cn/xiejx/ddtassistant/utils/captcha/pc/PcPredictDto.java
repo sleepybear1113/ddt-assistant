@@ -146,7 +146,6 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
             httpHelper.setUrlEncodedFormPostBody(pairs);
             HttpResponseHelper responseHelper = httpHelper.request();
             String responseBody = responseHelper.getResponseBody();
-            System.out.println(responseBody);
 
             ObjectMapper mapper = new ObjectMapper();
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
