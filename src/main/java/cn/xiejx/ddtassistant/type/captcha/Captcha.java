@@ -417,7 +417,7 @@ public class Captcha extends BaseType {
                 }
             }
         }
-        return repeatCount >= (points.length - 2);
+        return repeatCount >= (points.length - 1);
     }
 
     public static boolean startIdentifyCaptcha(Integer hwnd, CaptchaConfig captchaConfig) {
