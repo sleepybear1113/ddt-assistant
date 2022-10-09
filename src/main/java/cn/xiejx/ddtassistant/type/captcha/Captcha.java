@@ -406,18 +406,21 @@ public class Captcha extends BaseType {
         int w = 30;
         int h = 30;
         int[][] points = {{30, 30}, {30, 90}, {30, 180}, {120, 30}, {120, 90}, {120, 180}};
-        int delta = 10;
+        int delta = 5;
         int repeatCount = 0;
+        int totalDelta = 0;
         for (int[] point : points) {
             int[] avgColor0 = ImgUtil.getAvgColor(last.getSubimage(point[0], point[1], w, h));
             int[] avgColor1 = ImgUtil.getAvgColor(current.getSubimage(point[0], point[1], w, h));
             for (int i = 0; i < avgColor0.length; i++) {
-                if (Math.abs(avgColor0[i] - avgColor1[i]) < delta) {
+                int abs = Math.abs(avgColor0[i] - avgColor1[i]);
+                if (abs < delta) {
                     repeatCount++;
                 }
+                totalDelta += abs;
             }
         }
-        return repeatCount >= (points.length - 1);
+        return repeatCount >= (points.length * 3 - 5) && totalDelta < delta * 3;
     }
 
     public static boolean startIdentifyCaptcha(Integer hwnd, CaptchaConfig captchaConfig) {

@@ -13,9 +13,10 @@ import net.sourceforge.tess4j.TesseractException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.util.Map;
 
 /**
@@ -25,11 +26,21 @@ public class SimpleTest {
     private static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
 
     public static void main(String[] args) throws Exception {
-        String hostName = InetAddress.getLocalHost().getHostName();
-        System.out.println(hostName);
-        log.info(hostName);
-        int[] x = {1, 2};
-        log.info("{}", x);
+        testSamePic();
+    }
+
+    public static void testSamePic() throws IOException {
+        BufferedImage image1 = ImageIO.read(new File("pictures/396134-16_54_02.png"));
+        BufferedImage image2 = ImageIO.read(new File("pictures/396134-17_13_59.png"));
+        BufferedImage image3 = ImageIO.read(new File("pictures/396134-17_14_00.png"));
+        BufferedImage image4 = ImageIO.read(new File("pictures/396134-17_14_09.png"));
+        BufferedImage[] bufferedImages = {image1, image2, image3, image4};
+        for (BufferedImage bufferedImage : bufferedImages) {
+            for (BufferedImage image : bufferedImages) {
+                System.out.println(Captcha.isSameCaptcha(bufferedImage, image));
+            }
+            System.out.println();
+        }
     }
 
     public static void captchaValid() {

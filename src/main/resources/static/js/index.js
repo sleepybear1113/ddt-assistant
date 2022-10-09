@@ -6,6 +6,8 @@ let indexApp = new Vue({
         tabIndex: 0,
     },
     created() {
+        document.getElementById("ie").style.display = "none";
+        document.getElementById("ie-a").innerText = "true";
         this.initApp();
     },
     methods: {

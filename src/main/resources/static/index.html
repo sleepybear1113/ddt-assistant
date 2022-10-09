@@ -11,203 +11,216 @@
 <script src="lib/js/echarts.min.js"></script>
 <script src="js/config/axios-config.js"></script>
 <body>
-<div id="index">
-    <div>
-        <span>版本号：</span><u>{{appVersion}}</u>&nbsp;&nbsp;&nbsp;
-        <span>作者：sleepybear</span>&nbsp;&nbsp;&nbsp;
-        <span>免费交流群：879596615</span>
-        <a href="https://jq.qq.com/?_wv=1027&k=G5Ju4kBf" target="_blank">点击唤起QQ打开群</a>&nbsp;&nbsp;&nbsp;&nbsp;
-        <span>设置完毕之后，本页面可以关闭，但不要关闭后台程序</span>
-        <span>，若页面显示和预期不一致，请使用 Ctrl + F5 强制刷新本页面。</span>
-    </div>
-    <label for="textarea-info">信息：</label>
-    <textarea id="textarea-info" style="width: 400px; height: 70px" readonly></textarea>
-    <div id="large-pic-div" style="display: none">
-        <img id="cover-img" src="" width="80%" alt="1">
-    </div>
-    <div id="cover" onclick="hideImg()" style="display: none"></div>
+<script>
+    setTimeout(function () {
+        document.getElementById("ie-h1").innerHTML = "请不要使用IE浏览器访问！！！";
+        if (document.getElementById("ie-a").innerText !== "true") {
+            document.getElementById("main").style.display = "none";
+        }
+    }, 2000);
+</script>
+<div id="ie">
+    <h1 id="ie-h1"></h1>
+    <a id="ie-a" style="display: none"></a>
 </div>
-<hr>
+<div id="main">
+    <div id="index">
+        <div>
+            <span>版本号：</span><u>{{appVersion}}</u>&nbsp;&nbsp;&nbsp;
+            <span>作者：sleepybear</span>&nbsp;&nbsp;&nbsp;
+            <span>免费交流群：879596615</span>
+            <a href="https://jq.qq.com/?_wv=1027&k=G5Ju4kBf" target="_blank">点击唤起QQ打开群</a>&nbsp;&nbsp;&nbsp;&nbsp;
+            <span>设置完毕之后，本页面可以关闭，但不要关闭后台程序</span>
+            <span>，若页面显示和预期不一致，请使用 Ctrl + F5 强制刷新本页面。</span>
+        </div>
+        <label for="textarea-info">信息：</label>
+        <textarea id="textarea-info" style="width: 400px; height: 70px" readonly></textarea>
+        <div id="large-pic-div" style="display: none">
+            <img id="cover-img" src="" width="80%" alt="1">
+        </div>
+        <div id="cover" onclick="hideImg()" style="display: none"></div>
+    </div>
+    <hr>
 
-<div id="tab">
-    <a>功能</a>
-    <span v-for="tab in tabs">
+    <div id="tab">
+        <a>功能</a>
+        <span v-for="tab in tabs">
         <button v-on:click="changeTab(tab.tabId)">{{tab.name}}</button>
     </span>
-</div>
+    </div>
 
-<div class="area">
-    <div class="tab" id="captcha">
-        <h3>副本验证码功能</h3>
-        <hr>
-        <div class="area">
-            <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
-            <button v-on:click="changeCaptchaWayTabIndex(1)">图鉴打码</button>
-            <button v-on:click="changeCaptchaWayTabIndex(2)">平川服务器打码</button>
+    <div class="area">
+        <div class="tab" id="captcha">
+            <h3>副本验证码功能</h3>
             <hr>
+            <div class="area">
+                <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
+                <button v-on:click="changeCaptchaWayTabIndex(1)">图鉴打码</button>
+                <button v-on:click="changeCaptchaWayTabIndex(2)">平川服务器打码</button>
+                <hr>
 
-            <div v-show="captchaWayTabIndex === 1">
-                <h3>图鉴打码</h3>
-                <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
-                <label for="input-username">用户名</label>
-                <input id="input-username" v-model="captchaConfig.tj.username"><br/>
-                <label for="input-password">密码　</label>
-                <input id="input-password" v-model="captchaConfig.tj.password" type="password"><br/>
-                <label for="input-softId">softId </label>
-                <input id="input-softId" v-model="captchaConfig.tj.softId"><br/>
-                <label for="input-typeId">typeId </label>
-                <input id="input-typeId" v-model="captchaConfig.tj.typeId"><br/>
-                <button v-on:click="testCaptcha(1)">测试验证码</button>
-                <button v-on:click="showTjAccountInfo(1)">查看余额</button>
-            </div>
+                <div v-show="captchaWayTabIndex === 1">
+                    <h3>图鉴打码</h3>
+                    <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
+                    <label for="input-username">用户名</label>
+                    <input id="input-username" v-model="captchaConfig.tj.username"><br/>
+                    <label for="input-password">密码　</label>
+                    <input id="input-password" v-model="captchaConfig.tj.password" type="password"><br/>
+                    <label for="input-softId">softId </label>
+                    <input id="input-softId" v-model="captchaConfig.tj.softId"><br/>
+                    <label for="input-typeId">typeId </label>
+                    <input id="input-typeId" v-model="captchaConfig.tj.typeId"><br/>
+                    <button v-on:click="testCaptcha(1)">测试验证码</button>
+                    <button v-on:click="showTjAccountInfo(1)">查看余额</button>
+                </div>
 
-            <div v-show="captchaWayTabIndex === 2">
-                <h3>平川服务器打码</h3>
-                <label for="input-pc-cami">卡密</label>
-                <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
-                <label for="input-pc-cami-1"></label>
-                <input type="text" id="input-pc-cami-1" v-model="captchaConfig.pc.cami" v-show="showPcCami">
-                <label for="input-pc-author" v-show="pcAuthorShow">author</label>
-                <input id="input-pc-author" v-show="pcAuthorShow" v-model="captchaConfig.pc.cami">
-                <button v-on:click="changePcCamiShow()">显示/隐藏</button>
+                <div v-show="captchaWayTabIndex === 2">
+                    <h3>平川服务器打码</h3>
+                    <label for="input-pc-cami">卡密</label>
+                    <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
+                    <label for="input-pc-cami-1"></label>
+                    <input type="text" id="input-pc-cami-1" v-model="captchaConfig.pc.cami" v-show="showPcCami">
+                    <label for="input-pc-author" v-show="pcAuthorShow">author</label>
+                    <input id="input-pc-author" v-show="pcAuthorShow" v-model="captchaConfig.pc.cami">
+                    <button v-on:click="changePcCamiShow()">显示/隐藏</button>
+                    <br/>
+                    <button v-on:click="testCaptcha(2)">测试验证码</button>
+                    <button v-on:click="showTjAccountInfo(2)">查看余额</button>
+                </div>
+                <hr>
+
+                <input id="checkbox-lowBalanceRemind" type="checkbox" v-model="captchaConfig.lowBalanceRemind">
+                <label for="checkbox-lowBalanceRemind">
+                    余额低于
+                    <label for="input-lowBalanceNum"></label>
+                    <input id="input-lowBalanceNum" v-model="captchaConfig.lowBalanceNum" class="ms-input-small">
+                    元，开启邮件提醒（每次启动时判断）
+                </label>
                 <br/>
-                <button v-on:click="testCaptcha(2)">测试验证码</button>
-                <button v-on:click="showTjAccountInfo(2)">查看余额</button>
-            </div>
-            <hr>
-
-            <input id="checkbox-lowBalanceRemind" type="checkbox" v-model="captchaConfig.lowBalanceRemind">
-            <label for="checkbox-lowBalanceRemind">
-                余额低于
-                <label for="input-lowBalanceNum"></label>
-                <input id="input-lowBalanceNum" v-model="captchaConfig.lowBalanceNum" class="ms-input-small">
-                元，开启邮件提醒（每次启动时判断）
-            </label>
-            <br/>
-            <span>打码次序</span>
-            <template v-for="(way, index) in captchaConfig.captchaWay">
-                <label for="select-captchaWay"></label>
-                <select id="select-captchaWay" v-model="captchaConfig.captchaWay[index]">
-                    <option value="0">不打码</option>
-                    <option value="1">图鉴打码</option>
-                    <option value="2">平川服务器打码</option>
-                </select>
-            </template>
-
-            <hr>
-            <button v-on:click="updateCaptchaWaySetting()">保存打码设置</button>
-            <button v-on:click="resetCaptchaWaySetting()">重置打码设置</button>
-        </div>
-
-
-        <div style="border: black solid 1px">
-            <ul>
-                <li>
-                    <label for="input-captureInterval">识屏间隔(毫秒)</label>
-                    <input type="number" id="input-captureInterval" v-model="userConfig.captureInterval"
-                           class="ms-input"><br/>
-                </li>
-                <li>
-                    <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
-                    <select id="select-defaultChoiceAnswer" v-model="userConfig.defaultChoiceAnswer">
-                        <option v-for="item in answerChoices" :value="item.title">{{item.option}}</option>
+                <span>打码次序</span>
+                <template v-for="(way, index) in captchaConfig.captchaWay">
+                    <label for="select-captchaWay"></label>
+                    <select id="select-captchaWay" v-model="captchaConfig.captchaWay[index]">
+                        <option value="0">不打码</option>
+                        <option value="1">图鉴打码</option>
+                        <option value="2">平川服务器打码</option>
                     </select>
-                </li>
-                <li>
-                    <label for="input-captchaAppearDelay">当出现验证码后经过</label>
-                    <input id="input-captchaAppearDelay" v-model="userConfig.captchaAppearDelay" type="number"
-                           class="ms-input">
-                    <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
-                    <input id="input-keyPressAfterCaptchaShow" v-model="userConfig.keyPressAfterCaptchaShow"
-                           class="string-input">
-                    <br/>
-                    <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后经过</label>
-                    <input id="input-keyPressDelayAfterCaptchaDisappear"
-                           v-model="userConfig.keyPressDelayAfterCaptchaDisappear"
-                           type="number" class="ms-input">
-                    <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
-                    <input id="input-keyPressAfterCaptchaDisappear" v-model="userConfig.keyPressAfterCaptchaDisappear"
-                           class="string-input">
-                </li>
-                <li>
-                    <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
-                    <input id="input-pveFlopBonusAppearDelay" v-model="userConfig.pveFlopBonusAppearDelay" type="number"
-                           class="ms-input">
-                    <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
-                    <input id="input-keyPressAfterPveFlopBonus" v-model="userConfig.keyPressAfterPveFlopBonus"
-                           class="string-input">
-                    <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
-                    <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture" type="checkbox">
-                    <br/>
-                    <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
-                    <input id="input-pveFlopBonusDisappearDelay" v-model="userConfig.pveFlopBonusDisappearDelay"
-                           type="number"
-                           class="ms-input">
-                    <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
-                    <input id="input-keyPressAfterPveFlopBonusDisappear"
-                           v-model="userConfig.keyPressAfterPveFlopBonusDisappear"
-                           class="string-input">
-                </li>
-                <li>
-                    <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label>
-                    <input id="input-logPrintInterval" v-model="userConfig.logPrintInterval" type="number"
-                           class="ms-input"><br/>
-                </li>
-                <li>
-                    <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
-                    <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval" type="number"
-                           class="ms-input">
-                </li>
-                <li v-show="userConfig.showExtPorts">
-                    <label for="input-extPorts"
-                           v-show="userConfig.showExtPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
-                    <input id="input-extPorts" v-model="userConfig.extPorts" class="string-input"
-                           placeholder="例：80,20400">
-                </li>
-            </ul>
+                </template>
 
-            <label>其中 1000 毫秒 = 1 秒</label><br/>
-            <button v-on:click="saveUserConfig()">保存</button>
-            <button v-on:click="resetUserConfig()">重置</button>
-            <hr>
-            <div>
-                <button v-on:click="bindAll()">检测并添加所有窗口</button>
+                <hr>
+                <button v-on:click="updateCaptchaWaySetting()">保存打码设置</button>
+                <button v-on:click="resetCaptchaWaySetting()">重置打码设置</button>
+            </div>
+
+
+            <div style="border: black solid 1px">
+                <ul>
+                    <li>
+                        <label for="input-captureInterval">识屏间隔(毫秒)</label>
+                        <input type="number" id="input-captureInterval" v-model="userConfig.captureInterval"
+                               class="ms-input"><br/>
+                    </li>
+                    <li>
+                        <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
+                        <select id="select-defaultChoiceAnswer" v-model="userConfig.defaultChoiceAnswer">
+                            <option v-for="item in answerChoices" :value="item.title">{{item.option}}</option>
+                        </select>
+                    </li>
+                    <li>
+                        <label for="input-captchaAppearDelay">当出现验证码后经过</label>
+                        <input id="input-captchaAppearDelay" v-model="userConfig.captchaAppearDelay" type="number"
+                               class="ms-input">
+                        <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
+                        <input id="input-keyPressAfterCaptchaShow" v-model="userConfig.keyPressAfterCaptchaShow"
+                               class="string-input">
+                        <br/>
+                        <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后经过</label>
+                        <input id="input-keyPressDelayAfterCaptchaDisappear"
+                               v-model="userConfig.keyPressDelayAfterCaptchaDisappear"
+                               type="number" class="ms-input">
+                        <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
+                        <input id="input-keyPressAfterCaptchaDisappear" v-model="userConfig.keyPressAfterCaptchaDisappear"
+                               class="string-input">
+                    </li>
+                    <li>
+                        <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
+                        <input id="input-pveFlopBonusAppearDelay" v-model="userConfig.pveFlopBonusAppearDelay" type="number"
+                               class="ms-input">
+                        <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
+                        <input id="input-keyPressAfterPveFlopBonus" v-model="userConfig.keyPressAfterPveFlopBonus"
+                               class="string-input">
+                        <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
+                        <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture" type="checkbox">
+                        <br/>
+                        <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
+                        <input id="input-pveFlopBonusDisappearDelay" v-model="userConfig.pveFlopBonusDisappearDelay"
+                               type="number"
+                               class="ms-input">
+                        <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
+                        <input id="input-keyPressAfterPveFlopBonusDisappear"
+                               v-model="userConfig.keyPressAfterPveFlopBonusDisappear"
+                               class="string-input">
+                    </li>
+                    <li>
+                        <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label>
+                        <input id="input-logPrintInterval" v-model="userConfig.logPrintInterval" type="number"
+                               class="ms-input"><br/>
+                    </li>
+                    <li>
+                        <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
+                        <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval" type="number"
+                               class="ms-input">
+                    </li>
+                    <li v-show="userConfig.showExtPorts">
+                        <label for="input-extPorts"
+                               v-show="userConfig.showExtPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
+                        <input id="input-extPorts" v-model="userConfig.extPorts" class="string-input"
+                               placeholder="例：80,20400">
+                    </li>
+                </ul>
+
+                <label>其中 1000 毫秒 = 1 秒</label><br/>
+                <button v-on:click="saveUserConfig()">保存</button>
+                <button v-on:click="resetUserConfig()">重置</button>
+                <hr>
+                <div>
+                    <button v-on:click="bindAll()">检测并添加所有窗口</button>
+                </div>
             </div>
         </div>
-    </div>
 
 
-    <div class="tab" id="offlineDetection">
-        <h3>{{tabName}}</h3>
-        <hr>
+        <div class="tab" id="offlineDetection">
+            <h3>{{tabName}}</h3>
+            <hr>
 
-        <label for="input-detectOfflineDelay">检测时间间隔</label>
-        <input id="input-detectOfflineDelay" class="ms-input-middle" v-model="offlineDetection.delay">
-        <label for="checkbox-detectOfflineCheckbox">毫秒，并且邮件提醒</label>
-        <input id="checkbox-detectOfflineCheckbox" type="checkbox" v-model="offlineDetection.emailRemind">
-        <button onclick="jumpToMailSettingPage()">转到邮箱设置页</button>
-        <hr>
-        <button v-on:click="update()">保存</button>
-    </div>
+            <label for="input-detectOfflineDelay">检测时间间隔</label>
+            <input id="input-detectOfflineDelay" class="ms-input-middle" v-model="offlineDetection.delay">
+            <label for="checkbox-detectOfflineCheckbox">毫秒，并且邮件提醒</label>
+            <input id="checkbox-detectOfflineCheckbox" type="checkbox" v-model="offlineDetection.emailRemind">
+            <button onclick="jumpToMailSettingPage()">转到邮箱设置页</button>
+            <hr>
+            <button v-on:click="update()">保存</button>
+        </div>
 
 
-    <div class="tab" id="auction">
-        <h3>{{tabName}}</h3>
-        <span>用来自动化挂物品到拍卖场。自动识别数量和物品名称，计算价格和是否拍卖，然后根据条件挂拍卖场。</span>
-        <hr>
-        <span v-for="tab in tabs">
+        <div class="tab" id="auction">
+            <h3>{{tabName}}</h3>
+            <span>用来自动化挂物品到拍卖场。自动识别数量和物品名称，计算价格和是否拍卖，然后根据条件挂拍卖场。</span>
+            <hr>
+            <span v-for="tab in tabs">
              <button v-on:click="changeTab(tab)">{{tab.name}}</button>
         </span>
-        <hr>
-        <hr>
-        <div v-show="selectedTab === '使用界面'">
-            <button v-on:click="sellAll()">运行以下勾选句柄</button>
-            <button v-on:click="stopAll()">停止所有句柄运行</button>
-            <br/>
-            <button v-on:click="getDdtHwnds()">获取全部句柄</button>
-            <label for="checkbox-auctionConfirm">确认拍卖</label>
-            <input type="checkbox" id="checkbox-auctionConfirm" v-model="auctionData.confirm">
-            <div>
+            <hr>
+            <hr>
+            <div v-show="selectedTab === '使用界面'">
+                <button v-on:click="sellAll()">运行以下勾选句柄</button>
+                <button v-on:click="stopAll()">停止所有句柄运行</button>
+                <br/>
+                <button v-on:click="getDdtHwnds()">获取全部句柄</button>
+                <label for="checkbox-auctionConfirm">确认拍卖</label>
+                <input type="checkbox" id="checkbox-auctionConfirm" v-model="auctionData.confirm">
+                <div>
                 <span v-for="hwnd in hwnds">
                     <label :for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
                     <label>
@@ -218,357 +231,357 @@
                     <button v-on:click="stop(hwnd.hwnd)">停止</button>
                     <br/>
                 </span>
-                <span v-show="hwnds.length === 0"><i>没有获取可运行的句柄，请点击“获取”</i></span>
+                    <span v-show="hwnds.length === 0"><i>没有获取可运行的句柄，请点击“获取”</i></span>
 
-            </div>
-            <hr>
+                </div>
+                <hr>
 
-            <div id="auction-data-filter">
-                <label for="filter-condition">筛选条件</label>
-                <input id="filter-condition" v-model="newFilterCondition">
-                <button v-on:click="addFilterConditionList(newFilterCondition)">添加</button>
-                <button v-on:click="deleteFilterConditionList()">删除</button>
-                <button v-on:click="saveFilterConditionList()">保存</button>
-                <br/>
-                <span v-for="button in filterConditionButtonList">
+                <div id="auction-data-filter">
+                    <label for="filter-condition">筛选条件</label>
+                    <input id="filter-condition" v-model="newFilterCondition">
+                    <button v-on:click="addFilterConditionList(newFilterCondition)">添加</button>
+                    <button v-on:click="deleteFilterConditionList()">删除</button>
+                    <button v-on:click="saveFilterConditionList()">保存</button>
+                    <br/>
+                    <span v-for="button in filterConditionButtonList">
                 <button :class="button.chosen === true? 'button-chosen': ''"
                         v-on:click="changeAuctionFilterList(button)">{{button.condition}}</button>
             </span>
-            </div>
+                </div>
 
-            <hr>
-            <button v-on:click="savaItems()">保存</button>
-            <button v-on:click="getItems()">重载</button>
-            <button v-on:click="addNewItem()">添加一行</button>
-            <label for="checkbox-autoAddUnknown">是否自动添加未识别的OCR物品</label>
-            <input id="checkbox-autoAddUnknown" type="checkbox" v-model="auctionData.autoAddUnknown">
+                <hr>
+                <button v-on:click="savaItems()">保存</button>
+                <button v-on:click="getItems()">重载</button>
+                <button v-on:click="addNewItem()">添加一行</button>
+                <label for="checkbox-autoAddUnknown">是否自动添加未识别的OCR物品</label>
+                <input id="checkbox-autoAddUnknown" type="checkbox" v-model="auctionData.autoAddUnknown">
 
-            <div>
-                <label>
-                    先道具栏再装备栏
-                    <input type="radio" value="1" v-model="auctionData.sellType">
-                </label>
-                <label>
-                    丨仅道具栏
-                    <input type="radio" value="2" v-model="auctionData.sellType">
-                </label>
-                <br/>
-                <label>
-                    先装备栏再道具栏
-                    <input type="radio" value="3" v-model="auctionData.sellType">
-                </label>
-                <label>
-                    丨仅装备栏
-                    <input type="radio" value="4" v-model="auctionData.sellType">
-                </label>
-            </div>
+                <div>
+                    <label>
+                        先道具栏再装备栏
+                        <input type="radio" value="1" v-model="auctionData.sellType">
+                    </label>
+                    <label>
+                        丨仅道具栏
+                        <input type="radio" value="2" v-model="auctionData.sellType">
+                    </label>
+                    <br/>
+                    <label>
+                        先装备栏再道具栏
+                        <input type="radio" value="3" v-model="auctionData.sellType">
+                    </label>
+                    <label>
+                        丨仅装备栏
+                        <input type="radio" value="4" v-model="auctionData.sellType">
+                    </label>
+                </div>
 
-            <table>
-                <thead>
-                <tr>
-                    <th>启用</th>
-                    <th>物品名</th>
-                    <th>OCR名</th>
-                    <th>竞拍单价</th>
-                    <th>一口单价</th>
-                    <th>最小拍卖数量</th>
-                    <th>时限</th>
-                    <th>卖金币</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-                <tr>
-                    <td>
-                        <label>
-                            <select v-model="batchChangeItem.enabled">
-                                <option :value="null">不变</option>
-                                <option :value="true">选中</option>
-                                <option :value="false">不选</option>
-                            </select>
-                        </label>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <label>
-                            <input v-model="batchChangeItem.argueUnitPrice" class="string-input">
-                        </label>
-                    </td>
-                    <td>
-                        <label>
-                            <input v-model="batchChangeItem.mouthfulUnitPrice" class="string-input">
-                        </label>
-                    </td>
-                    <td>
-                        <label>
-                            <input v-model="batchChangeItem.minNum" class="string-input">
-                        </label>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <button v-on:click="batchChangeItemFunc()">批量修改以下信息</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                    <td>
-                        <hr>
-                    </td>
-                </tr>
-                <template v-for="(item, index) in auctionData.auctionItemList">
-                    <tr v-show="item.shown">
-                        <td>
-                            <label :for="'checkbox-auction-item-enabled-'+index">{{(index < 9 ? "0" : "") + (index +
-                                    1)}}</label>
-                            <label>
-                                <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox"
-                                       v-model="item.enabled">
-                            </label>
-                        </td>
-
+                <table>
+                    <thead>
+                    <tr>
+                        <th>启用</th>
+                        <th>物品名</th>
+                        <th>OCR名</th>
+                        <th>竞拍单价</th>
+                        <th>一口单价</th>
+                        <th>最小拍卖数量</th>
+                        <th>时限</th>
+                        <th>卖金币</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tr>
                         <td>
                             <label>
-                                <input :id="'input-auction-item-name-'+index" v-model="item.name"
-                                       class="string-input-large">
+                                <select v-model="batchChangeItem.enabled">
+                                    <option :value="null">不变</option>
+                                    <option :value="true">选中</option>
+                                    <option :value="false">不选</option>
+                                </select>
                             </label>
                         </td>
-
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
                         <td>
                             <label>
-                                <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName"
-                                       class="string-input-large">
+                                <input v-model="batchChangeItem.argueUnitPrice" class="string-input">
                             </label>
                         </td>
-
                         <td>
                             <label>
-                                <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
-                                       class="string-input">
+                                <input v-model="batchChangeItem.mouthfulUnitPrice" class="string-input">
                             </label>
                         </td>
-
                         <td>
                             <label>
-                                <input :id="'input-auction-item-mouthful-unit-price-'+index"
-                                       v-model="item.mouthfulUnitPrice"
-                                       class="string-input">
+                                <input v-model="batchChangeItem.minNum" class="string-input">
                             </label>
                         </td>
-
                         <td>
-                            <label>
-                                <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum"
-                                       class="string-input">
-                            </label>
+                            <hr>
                         </td>
-
                         <td>
-                            <button v-show="item.auctionTime === 8" v-on:click="changeAuctionTime(item, 24)">&nbsp;&nbsp;8
-                            </button>
-                            <button v-show="item.auctionTime === 24" v-on:click="changeAuctionTime(item, 48)">24
-                            </button>
-                            <button v-show="item.auctionTime === 48" v-on:click="changeAuctionTime(item, 8)">48</button>
+                            <hr>
                         </td>
-
                         <td>
-                            <label :for="'checkbox-auction-item-drop-'+index">&nbsp;&nbsp;</label>
-                            <label>
-                                <input :id="'checkbox-auction-item-drop-'+index" type="checkbox" v-model="item.drop">
-                            </label>
-                        </td>
-
-                        <td>
-                            <button v-on:click="moveIndex(index, -1)">上移</button>
-                            <button v-on:click="moveIndex(index, 1)">下移</button>
-                            <button v-on:click="deleteItem(index)">删除</button>
+                            <button v-on:click="batchChangeItemFunc()">批量修改以下信息</button>
                         </td>
                     </tr>
-                </template>
-            </table>
+                    <tr>
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
+                        <td>
+                            <hr>
+                        </td>
+                    </tr>
+                    <template v-for="(item, index) in auctionData.auctionItemList">
+                        <tr v-show="item.shown">
+                            <td>
+                                <label :for="'checkbox-auction-item-enabled-'+index">{{(index < 9 ? "0" : "") + (index +
+                                        1)}}</label>
+                                <label>
+                                    <input :id="'checkbox-auction-item-enabled-'+index" type="checkbox"
+                                           v-model="item.enabled">
+                                </label>
+                            </td>
+
+                            <td>
+                                <label>
+                                    <input :id="'input-auction-item-name-'+index" v-model="item.name"
+                                           class="string-input-large">
+                                </label>
+                            </td>
+
+                            <td>
+                                <label>
+                                    <input :id="'input-auction-item-ocr-name-'+index" v-model="item.ocrName"
+                                           class="string-input-large">
+                                </label>
+                            </td>
+
+                            <td>
+                                <label>
+                                    <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
+                                           class="string-input">
+                                </label>
+                            </td>
+
+                            <td>
+                                <label>
+                                    <input :id="'input-auction-item-mouthful-unit-price-'+index"
+                                           v-model="item.mouthfulUnitPrice"
+                                           class="string-input">
+                                </label>
+                            </td>
+
+                            <td>
+                                <label>
+                                    <input :id="'input-auction-item-min-num-'+index" v-model="item.minNum"
+                                           class="string-input">
+                                </label>
+                            </td>
+
+                            <td>
+                                <button v-show="item.auctionTime === 8" v-on:click="changeAuctionTime(item, 24)">&nbsp;&nbsp;8
+                                </button>
+                                <button v-show="item.auctionTime === 24" v-on:click="changeAuctionTime(item, 48)">24
+                                </button>
+                                <button v-show="item.auctionTime === 48" v-on:click="changeAuctionTime(item, 8)">48</button>
+                            </td>
+
+                            <td>
+                                <label :for="'checkbox-auction-item-drop-'+index">&nbsp;&nbsp;</label>
+                                <label>
+                                    <input :id="'checkbox-auction-item-drop-'+index" type="checkbox" v-model="item.drop">
+                                </label>
+                            </td>
+
+                            <td>
+                                <button v-on:click="moveIndex(index, -1)">上移</button>
+                                <button v-on:click="moveIndex(index, 1)">下移</button>
+                                <button v-on:click="deleteItem(index)">删除</button>
+                            </td>
+                        </tr>
+                    </template>
+                </table>
+            </div>
+
+            <div v-show="selectedTab === '使用说明'">
+                <h3>功能简介：</h3>
+                <ol>
+                    <li>
+                        能够自动识别物品名、数量，使用 OCR 技术将物品名转为文字。
+                    </li>
+                    <li>
+                        可以拍卖未绑定的物品，也可以将不需要的物品直接丢弃。
+                    </li>
+                    <li>
+                        针对每个物品可以单独设置价格和数量，通过单价和数量计算总价。
+                    </li>
+                    <li>
+                        支持批量出售单个物品的全部数量，也可以支持拆单、拆特定数量多次拍卖。
+                    </li>
+                </ol>
+
+                <h3>使用步骤：</h3>
+                <ol>
+                    <li>
+                        游戏进入拍卖场界面。
+                    </li>
+                    <li>
+                        点击获取全部句柄，等待 1 秒下面出现句柄数字和相关按钮。
+                    </li>
+                    <li>
+                        点击查看游戏截图可以了解运行的是哪一个窗口。
+                    </li>
+                    <li>
+                        点击运行，脚本会自己识别背包的有物品的格子，然后根据下面的配置信息，来识别物品名称、数量，计算价格并且拍卖。
+                    </li>
+                    <li>
+                        运行单个窗口不需要勾选，自动会勾选的。但是批量运行需要手动勾选哪几个窗口，而后所有窗口就能自动拍卖了。
+                    </li>
+                </ol>
+
+                <h3>重要说明：</h3>
+                <ol>
+                    <li>
+                        “确认拍卖”勾选框的作用：勾选之后才会最后点击拍卖按钮将物品进行拍卖，不勾选的话就不必担心测试过程中价格错误或者其他情况导致异常拍卖。建议首次运行的时候，先不勾选，观察一个游戏窗口的运行情况。若价格正常那么可以勾选上。
+                    </li>
+                    <li>
+                        物品中第一列“启用”列，只有勾选了，才会去拍卖（或者卖金币）。所以千万记得，想要拍卖切记勾选“启用”，只写价格、数量是不会被进一步操作的。
+                    </li>
+                    <li>
+                        记得修改之后，一定要点击保存！！！！！！！！！
+                    </li>
+                    <li>
+                        物品名和 OCR 名：物品名就是实际的物品的名称，需要手动填入。OCR
+                        名就是识别游戏画面的文字，提取出来的文字，由于字库较少，所以识别可能会有一定的不一致。但是假如物品 ABC
+                        被识别为了
+                        QWE，那么 OCR 名就为 QWE，可以手动在物品名中写上 ABC。但是程序内部还是按照 QWE 来识别。
+                        <br/>
+                        一般来说，不需要改 OCR 名，改了程序就识别不到了。如果识别出现不一致，也问题不大，因为 ABC 识别为 QWE
+                        后，正常情况下，不会有另外的物品也被识别为 QWE，QWE 相当于是程序对 ABC
+                        的别名。
+                        <br/>
+                        由于物品较多，字库收集较麻烦，所以目前只收集了常见的字。
+                    </li>
+                    <li>
+                        <ul>
+                            <li>
+                                首先在价格输入框，一个输入框可以填写多个价格，也可以只填写一个，比如"20,18,16"。当填写多个价格的时候，需要用逗号分隔。多价格需要与多数量配合，在不同数量的时候，使用单价为
+                                20、18、16 的价格。可以有小数但是不能带其他符号。
+                            </li>
+                            <li>
+                                在最小数量输入框中，填写最小的拍卖数量。其中数量这块有三种格式，普通数字、带+的数字（正数）、带-的数字（负数）。当填写多个数量的时候，需要用逗号分隔。
+                            </li>
+                            <li>
+                                在最小数量输入框中，如果写普通数字，比如 50，那么物品数量超过 50 就会全部放入拍卖框中；如果是负数，比如
+                                -100，那么物品数量大于等于 100，每次只放入拍卖场 100
+                                个；如果写正数，比如 +300，那么物品数量超过 300 才会按照 300 的整倍数放入如放入
+                                900、600、300。简单来说，就是正数是整倍数，负数是固定数量，普通数字是大于等于全部放入。
+                            </li>
+                            <li>
+                                在最小数量输入框中，也可以多个数值之间用逗号隔开，那么会从左到右依次匹配。如写了
+                                “+100,-10,5”，而实际总数是 732，那么第一次会匹配 +100 整倍数 700
+                                进行拍卖。第二次匹配不到 +100 了因为数量只剩下 32，往后匹配到 -10，往拍卖场放入 3 次 10
+                                数量的物品。最后匹配 5，但是此时数量只剩下 2，不满足大于等于
+                                5，此时停止拍卖该物品。
+                            </li>
+                            <li>
+                                同时单价也支持多价格，与数量匹配，对应位置数量启用对应位置价格。比如单价 19,17,15，数量
+                                -999,-100,-10，那么有 999 数量的就按照 19 单价计算，剩下的有
+                                100 数量的每次 17 单价。
+                            </li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
         </div>
 
-        <div v-show="selectedTab === '使用说明'">
-            <h3>功能简介：</h3>
-            <ol>
-                <li>
-                    能够自动识别物品名、数量，使用 OCR 技术将物品名转为文字。
-                </li>
-                <li>
-                    可以拍卖未绑定的物品，也可以将不需要的物品直接丢弃。
-                </li>
-                <li>
-                    针对每个物品可以单独设置价格和数量，通过单价和数量计算总价。
-                </li>
-                <li>
-                    支持批量出售单个物品的全部数量，也可以支持拆单、拆特定数量多次拍卖。
-                </li>
-            </ol>
 
-            <h3>使用步骤：</h3>
-            <ol>
-                <li>
-                    游戏进入拍卖场界面。
-                </li>
-                <li>
-                    点击获取全部句柄，等待 1 秒下面出现句柄数字和相关按钮。
-                </li>
-                <li>
-                    点击查看游戏截图可以了解运行的是哪一个窗口。
-                </li>
-                <li>
-                    点击运行，脚本会自己识别背包的有物品的格子，然后根据下面的配置信息，来识别物品名称、数量，计算价格并且拍卖。
-                </li>
-                <li>
-                    运行单个窗口不需要勾选，自动会勾选的。但是批量运行需要手动勾选哪几个窗口，而后所有窗口就能自动拍卖了。
-                </li>
-            </ol>
+        <div class="tab" id="capture">
+            <h3>截屏查看</h3>
+            <hr>
+            <span>刷新频率：{{interval == null ? "无" : (interval + "毫秒")}}</span>
+            <br/>
+            <span v-for="i in intervalList"><button v-on:click="changeInterval(i)">{{i}}</button></span>
+            <button v-on:click="changeInterval(interval - 100)">-100</button>
+            <button v-on:click="changeInterval(interval + 100)">+100</button>
+            <button v-on:click="clearIntervalFunc()">清空</button>
+            <br/>
+            <br/>
+            <span>图片质量：{{imgQuality}}</span>
+            <br/>
+            <span v-for="i in imgQualityList"><button v-on:click="changeImgQuality(i)">{{i}}</button></span>
+            <br/>
+            <br/>
 
-            <h3>重要说明：</h3>
-            <ol>
-                <li>
-                    “确认拍卖”勾选框的作用：勾选之后才会最后点击拍卖按钮将物品进行拍卖，不勾选的话就不必担心测试过程中价格错误或者其他情况导致异常拍卖。建议首次运行的时候，先不勾选，观察一个游戏窗口的运行情况。若价格正常那么可以勾选上。
-                </li>
-                <li>
-                    物品中第一列“启用”列，只有勾选了，才会去拍卖（或者卖金币）。所以千万记得，想要拍卖切记勾选“启用”，只写价格、数量是不会被进一步操作的。
-                </li>
-                <li>
-                    记得修改之后，一定要点击保存！！！！！！！！！
-                </li>
-                <li>
-                    物品名和 OCR 名：物品名就是实际的物品的名称，需要手动填入。OCR
-                    名就是识别游戏画面的文字，提取出来的文字，由于字库较少，所以识别可能会有一定的不一致。但是假如物品 ABC
-                    被识别为了
-                    QWE，那么 OCR 名就为 QWE，可以手动在物品名中写上 ABC。但是程序内部还是按照 QWE 来识别。
-                    <br/>
-                    一般来说，不需要改 OCR 名，改了程序就识别不到了。如果识别出现不一致，也问题不大，因为 ABC 识别为 QWE
-                    后，正常情况下，不会有另外的物品也被识别为 QWE，QWE 相当于是程序对 ABC
-                    的别名。
-                    <br/>
-                    由于物品较多，字库收集较麻烦，所以目前只收集了常见的字。
-                </li>
-                <li>
-                    <ul>
-                        <li>
-                            首先在价格输入框，一个输入框可以填写多个价格，也可以只填写一个，比如"20,18,16"。当填写多个价格的时候，需要用逗号分隔。多价格需要与多数量配合，在不同数量的时候，使用单价为
-                            20、18、16 的价格。可以有小数但是不能带其他符号。
-                        </li>
-                        <li>
-                            在最小数量输入框中，填写最小的拍卖数量。其中数量这块有三种格式，普通数字、带+的数字（正数）、带-的数字（负数）。当填写多个数量的时候，需要用逗号分隔。
-                        </li>
-                        <li>
-                            在最小数量输入框中，如果写普通数字，比如 50，那么物品数量超过 50 就会全部放入拍卖框中；如果是负数，比如
-                            -100，那么物品数量大于等于 100，每次只放入拍卖场 100
-                            个；如果写正数，比如 +300，那么物品数量超过 300 才会按照 300 的整倍数放入如放入
-                            900、600、300。简单来说，就是正数是整倍数，负数是固定数量，普通数字是大于等于全部放入。
-                        </li>
-                        <li>
-                            在最小数量输入框中，也可以多个数值之间用逗号隔开，那么会从左到右依次匹配。如写了
-                            “+100,-10,5”，而实际总数是 732，那么第一次会匹配 +100 整倍数 700
-                            进行拍卖。第二次匹配不到 +100 了因为数量只剩下 32，往后匹配到 -10，往拍卖场放入 3 次 10
-                            数量的物品。最后匹配 5，但是此时数量只剩下 2，不满足大于等于
-                            5，此时停止拍卖该物品。
-                        </li>
-                        <li>
-                            同时单价也支持多价格，与数量匹配，对应位置数量启用对应位置价格。比如单价 19,17,15，数量
-                            -999,-100,-10，那么有 999 数量的就按照 19 单价计算，剩下的有
-                            100 数量的每次 17 单价。
-                        </li>
-                    </ul>
-                </li>
-            </ol>
-        </div>
-    </div>
-
-
-    <div class="tab" id="capture">
-        <h3>截屏查看</h3>
-        <hr>
-        <span>刷新频率：{{interval == null ? "无" : (interval + "毫秒")}}</span>
-        <br/>
-        <span v-for="i in intervalList"><button v-on:click="changeInterval(i)">{{i}}</button></span>
-        <button v-on:click="changeInterval(interval - 100)">-100</button>
-        <button v-on:click="changeInterval(interval + 100)">+100</button>
-        <button v-on:click="clearIntervalFunc()">清空</button>
-        <br/>
-        <br/>
-        <span>图片质量：{{imgQuality}}</span>
-        <br/>
-        <span v-for="i in imgQualityList"><button v-on:click="changeImgQuality(i)">{{i}}</button></span>
-        <br/>
-        <br/>
-
-        <button v-on:click="getScreenshotPath()">查看屏幕截图</button>
-        <button v-on:click="getAllGamePicPath()">查看所有句柄截图</button>
-        <br/>
-        <button v-on:click="getDdtHwnds()">刷新获取句柄</button>
-        <br/>
-        <div>
+            <button v-on:click="getScreenshotPath()">查看屏幕截图</button>
+            <button v-on:click="getAllGamePicPath()">查看所有句柄截图</button>
+            <br/>
+            <button v-on:click="getDdtHwnds()">刷新获取句柄</button>
+            <br/>
+            <div>
             <span v-for="hwnd in hwnds">
                 <button v-on:click="getGameShot(hwnd)">{{hwnd}}</button>
             </span>
-        </div>
-        <hr>
-        <span>{{msg}}</span>
-        <br/>
-        <button v-on:click="changeImgSize('25')">25%</button>
-        <button v-on:click="changeImgSize('50')">50%</button>
-        <button v-on:click="changeImgSize('75')">75%</button>
-        <button v-on:click="changeImgSize('100')">100%</button>
-        <button v-on:click="changeImgSize('-10')">-10%</button>
-        <button v-on:click="changeImgSize('+10')">+10%</button>
-        <br/>
-        <img :src="src" alt="" :width="width">
-    </div>
-
-
-    <div class="tab" id="reCapture">
-        <h3>补偿截图</h3>
-        <hr>
-        <div>
-            <strong>什么是补偿截图</strong>
+            </div>
+            <hr>
+            <span>{{msg}}</span>
             <br/>
-            <span>
+            <button v-on:click="changeImgSize('25')">25%</button>
+            <button v-on:click="changeImgSize('50')">50%</button>
+            <button v-on:click="changeImgSize('75')">75%</button>
+            <button v-on:click="changeImgSize('100')">100%</button>
+            <button v-on:click="changeImgSize('-10')">-10%</button>
+            <button v-on:click="changeImgSize('+10')">+10%</button>
+            <br/>
+            <img :src="src" alt="" :width="width">
+        </div>
+
+
+        <div class="tab" id="reCapture">
+            <h3>补偿截图</h3>
+            <hr>
+            <div>
+                <strong>什么是补偿截图</strong>
+                <br/>
+                <span>
                 某些人的电脑可能由于设置原因，游戏画面的图片样本和默认自带的图库有些许差别，导致找图无法找到。所以这个功能是在找图找不到的情况下，自行截图游戏画面的样图，作为自己的识别图片。
             </span>
-            <hr>
-            <button v-on:click="openResourceDir()">打开模板图片文件夹</button>
-            <hr>
-        </div>
-        <button v-on:click="getDdtHwnds()">刷新获取句柄</button>
-        <br/>
-        <div>
+                <hr>
+                <button v-on:click="openResourceDir()">打开模板图片文件夹</button>
+                <hr>
+            </div>
+            <button v-on:click="getDdtHwnds()">刷新获取句柄</button>
+            <br/>
+            <div>
             <span v-for="hwnd in hwnds">
                 <label :for="'reCapture-hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
                 <label>
@@ -577,29 +590,29 @@
                 <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
                 <br/>
             </span>
-            <span v-show="hwnds.length === 0"><i>没有获取可运行的句柄，请点击“获取”</i></span>
-            <br/>
-            <table>
-                <thead>
-                <tr>
-                    <th>模板名</th>
-                    <th>操作</th>
-                </tr>
-                </thead>
-
-                <template v-for="templateInfo in templateInfoList">
+                <span v-show="hwnds.length === 0"><i>没有获取可运行的句柄，请点击“获取”</i></span>
+                <br/>
+                <table>
+                    <thead>
                     <tr>
-                        <td>{{templateInfo.msg}}</td>
-                        <td>
-                            <button v-on:click="reCaptureSampleImg(templateInfo.msg, templateInfo.url)">截图</button>
-                            <button v-on:click="showTemplates(templateInfo.prefix)">查看已有样图</button>
-                        </td>
+                        <th>模板名</th>
+                        <th>操作</th>
                     </tr>
-                </template>
-            </table>
-            <hr>
-            <h3>截图样例</h3>
-            <span v-for="template in templates">
+                    </thead>
+
+                    <template v-for="templateInfo in templateInfoList">
+                        <tr>
+                            <td>{{templateInfo.msg}}</td>
+                            <td>
+                                <button v-on:click="reCaptureSampleImg(templateInfo.msg, templateInfo.url)">截图</button>
+                                <button v-on:click="showTemplates(templateInfo.prefix)">查看已有样图</button>
+                            </td>
+                        </tr>
+                    </template>
+                </table>
+                <hr>
+                <h3>截图样例</h3>
+                <span v-for="template in templates">
                 <span>{{template}}</span>
                 <br/>
                 <img :src="template" alt="">
@@ -609,254 +622,255 @@
                 <button v-show="template.indexOf('非正式模板-') > 0" v-on:click="convertToOfficialTemplate(template)">转为正式模板</button>
                 <hr>
             </span>
+            </div>
         </div>
-    </div>
 
 
-    <div class="tab" id="test">
-        <h3>以下为用户第一次使用前的自行测试</h3>
-        <hr>
-        <span>若点击操作无反应，请启动 “运行-管理员.exe”，部分人的可能存在不提高权限不能点击的情况</span><br/>
-        <span class="red-font">如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
-        <label for="input-testDelay">以下操作延迟时间(毫秒)</label>
-        <input id="input-testDelay" v-model="test.testDelay" type="number" value="500" class="ms-input">
-        <div id="div-click">
-            <label for="input-clickX">X坐标</label>
-            <input id="input-clickX" v-model="test.clickX" type="number" maxlength="4" max="9999" value="530"
-                   class="ms-input">
-            <label for="input-clickY">Y坐标</label>
-            <input id="input-clickY" v-model="test.clickY" type="number" maxlength="4" max="9999" value="585"
-                   class="ms-input">
-            <button v-on:click="testClick()">测试点击该坐标</button>
-            <span>(530,585)坐标正常为“充值”按钮，可以根据自己需要点击其他位置</span>
+        <div class="tab" id="test">
+            <h3>以下为用户第一次使用前的自行测试</h3>
+            <hr>
+            <span>若点击操作无反应，请启动 “运行-管理员.exe”，部分人的可能存在不提高权限不能点击的情况</span><br/>
+            <span class="red-font">如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
+            <label for="input-testDelay">以下操作延迟时间(毫秒)</label>
+            <input id="input-testDelay" v-model="test.testDelay" type="number" value="500" class="ms-input">
+            <div id="div-click">
+                <label for="input-clickX">X坐标</label>
+                <input id="input-clickX" v-model="test.clickX" type="number" maxlength="4" max="9999" value="530"
+                       class="ms-input">
+                <label for="input-clickY">Y坐标</label>
+                <input id="input-clickY" v-model="test.clickY" type="number" maxlength="4" max="9999" value="585"
+                       class="ms-input">
+                <button v-on:click="testClick()">测试点击该坐标</button>
+                <span>(530,585)坐标正常为“充值”按钮，可以根据自己需要点击其他位置</span>
+            </div>
+            <div id="div-keyPress">
+                <label for="input-keyPress">按下键盘的按键(仅支持Fn)</label>
+                <input id="input-keyPress" v-model="test.keyPress" value="F5" class="string-input">
+                <button v-on:click="testKeyPress()">测试按键</button>
+                <span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
+            </div>
         </div>
-        <div id="div-keyPress">
-            <label for="input-keyPress">按下键盘的按键(仅支持Fn)</label>
-            <input id="input-keyPress" v-model="test.keyPress" value="F5" class="string-input">
-            <button v-on:click="testKeyPress()">测试按键</button>
-            <span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
-        </div>
-    </div>
 
 
-    <div class="tab" id="otherFunction">
-        <h3>其他功能</h3>
-        <hr>
-        <span v-for="tab in tabs">
+        <div class="tab" id="otherFunction">
+            <h3>其他功能</h3>
+            <hr>
+            <span v-for="tab in tabs">
              <button v-on:click="changeTab(tab)">{{tab.name}}</button>
         </span>
-        <div v-show="selectedTab === 'host文件查看/修改'">
-            <h5>host文件查看/修改</h5>
-            <a class="red-font">修改 host 文件需要管理员权限</a>
-            <br/>
-            <span>当前权限：{{isAdmin ? "已是" : "非"}}管理员</span>
-            <br/>
-            <label for="otherFunction-textarea-host">host文件内容</label>
-            <button v-on:click="getHost()">重新载入</button>
-            <br/>
-            <textarea style="width: 100%; height: 400px;" id="otherFunction-textarea-host" v-model="host"
-                      :readonly="isAdmin? false :'readonly'"></textarea>
-            <br/>
-            <button v-on:click="updateHost()" v-show="isAdmin">确认修改host</button>
+            <div v-show="selectedTab === 'host文件查看/修改'">
+                <h5>host文件查看/修改</h5>
+                <a class="red-font">修改 host 文件需要管理员权限</a>
+                <br/>
+                <span>当前权限：{{isAdmin ? "已是" : "非"}}管理员</span>
+                <br/>
+                <label for="otherFunction-textarea-host">host文件内容</label>
+                <button v-on:click="getHost()">重新载入</button>
+                <br/>
+                <textarea style="width: 100%; height: 400px;" id="otherFunction-textarea-host" v-model="host"
+                          :readonly="isAdmin? false :'readonly'"></textarea>
+                <br/>
+                <button v-on:click="updateHost()" v-show="isAdmin">确认修改host</button>
+            </div>
+
+            <div v-show="selectedTab === '自动刷点券'">
+                <h5>想屁吃？</h5>
+            </div>
         </div>
 
-        <div v-show="selectedTab === '自动刷点券'">
-            <h5>想屁吃？</h5>
-        </div>
-    </div>
 
+        <div class="tab" id="setting">
+            <h3>设置相关</h3>
+            <hr>
+            <button v-on:click="update()">保存设置</button>
+            <hr>
 
-    <div class="tab" id="setting">
-        <h3>设置相关</h3>
-        <hr>
-        <button v-on:click="update()">保存设置</button>
-        <hr>
-
-        <span v-for="tab in tabs">
+            <span v-for="tab in tabs">
              <button v-on:click="changeTab(tab)">{{tab.name}}</button>
         </span>
-        <hr>
+            <hr>
 
-        <div v-show="selectedTab === '按键设置'">
-            <h5>按键设置</h5>
-            <span>全局按键使用：</span><br/>
-            <span>全局按键：比如 F5、F7 这种，不单独对游戏某个窗口生效，对全部生效的按键。</span>
-            <br/>
-            <span>这里有两种调用方式。一种是“大漠”：用大漠插件内置的，一种是“Java Robot”，用 Java 内置的方式调用。如果一种方法存在问题，可以切换另一种。</span>
-            <br/>
-            <label for="keyPadPressWay-dm">大漠</label>
-            <input id="keyPadPressWay-dm" type="radio" name="keyPadPressGroup" value="dm"
-                   v-model="settingConfig.keyPadPressWay">
-            <label for="keyPadPressWay-robot">| Java Robot</label>
-            <input id="keyPadPressWay-robot" type="radio" name="keyPadPressGroup" value="robot"
-                   v-model="settingConfig.keyPadPressWay">
+            <div v-show="selectedTab === '按键设置'">
+                <h5>按键设置</h5>
+                <span>全局按键使用：</span><br/>
+                <span>全局按键：比如 F5、F7 这种，不单独对游戏某个窗口生效，对全部生效的按键。</span>
+                <br/>
+                <span>这里有两种调用方式。一种是“大漠”：用大漠插件内置的，一种是“Java Robot”，用 Java 内置的方式调用。如果一种方法存在问题，可以切换另一种。</span>
+                <br/>
+                <label for="keyPadPressWay-dm">大漠</label>
+                <input id="keyPadPressWay-dm" type="radio" name="keyPadPressGroup" value="dm"
+                       v-model="settingConfig.keyPadPressWay">
+                <label for="keyPadPressWay-robot">| Java Robot</label>
+                <input id="keyPadPressWay-robot" type="radio" name="keyPadPressGroup" value="robot"
+                       v-model="settingConfig.keyPadPressWay">
+            </div>
+
+            <div v-show="selectedTab === '邮箱设置'">
+                <h5>邮箱设置</h5>
+                <span>通过邮箱功能，可以进行相关功能的提醒</span><br/>
+                <br/>
+                <label for="input-emailFrom">发件人邮箱</label>
+                <input id="input-emailFrom" v-model="settingConfig.email.emailFrom">
+                <br/>
+                <label for="input-emailPassword">发件人授权码</label>
+                <input id="input-emailPassword" v-model="settingConfig.email.emailPassword" type="password">
+                <br/>
+                <label for="input-emailTo">收件人邮箱列表</label>
+                <input id="input-emailTo" v-model="settingConfig.email.emailTo" placeholder="若多邮箱 请逗号分隔">
+                <hr>
+                <label for="hostNameInput">主机名</label>
+                <input id="hostNameInput" v-model="settingConfig.email.hostName">
+                <hr>
+                <span>保存相关内容后，测试邮箱功能是否可用</span><br/>
+                <button v-on:click="testEmailSend()">测试邮箱发送</button>
+                <hr>
+                <strong>如何获取邮箱授权码？</strong>
+                <br/>
+                <span>首先授权码类似于密码，有了授权码就能发邮件。但是密码只有一个，授权码有多个。</span>
+                <br/>
+                <span>各大邮箱为了安全，不把邮箱密码作为发件密码，只用授权码，这样子即使泄漏也不会危害到自身邮箱。</span>
+                <br/>
+                <a href="https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256" target="_blank">点击此处查看
+                    QQ
+                    邮箱如何获取授权码</a>
+                <br/>
+                <a href="https://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac21b8ba4d48ed49ebc"
+                   target="_blank">点击此处查看网易邮箱如何获取授权码</a>
+            </div>
         </div>
 
-        <div v-show="selectedTab === '邮箱设置'">
-            <h5>邮箱设置</h5>
-            <span>通过邮箱功能，可以进行相关功能的提醒</span><br/>
-            <br/>
-            <label for="input-emailFrom">发件人邮箱</label>
-            <input id="input-emailFrom" v-model="settingConfig.email.emailFrom">
-            <br/>
-            <label for="input-emailPassword">发件人授权码</label>
-            <input id="input-emailPassword" v-model="settingConfig.email.emailPassword" type="password">
-            <br/>
-            <label for="input-emailTo">收件人邮箱列表</label>
-            <input id="input-emailTo" v-model="settingConfig.email.emailTo" placeholder="若多邮箱 请逗号分隔">
-            <hr>
-            <label for="hostNameInput">主机名</label>
-            <input id="hostNameInput" v-model="settingConfig.email.hostName">
-            <hr>
-            <span>保存相关内容后，测试邮箱功能是否可用</span><br/>
-            <button v-on:click="testEmailSend()">测试邮箱发送</button>
-            <hr>
-            <strong>如何获取邮箱授权码？</strong>
-            <br/>
-            <span>首先授权码类似于密码，有了授权码就能发邮件。但是密码只有一个，授权码有多个。</span>
-            <br/>
-            <span>各大邮箱为了安全，不把邮箱密码作为发件密码，只用授权码，这样子即使泄漏也不会危害到自身邮箱。</span>
-            <br/>
-            <a href="https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256" target="_blank">点击此处查看
-                QQ
-                邮箱如何获取授权码</a>
-            <br/>
-            <a href="https://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac21b8ba4d48ed49ebc"
-               target="_blank">点击此处查看网易邮箱如何获取授权码</a>
-        </div>
-    </div>
 
-
-    <div class="tab" id="introduction">
-        <h3>相关介绍</h3>
-        <hr>
-        <span v-for="tab in tabs">
+        <div class="tab" id="introduction">
+            <h3>相关介绍</h3>
+            <hr>
+            <span v-for="tab in tabs">
              <button v-on:click="changeTab(tab)">{{tab.name}}</button>
         </span>
-        <hr>
-
-        <div v-show="selectedTab === '简介'">
-            <a class="red-font">本软件为免费软件！</a>
-            <a>本软件是个人出于兴趣爱好，在业余时间随性而作，可能会存在不少 bug，敬请谅解。</a>
-            <br/>
-            <a>本软件暂未授权给任何人付费分发、倒卖。欢迎免费分享。</a>
-            <br/>
-            <span>作者：sleepybear</span>&nbsp;&nbsp;&nbsp;
-            <span>免费交流群：879596615</span>
-            <a href="https://jq.qq.com/?_wv=1027&k=G5Ju4kBf" target="_blank">点击唤起QQ打开群</a>&nbsp;&nbsp;&nbsp;&nbsp;
-            <br/>
-            <strong>本软件相关使用问题，请加群进行咨询，并且群内不定期更新新版脚本，下载即用。</strong>
             <hr>
-            <h5>程序目录介绍</h5>
-            <table>
-                <thead>
-                <tr>
-                    <th>文件夹/文件名</th>
-                    <th></th>
-                    <th>说明</th>
-                </tr>
-                </thead>
 
-                <tr>
-                    <td>tessdata</td>
-                    <td></td>
-                    <td>OCR 的训练字库。</td>
-                </tr>
-                <tr>
-                    <td>大漠插件注册</td>
-                    <td></td>
-                    <td>如果大漠插件不起作用，那么进去双击注册到系统。</td>
-                </tr>
-                <tr>
-                    <td>临时文件</td>
-                    <td></td>
-                    <td>保存运行时的临时文件，如找图的图片等。</td>
-                </tr>
-                <tr>
-                    <td>图片</td>
-                    <td></td>
-                    <td>相关运行时产生的需要保存到本地的图片，如验证码截图、副本收益图等。</td>
-                </tr>
-                <tr>
-                    <td>日志文件</td>
-                    <td></td>
-                    <td>日志文件夹，每日形成一个 app.log 文件。</td>
-                </tr>
-                <tr>
-                    <td>用户配置文件</td>
-                    <td></td>
-                    <td>保存的是用户的各种配置信息，如账号密码、各种设置。</td>
-                </tr>
-                <tr>
-                    <td>资源图片</td>
-                    <td></td>
-                    <td>保存模板图片，用来匹配游戏画面；还有验证码测试图。</td>
-                </tr>
-                <tr>
-                    <td>资源文件</td>
-                    <td></td>
-                    <td>该文件夹暂无使用，先占位。</td>
-                </tr>
-                <tr>
-                    <td>ddt-assistant.jar</td>
-                    <td></td>
-                    <td>主 Java 文件。后缀为 .jar 是包含了所有功能的包。</td>
-                </tr>
-                <tr>
-                    <td>Java的运行版本.txt</td>
-                    <td></td>
-                    <td>指定当前需要运行的 ddt-assistant 的版本。如果当前目录有多个 jar
-                        包，那么第一行需要指定，否则不需要。
-                    </td>
-                </tr>
-            </table>
+            <div v-show="selectedTab === '简介'">
+                <a class="red-font">本软件为免费软件！</a>
+                <a>本软件是个人出于兴趣爱好，在业余时间随性而作，可能会存在不少 bug，敬请谅解。</a>
+                <br/>
+                <a>本软件暂未授权给任何人付费分发、倒卖。欢迎免费分享。</a>
+                <br/>
+                <span>作者：sleepybear</span>&nbsp;&nbsp;&nbsp;
+                <span>免费交流群：879596615</span>
+                <a href="https://jq.qq.com/?_wv=1027&k=G5Ju4kBf" target="_blank">点击唤起QQ打开群</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                <br/>
+                <strong>本软件相关使用问题，请加群进行咨询，并且群内不定期更新新版脚本，下载即用。</strong>
+                <hr>
+                <h5>程序目录介绍</h5>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>文件夹/文件名</th>
+                        <th></th>
+                        <th>说明</th>
+                    </tr>
+                    </thead>
 
-            <h5>软件更新相关</h5>
-            <ol>
-                <li>
-                    <strong>小更新</strong>
-                    <br/>
-                    <a>方法一：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，删除旧版 jar 文件。</a>
-                    <br/>
-                    <a>方法二：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，打开“Java的运行版本.txt”记事本文件，第一行改为最新版的文件名。</a>
-                </li>
-                <li>
-                    <a>中等更新：在“小更新”的替换 jar
-                        的基础上，可能会有一些资源文件的替换，比如在“资源图片”文件夹添加几个文件，从群文件下载复制进去即可。</a>
-                </li>
-                <li>
-                    <a>大更新：需要全量下载完整包，在整个项目存在实质性底层架构改变才会使用，一般不会涉及。</a>
-                </li>
-                <li>
-                    <a>无脑更新：直接下载全量包，使用即可。不用考虑资源文件的额外下载。由于个人配置文件在脚本文件夹，所以可以把上一个版本的“用户配置”文件夹复制过来，就能保持配置复用。</a>
-                </li>
-                <li>
-                    <a class="red-font">
-                        每次更新完成，第一次打开设置页面，切记，强制刷新浏览器，使用 Ctrl + F5 或者 Ctrl +
-                        点击刷新按钮，来避免旧版本页面的缓存。
-                    </a>
-                </li>
-            </ol>
-        </div>
+                    <tr>
+                        <td>tessdata</td>
+                        <td></td>
+                        <td>OCR 的训练字库。</td>
+                    </tr>
+                    <tr>
+                        <td>大漠插件注册</td>
+                        <td></td>
+                        <td>如果大漠插件不起作用，那么进去双击注册到系统。</td>
+                    </tr>
+                    <tr>
+                        <td>临时文件</td>
+                        <td></td>
+                        <td>保存运行时的临时文件，如找图的图片等。</td>
+                    </tr>
+                    <tr>
+                        <td>图片</td>
+                        <td></td>
+                        <td>相关运行时产生的需要保存到本地的图片，如验证码截图、副本收益图等。</td>
+                    </tr>
+                    <tr>
+                        <td>日志文件</td>
+                        <td></td>
+                        <td>日志文件夹，每日形成一个 app.log 文件。</td>
+                    </tr>
+                    <tr>
+                        <td>用户配置文件</td>
+                        <td></td>
+                        <td>保存的是用户的各种配置信息，如账号密码、各种设置。</td>
+                    </tr>
+                    <tr>
+                        <td>资源图片</td>
+                        <td></td>
+                        <td>保存模板图片，用来匹配游戏画面；还有验证码测试图。</td>
+                    </tr>
+                    <tr>
+                        <td>资源文件</td>
+                        <td></td>
+                        <td>该文件夹暂无使用，先占位。</td>
+                    </tr>
+                    <tr>
+                        <td>ddt-assistant.jar</td>
+                        <td></td>
+                        <td>主 Java 文件。后缀为 .jar 是包含了所有功能的包。</td>
+                    </tr>
+                    <tr>
+                        <td>Java的运行版本.txt</td>
+                        <td></td>
+                        <td>指定当前需要运行的 ddt-assistant 的版本。如果当前目录有多个 jar
+                            包，那么第一行需要指定，否则不需要。
+                        </td>
+                    </tr>
+                </table>
 
-        <div v-show="selectedTab === '请我吃点东西'">
-            <p>如果觉得有帮助，并且想要请我吃点东西，可以扫码，感谢！</p>
-            <img src="images/wx.jpg" alt="微信二维码" width="25%">
-            <img src="images/zfb.jpg" alt="支付宝二维码" width="25%">
-        </div>
+                <h5>软件更新相关</h5>
+                <ol>
+                    <li>
+                        <strong>小更新</strong>
+                        <br/>
+                        <a>方法一：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，删除旧版 jar 文件。</a>
+                        <br/>
+                        <a>方法二：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，打开“Java的运行版本.txt”记事本文件，第一行改为最新版的文件名。</a>
+                    </li>
+                    <li>
+                        <a>中等更新：在“小更新”的替换 jar
+                            的基础上，可能会有一些资源文件的替换，比如在“资源图片”文件夹添加几个文件，从群文件下载复制进去即可。</a>
+                    </li>
+                    <li>
+                        <a>大更新：需要全量下载完整包，在整个项目存在实质性底层架构改变才会使用，一般不会涉及。</a>
+                    </li>
+                    <li>
+                        <a>无脑更新：直接下载全量包，使用即可。不用考虑资源文件的额外下载。由于个人配置文件在脚本文件夹，所以可以把上一个版本的“用户配置”文件夹复制过来，就能保持配置复用。</a>
+                    </li>
+                    <li>
+                        <a class="red-font">
+                            每次更新完成，第一次打开设置页面，切记，强制刷新浏览器，使用 Ctrl + F5 或者 Ctrl +
+                            点击刷新按钮，来避免旧版本页面的缓存。
+                        </a>
+                    </li>
+                </ol>
+            </div>
 
-        <div v-show="selectedTab === '工程介绍'">
-            <p>本项目后端使用 Spring Boot 2.7.2 基于 32 位 Java 8 开发。</p>
-            <p>本项目前端使用非 node 非 cli 的纯 vue.js 文件开发，不使用前端其他复杂框架。</p>
-            <p>
-                本项目已开源（开放全部源代码），地址：
-                <a href="https://github.com/sleepybear1113/ddt-assistant" target="_blank">https://github.com/sleepybear1113/ddt-assistant</a>。
-            </p>
-            <p>可以直接 Maven package 打包成 可用 jar 来直接运行。</p>
-            <hr>
-            <p>本项目使用大漠插件作为后台操作游戏的插件，使用 tesseract 作为 OCR 工具。</p>
-            <p>不对游戏做任何入侵、修改、增加、删除，不对游戏进行任何破坏，仅模拟人工点击等操作。</p>
-            <p>非经允许，任何人不得将此程序用于商业用途，作者将保留一切该程序的权利。</p>
+            <div v-show="selectedTab === '请我吃点东西'">
+                <p>如果觉得有帮助，并且想要请我吃点东西，可以扫码，感谢！</p>
+                <img src="images/wx.jpg" alt="微信二维码" width="25%">
+                <img src="images/zfb.jpg" alt="支付宝二维码" width="25%">
+            </div>
+
+            <div v-show="selectedTab === '工程介绍'">
+                <p>本项目后端使用 Spring Boot 2.7.2 基于 32 位 Java 8 开发。</p>
+                <p>本项目前端使用非 node 非 cli 的纯 vue.js 文件开发，不使用前端其他复杂框架。</p>
+                <p>
+                    本项目已开源（开放全部源代码），地址：
+                    <a href="https://github.com/sleepybear1113/ddt-assistant" target="_blank">https://github.com/sleepybear1113/ddt-assistant</a>。
+                </p>
+                <p>可以直接 Maven package 打包成 可用 jar 来直接运行。</p>
+                <hr>
+                <p>本项目使用大漠插件作为后台操作游戏的插件，使用 tesseract 作为 OCR 工具。</p>
+                <p>不对游戏做任何入侵、修改、增加、删除，不对游戏进行任何破坏，仅模拟人工点击等操作。</p>
+                <p>非经允许，任何人不得将此程序用于商业用途，作者将保留一切该程序的权利。</p>
+            </div>
         </div>
     </div>
 </div>
