@@ -41,10 +41,7 @@ import java.util.List;
 public class PcPredictDto extends BasePredictDto implements Serializable {
     private static final long serialVersionUID = -3828083082254095381L;
 
-    public static final String HOST = "http://139.155.237.55:21000";
-
-    private static final String ACCOUNT_INFO_URL = HOST + "/balance?cami=%s&author=%s";
-
+    private static final String ACCOUNT_INFO_SUFFIX_URL = "/balance?cami=%s&author=%s";
 
     private String cami;
     private String author;
@@ -60,14 +57,21 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
         return StringUtils.isBlank(author) ? "sleepy" : author;
     }
 
+    public String getHost(boolean throwException) {
+        String host = SpringContextUtil.getBean(CaptchaConfig.class).getPc().getServerAddr();
+        if (StringUtils.isBlank(host) || (!host.startsWith("http://") && !host.startsWith("https://"))) {
+            if (throwException) {
+                throw new FrontException("服务器地址填写错误");
+            } else {
+                log.warn("服务器地址填写错误");
+            }
+        }
+        return host;
+    }
+
     @Override
     public String getPredictUrl() {
-        PcCaptcha pcCaptcha = SpringContextUtil.getBean(CaptchaConfig.class).getPc();
-        String serverAddr = pcCaptcha.getServerAddr();
-        if (StringUtils.isBlank(serverAddr) || (!serverAddr.startsWith("http://") && !serverAddr.startsWith("https://"))) {
-            throw new FrontException("服务器地址填写错误");
-        }
-        return serverAddr + "/predict2";
+        return getHost(true) + "/predict2";
     }
 
     @Override
@@ -100,6 +104,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
         if (!pc.validUserInfo()) {
             throw new FrontException("用户卡密信息错误！");
         }
+        getHost(true);
         setAuthor(pc.getAuthor());
         setCami(pc.getCami());
     }
@@ -111,7 +116,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
 
     @Override
     public boolean testConnection() {
-        HttpRequestMaker requestMaker = HttpRequestMaker.makeGetHttpHelper(HOST + "/test");
+        HttpRequestMaker requestMaker = HttpRequestMaker.makeGetHttpHelper(getHost(true) + "/test");
         requestMaker.setConfig(RequestConfig.custom()
                 .setConnectionRequestTimeout(2000)
                 .setConnectTimeout(2000)
@@ -142,7 +147,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
             return sb.append("卡密为空，无可用用户信息").toString();
         }
         try {
-            String url = String.format(ACCOUNT_INFO_URL, cami, author);
+            String url = String.format(getHost(true) + ACCOUNT_INFO_SUFFIX_URL, cami, author);
             HttpHelper httpHelper = HttpHelper.makeDefaultGetHttpHelper(url);
             ArrayList<NameValuePair> pairs = new ArrayList<>();
             pairs.add(new BasicNameValuePair("cami", cami));
@@ -174,7 +179,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
         } catch (Exception e) {
             String s = sb.append("获取用户信息失败：").append(e.getMessage()).toString();
             log.warn(s, e);
-            return "";
+            return s;
         }
     }
 

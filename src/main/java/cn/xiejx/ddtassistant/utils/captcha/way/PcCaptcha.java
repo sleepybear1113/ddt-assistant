@@ -26,7 +26,14 @@ public class PcCaptcha extends BaseCaptchaWay implements Serializable {
 
     @Override
     public boolean validUserInfo() {
-        return StringUtils.isNotBlank(cami) && StringUtils.isNotBlank(serverAddr);
+        return StringUtils.isNotBlank(cami);
+    }
+
+    public void setServerAddr(String serverAddr) {
+        this.serverAddr = serverAddr;
+        if (serverAddr != null) {
+            this.serverAddr = serverAddr.trim();
+        }
     }
 
     public String getAuthor() {
