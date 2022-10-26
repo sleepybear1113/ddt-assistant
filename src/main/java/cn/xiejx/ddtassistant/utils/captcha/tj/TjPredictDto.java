@@ -52,8 +52,8 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
     }
 
     @Override
-    public String getUrl() {
-        return HOST + "/predict";
+    public String getPredictUrl() {
+        return SpringContextUtil.getBean(CaptchaConfig.class).getTj().getHost() + "/predict";
     }
 
     @Override

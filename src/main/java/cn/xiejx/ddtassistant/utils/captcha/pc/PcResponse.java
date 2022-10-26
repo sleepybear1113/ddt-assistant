@@ -79,6 +79,8 @@ public class PcResponse extends BaseResponse implements Serializable {
     public void buildResponse() {
         if ("success".equalsIgnoreCase(getMessage())) {
             setSuccess(true);
+        } else {
+            setMessage(getMessage() + "-" + getData());
         }
         if (!validChoice(this)) {
             setChoiceEnum(ChoiceEnum.UNDEFINED);

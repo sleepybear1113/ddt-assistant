@@ -45,7 +45,7 @@ public class CaptchaUtil {
         }
 
         // 构建 httpHelper
-        HttpRequestMaker requestMaker = HttpRequestMaker.makePostHttpHelper(basePredictDto.getUrl());
+        HttpRequestMaker requestMaker = HttpRequestMaker.makePostHttpHelper(basePredictDto.getPredictUrl());
         requestMaker.setConfig(basePredictDto.getRequestConfig());
         HttpHelper httpHelper = new HttpHelper(requestMaker);
 

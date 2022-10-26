@@ -37,7 +37,7 @@ public abstract class BasePredictDto implements Serializable {
      * @return String
      */
     @JsonIgnore
-    public abstract String getUrl();
+    public abstract String getPredictUrl();
 
     /**
      * 构建打码请求体

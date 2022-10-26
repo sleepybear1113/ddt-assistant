@@ -19,12 +19,14 @@ import java.io.Serializable;
 public class PcCaptcha extends BaseCaptchaWay implements Serializable {
     private static final long serialVersionUID = 3701573224665113223L;
 
+    private String serverAddr;
+
     private String cami;
     private String author;
 
     @Override
     public boolean validUserInfo() {
-        return StringUtils.isNotBlank(cami);
+        return StringUtils.isNotBlank(cami) && StringUtils.isNotBlank(serverAddr);
     }
 
     public String getAuthor() {

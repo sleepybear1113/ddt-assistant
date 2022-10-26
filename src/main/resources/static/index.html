@@ -76,6 +76,9 @@
 
                 <div v-show="captchaWayTabIndex === 2">
                     <h3>平川服务器打码</h3>
+                    <label for="input-pc-server-addr">服务器地址</label>
+                    <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr">
+                    <br/>
                     <label for="input-pc-cami">卡密</label>
                     <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
                     <label for="input-pc-cami-1"></label>

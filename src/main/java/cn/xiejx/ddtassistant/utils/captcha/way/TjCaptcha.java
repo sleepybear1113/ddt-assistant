@@ -33,6 +33,11 @@ public class TjCaptcha extends BaseCaptchaWay implements Serializable {
     private String typeId;
 
     @Override
+    public String getHost() {
+        return "http://api.ttshitu.com";
+    }
+
+    @Override
     public boolean validUserInfo() {
         return this.username != null && this.username.length() > 0 & this.password != null && this.password.length() > 0;
     }

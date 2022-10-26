@@ -48,6 +48,7 @@ class CaptchaTj {
         if (props == null) {
             return;
         }
+        this.serverAddr = props.serverAddr;
         this.username = props.username;
         this.password = props.password;
         this.softId = props.softId;
@@ -60,6 +61,7 @@ class CaptchaPc {
         if (props == null) {
             return;
         }
+        this.serverAddr = props.serverAddr;
         this.username = props.username;
         this.cami = props.cami;
         this.author = props.author;

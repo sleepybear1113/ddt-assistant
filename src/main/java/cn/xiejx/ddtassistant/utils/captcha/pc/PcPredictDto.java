@@ -11,7 +11,6 @@ import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
-import cn.xiejx.ddtassistant.utils.captcha.tj.TjConsumption;
 import cn.xiejx.ddtassistant.utils.captcha.way.PcCaptcha;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
@@ -62,8 +61,13 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
     }
 
     @Override
-    public String getUrl() {
-        return HOST + "/predict2";
+    public String getPredictUrl() {
+        PcCaptcha pcCaptcha = SpringContextUtil.getBean(CaptchaConfig.class).getPc();
+        String serverAddr = pcCaptcha.getServerAddr();
+        if (StringUtils.isBlank(serverAddr) || (!serverAddr.startsWith("http://") && !serverAddr.startsWith("https://"))) {
+            throw new FrontException("服务器地址填写错误");
+        }
+        return serverAddr + "/predict2";
     }
 
     @Override
