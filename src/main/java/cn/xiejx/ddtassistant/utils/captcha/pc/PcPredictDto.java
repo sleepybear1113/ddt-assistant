@@ -6,6 +6,7 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.logic.EmailLogic;
 import cn.xiejx.ddtassistant.type.captcha.Captcha;
+import cn.xiejx.ddtassistant.utils.EncryptUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
@@ -40,6 +41,10 @@ import java.util.List;
 @Slf4j
 public class PcPredictDto extends BasePredictDto implements Serializable {
     private static final long serialVersionUID = -3828083082254095381L;
+    public static final String ENCRYPT_PREFIX = "c" + "a" + "p" + "t" + "c" + "h" + "a" + ":" + "/" + "/";
+    public static final String ENCRYPT_SUFFIX = "." + "c" + "o" + "m";
+
+    public static final String AES_KEY = "1q2w3e4r5t6y7u8i";
 
     private static final String ACCOUNT_INFO_SUFFIX_URL = "/balance?cami=%s&author=%s";
 
@@ -59,7 +64,11 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
 
     public String getHost(boolean throwException) {
         String host = SpringContextUtil.getBean(CaptchaConfig.class).getPc().getServerAddr();
-        if (StringUtils.isBlank(host) || (!host.startsWith("http://") && !host.startsWith("https://"))) {
+        host = decryptHost(host);
+        if (StringUtils.isBlank(host)) {
+            throw new FrontException("服务器地址为空，请检查是否填写保存！");
+        }
+        if ((!host.startsWith("http://") && !host.startsWith("https://") && !host.startsWith(ENCRYPT_PREFIX))) {
             if (throwException) {
                 throw new FrontException("服务器地址填写错误");
             } else {
@@ -67,6 +76,24 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
             }
         }
         return host;
+    }
+
+    private String decryptHost(String host) {
+        if (StringUtils.isBlank(host)) {
+            return host;
+        }
+        if (!host.startsWith(ENCRYPT_PREFIX) && !host.endsWith(ENCRYPT_SUFFIX)) {
+            return host;
+        }
+        host = host.substring(ENCRYPT_PREFIX.length()).replace(ENCRYPT_SUFFIX, "");
+        if (StringUtils.isBlank(host)) {
+            throw new FrontException("加密服务器地址填写错误");
+        }
+        String s = EncryptUtil.aesDecrypt(host, AES_KEY);
+        if (s == null) {
+            throw new FrontException("服务器地址解密失败");
+        }
+        return s;
     }
 
     @Override

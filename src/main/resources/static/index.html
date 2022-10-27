@@ -76,8 +76,8 @@
 
                 <div v-show="captchaWayTabIndex === 2">
                     <h3>平川服务器打码</h3>
-                    <label for="input-pc-server-addr">服务器地址</label>
-                    <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr">
+                    <label for="input-pc-server-addr">加密服务器地址</label>
+                    <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr" style="width: 600px">
                     <br/>
                     <label for="input-pc-cami">卡密</label>
                     <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
@@ -411,11 +411,11 @@
                             </td>
 
                             <td>
-                                <button v-show="item.auctionTime === 8" v-on:click="changeAuctionTime(item, 24)">&nbsp;&nbsp;8
+                                <button v-show="item.auctionTime === '8'" v-on:click="changeAuctionTime(item, '24')">&nbsp;&nbsp;8
                                 </button>
-                                <button v-show="item.auctionTime === 24" v-on:click="changeAuctionTime(item, 48)">24
+                                <button v-show="item.auctionTime === '24'" v-on:click="changeAuctionTime(item, '48')">24
                                 </button>
-                                <button v-show="item.auctionTime === 48" v-on:click="changeAuctionTime(item, 8)">48</button>
+                                <button v-show="item.auctionTime === '48'" v-on:click="changeAuctionTime(item, '8')">48</button>
                             </td>
 
                             <td>

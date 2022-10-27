@@ -64,7 +64,7 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
 
         TjCaptcha tj = captchaConfig.getTj();
         if (!tj.validUserInfo()) {
-            throw new FrontException("用户名密码信息有误！");
+            throw new FrontException("用户名密码信息有误！请检查是否填写并保存！");
         }
 
         this.setImgFile(path);
