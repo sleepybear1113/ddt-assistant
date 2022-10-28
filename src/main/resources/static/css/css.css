@@ -10,6 +10,10 @@ div {
     color: red;
 }
 
+.red-button {
+    background-color: #d9e8ff;
+}
+
 .area {
     border: black solid 1px;
     background-color: #eeeeee;

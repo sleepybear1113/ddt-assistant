@@ -18,8 +18,8 @@ import java.util.Base64;
  */
 public class EncryptUtil {
     public static void main(String[] args) throws Exception {
-        String src = "http://pc.sleepybear.cn:9999";
-        String key = "1q2w3e4r5t6y7u8i";
+        String src = "";
+        String key = "";
 
         String x = aesEncrypt(src, key);
         System.out.println(x);

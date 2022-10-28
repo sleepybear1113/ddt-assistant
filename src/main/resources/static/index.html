@@ -76,7 +76,7 @@
 
                 <div v-show="captchaWayTabIndex === 2">
                     <h3>平川服务器打码</h3>
-                    <label for="input-pc-server-addr">加密服务器地址</label>
+                    <label for="input-pc-server-addr">服务器地址</label>
                     <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr" style="width: 600px">
                     <br/>
                     <label for="input-pc-cami">卡密</label>
@@ -97,7 +97,7 @@
                     余额低于
                     <label for="input-lowBalanceNum"></label>
                     <input id="input-lowBalanceNum" v-model="captchaConfig.lowBalanceNum" class="ms-input-small">
-                    元，开启邮件提醒（每次启动时判断）
+                    元，开启邮件提醒
                 </label>
                 <br/>
                 <span>打码次序</span>
@@ -111,7 +111,7 @@
                 </template>
 
                 <hr>
-                <button v-on:click="updateCaptchaWaySetting()">保存打码设置</button>
+                <button class="red-button" v-on:click="updateCaptchaWaySetting()">保存打码设置</button>
                 <button v-on:click="resetCaptchaWaySetting()">重置打码设置</button>
             </div>
 
@@ -183,7 +183,7 @@
                 </ul>
 
                 <label>其中 1000 毫秒 = 1 秒</label><br/>
-                <button v-on:click="saveUserConfig()">保存</button>
+                <button class="red-button" v-on:click="saveUserConfig()">保存</button>
                 <button v-on:click="resetUserConfig()">重置</button>
                 <hr>
                 <div>

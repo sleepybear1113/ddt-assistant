@@ -68,7 +68,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
         if (StringUtils.isBlank(host)) {
             throw new FrontException("服务器地址为空，请检查是否填写保存！");
         }
-        if ((!host.startsWith("http://") && !host.startsWith("https://") && !host.startsWith(ENCRYPT_PREFIX))) {
+        if ((!host.startsWith("ht" + "tp:" + "//") && !host.startsWith("ht" + "tps" + "://") && !host.startsWith(ENCRYPT_PREFIX))) {
             if (throwException) {
                 throw new FrontException("服务器地址填写错误");
             } else {
