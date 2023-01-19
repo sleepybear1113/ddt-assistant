@@ -41,6 +41,10 @@ public class ImgUtil {
         }
     }
 
+    public static boolean colorSimilar(int[] target, int[] test, int[] delta) {
+        return Math.abs(target[0] - test[0]) < delta[0] && Math.abs(target[1] - test[1]) < delta[1] && Math.abs(target[2] - test[2]) < delta[2];
+    }
+
     public static void cleanImg(String from, String to) {
         cleanImg(from, to, ImageClean.Type.CAPTCHA_NORMAL);
     }
@@ -115,7 +119,7 @@ public class ImgUtil {
         System.arraycopy(target, 0, input, 0, input.length);
     }
 
-    public static boolean colorInDelta(int[] color, int[] standard,int[] delta) {
+    public static boolean colorInDelta(int[] color, int[] standard, int[] delta) {
         if (color == null) {
             return false;
         }
@@ -169,12 +173,16 @@ public class ImgUtil {
         return new int[]{(int) (totalColor[0] / size), (int) (totalColor[1] / size), (int) (totalColor[2] / size)};
     }
 
-    public static int[] getMajorColor(String path) throws IOException {
-        BufferedImage img = ImageIO.read(new File(path));
-        return getMajorColor(img);
+    public static MajorPixelInfo getMajorColor(String path) {
+        try {
+            BufferedImage img = ImageIO.read(new File(path));
+            return getMajorColor(img);
+        } catch (IOException e) {
+            return null;
+        }
     }
 
-    public static int[] getMajorColor(BufferedImage img) {
+    public static MajorPixelInfo getMajorColor(BufferedImage img) {
         if (img == null) {
             return null;
         }
@@ -214,8 +222,13 @@ public class ImgUtil {
         if (StringUtils.isBlank(majorColor)) {
             return null;
         }
+
         String[] split = majorColor.replace("[", "").replace("]", "").replace(" ", "").split(",");
-        return new int[]{Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])};
+        MajorPixelInfo majorPixelInfo = new MajorPixelInfo(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2]));
+        majorPixelInfo.setWidth(img.getWidth());
+        majorPixelInfo.setHeight(img.getHeight());
+        majorPixelInfo.setMajorCount(majorCount);
+        return majorPixelInfo;
     }
 
     public static boolean imgConvert(String from, String to) {
@@ -341,4 +354,90 @@ public class ImgUtil {
         DELTA_IN,
         DELTA_OUT,
     }
+
+    public static class MajorPixelInfo {
+        private int r, g, b;
+        private int width, height;
+        private int majorCount;
+
+        public MajorPixelInfo() {
+        }
+
+        public MajorPixelInfo(int r, int g, int b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        }
+
+        public int[] toColor() {
+            return new int[]{r, g, b};
+        }
+
+        public int getR() {
+            return r;
+        }
+
+        public void setR(int r) {
+            this.r = r;
+        }
+
+        public int getG() {
+            return g;
+        }
+
+        public void setG(int g) {
+            this.g = g;
+        }
+
+        public int getB() {
+            return b;
+        }
+
+        public void setB(int b) {
+            this.b = b;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public void setWidth(int width) {
+            this.width = width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        public int getMajorCount() {
+            return majorCount;
+        }
+
+        public void setMajorCount(int majorCount) {
+            this.majorCount = majorCount;
+        }
+
+        public double getMajorPercent() {
+            return majorCount * 1.0 / width / height;
+        }
+
+        @Override
+        public String toString() {
+            return "MajorPixelInfo{" +
+                    "r=" + r +
+                    ", g=" + g +
+                    ", b=" + b +
+                    ", " + width +
+                    "*" + height +
+                    "=" + width * height +
+                    ", majorCount=" + majorCount +
+                    ", percent=" + Double.valueOf(String.format("%.2f", getMajorPercent() * 100)) + "%" +
+                    '}';
+        }
+    }
+
 }

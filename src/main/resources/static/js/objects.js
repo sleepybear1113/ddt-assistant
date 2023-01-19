@@ -255,6 +255,12 @@ class OfflineDetection {
 
         this.delay = props.delay;
         this.emailRemind = props.emailRemind;
+        this.disconnect = props.disconnect;
+        this.tokenExpired = props.tokenExpired;
+        this.offsite = props.offsite;
+        this.leaveGame = props.leaveGame;
+        this.whiteScreen = props.whiteScreen;
+        this.whiteScreenLimit = props.whiteScreenLimit;
     }
 }
 

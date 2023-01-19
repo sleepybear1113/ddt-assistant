@@ -102,6 +102,7 @@ public class TjPredictDto extends BasePredictDto implements Serializable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends BaseResponse> Class<T> getResponseClass() {
         return (Class<T>) TjResponse.class;
     }

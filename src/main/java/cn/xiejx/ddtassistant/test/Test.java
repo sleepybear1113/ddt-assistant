@@ -22,6 +22,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +34,36 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        angle();
+        whiteTest();
+    }
+
+    public static void whiteTest() throws IOException {
+        Util.sleep(500L);
+        for (int i = 0; i < 4; i++) {
+            long t0 = System.currentTimeMillis();
+            ImgUtil.MajorPixelInfo majorColor = ImgUtil.getMajorColor("test/white-screen.png");
+            long t1 = System.currentTimeMillis();
+            System.out.println(majorColor);
+            System.out.println(t1 - t0);
+        }
+
+    }
+
+    public static void searchLeaveGame() {
+        DmDdt dm = DmDdt.createInstance(null);
+        dm.capture(0, 0, 5000, 5000, "test/aaa.jpg");
+        int[] hwnds = dm.enumWindow(0, "离开此页(&L)", "", DmConstants.EnumWindowFilter.TITLE.getType());
+        System.out.println(Arrays.toString(hwnds));
+
+        hwnds = dm.enumWindow(0, "留在此页(&S)", "", DmConstants.EnumWindowFilter.TITLE.getType());
+        System.out.println(Arrays.toString(hwnds));
+
+        for (int hwnd : hwnds) {
+            DmDdt dmDdt = DmDdt.createInstance(hwnd);
+
+            dmDdt.bind();
+            dmDdt.captureFullGamePic("test/" + hwnd + ".jpg");
+        }
     }
 
     public static void angle() {
@@ -154,7 +184,7 @@ public class Test {
     }
 
     public static void capture() {
-        int hwnd = 329468;
+        int hwnd = 921548;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
         dm.clickCorner();
@@ -176,10 +206,21 @@ public class Test {
     }
 
     public static void captureFull() {
-        int hwnd = 329146;
+        int hwnd = 4330002;
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
-        dm.capturePicByRegion("test/full-1.bmp", DmDdt.GAME_FULL_REACT);
+        System.out.println(Arrays.toString(dm.getWindowRect(hwnd)));
+        dm.leftClick(1000,600);
+        Util.sleep(100L);
+        dm.capturePicByRegion("test/white-225.png", DmDdt.GAME_FULL_REACT);
+
+    }
+
+    public static void click() {
+        int hwnd = 921548;
+        DmDdt dm = DmDdt.createInstance(hwnd);
+        dm.bind();
+        dm.leftClick(179, 73);
     }
 
     public static void uploadFile(String path) {

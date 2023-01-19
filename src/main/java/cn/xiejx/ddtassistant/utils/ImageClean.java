@@ -366,7 +366,7 @@ public class ImageClean {
         /*
          * 确定旋转后的图象的高度和宽度
          */
-        if (degrees == 180 || degrees == 0 || degrees == 360) {
+        if (degrees == 180 || degrees == 0) {
             w = iw;
             h = ih;
         } else if (degrees == 90 || degrees == 270) {
@@ -1348,10 +1348,7 @@ public class ImageClean {
                 black++;
             }
         }
-        if (white > black) {
-            flag = true;
-        }
-        return flag;
+        return true;
     }
 
     /**

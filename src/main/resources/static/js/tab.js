@@ -2,8 +2,9 @@ let tabApp = new Vue({
     el: '#tab',
     data: {
         tabs: [
+            {tabId: "first", name: "首页"},
             {tabId: "captcha", name: "验证码功能"},
-            {tabId: "offlineDetection", name: "掉线检测"},
+            {tabId: "offlineDetection", name: "游戏异常检测"},
             {tabId: "auction", name: "拍卖场功能"},
             {tabId: "capture", name: "截图功能"},
             {tabId: "reCapture", name: "补偿截图"},

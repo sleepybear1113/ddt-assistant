@@ -17,7 +17,7 @@ import java.util.Base64;
  * @date 2022/10/06 21:23
  */
 public class EncryptUtil {
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         String src = "";
         String key = "";
 

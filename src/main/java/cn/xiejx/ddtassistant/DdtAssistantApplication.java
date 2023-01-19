@@ -5,6 +5,7 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -15,6 +16,7 @@ import org.springframework.core.env.Environment;
  * @author sleepybear
  */
 @SpringBootApplication
+@Slf4j
 public class DdtAssistantApplication {
 
     public static void main(String[] args) {
@@ -32,8 +34,8 @@ public class DdtAssistantApplication {
                 throw new RuntimeException("未能获取大漠版本号");
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("启动失败！大漠插件未找到，请注册！");
+            System.out.println("启动失败！大漠插件未找到，请注册！");
+            return;
         }
 
         SpringApplicationBuilder builder = new SpringApplicationBuilder(DdtAssistantApplication.class);

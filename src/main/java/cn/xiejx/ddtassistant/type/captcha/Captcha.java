@@ -24,6 +24,8 @@ import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -38,6 +40,7 @@ import java.util.Map;
  */
 @Slf4j
 public class Captcha extends BaseType {
+    private static final Logger logMore = LoggerFactory.getLogger("MORE");
 
     private static final long serialVersionUID = -2259938240133602111L;
 
@@ -48,7 +51,8 @@ public class Captcha extends BaseType {
     /**
      * 上一张验证码图
      */
-    private BufferedImage lastCaptchaImg;
+
+    private LastCaptchaImg lastCaptchaImg;
 
     /**
      * 是否发送过低余额邮件通知
@@ -157,7 +161,7 @@ public class Captcha extends BaseType {
                 Long logPrintInterval = userConfig.getLogPrintInterval();
                 if (logPrintInterval != null && logPrintInterval > 0) {
                     if (now - lastLogTime > logPrintInterval) {
-                        log.info("[{}] 窗口正在运行", hwnd);
+                        logMore.info("[{}] 窗口正在运行", hwnd);
                         lastLogTime = System.currentTimeMillis();
                     }
                 }
@@ -210,12 +214,27 @@ public class Captcha extends BaseType {
         }
         log.info("[{}] 发现副本验证码！", getHwnd());
 
+        // 读取发现的验证码图片到内存
         BufferedImage current = ImgUtil.read(captchaName);
+        // 判断是否为与上一次重复的验证码
         if (isSameCaptcha(lastCaptchaImg, current)) {
-            log.info("[{}] 验证码重复！！", getHwnd());
-            return;
+            log.info("[{}] 验证码第[{}]次重复！！请检查程序点击功能是否正常！！请打开网页进入“测试功能正常”中进行点击功能检查！！", getHwnd(), lastCaptchaImg.getSameTimes());
+            lastCaptchaImg.addSameTimes();
+
+            int sameTimes = 5;
+            if (lastCaptchaImg.getSameTimes() % sameTimes != 0) {
+                // 如果重复次数不是 5 的倍数，那么点击坐标之后，直接跳过上传到平台
+                clickCaptchaAnswer(lastCaptchaImg.getChoiceEnum(), userConfig.getDefaultChoiceAnswer(), null);
+                Util.sleep(1000L);
+                return;
+            }
+            // 如果是 5 的倍数，那么继续走原有逻辑，上传到平台、获取结果、打码
+        } else {
+            // 与上一次不为同一张验证码，那么清空重复次数
+            lastCaptchaImg.setSameTimes(0);
         }
-        lastCaptchaImg = current;
+        lastCaptchaImg.setImg(current);
+        lastCaptchaImg.setChoiceEnum(ChoiceEnum.UNDEFINED);
 
         // 设置验证码出现的按钮缓存
         MonitorLogic.TIME_CACHER.set(MonitorLogic.CAPTCHA_FOUND_KEY, System.currentTimeMillis(), MonitorLogic.CAPTCHA_DELAY, ExpireWayEnum.AFTER_UPDATE);
@@ -236,9 +255,32 @@ public class Captcha extends BaseType {
             BaseResponse.reportError(getHwnd(), lastErrorCaptchaInfo, false);
         }
 
+        // 获取打码结果
+        BaseResponse response = getCaptchaAnswer(captchaConfig, userConfig, captchaName);
+        if (response == null) {
+            // 内部非验证码返回 null，跳出
+            return;
+        }
+
+        // 获取结果
+        ChoiceEnum choiceEnum = response.getChoiceEnum();
+        lastCaptchaImg.setChoiceEnum(choiceEnum);
+        clickCaptchaAnswer(choiceEnum, userConfig.getDefaultChoiceAnswer(), captchaName);
+
+        Util.sleep(1000L);
+    }
+
+    /**
+     * 遍历所有的打码方式，返回打码结果
+     *
+     * @param captchaConfig captchaConfig
+     * @param userConfig    userConfig
+     * @param captchaName   captchaName
+     * @return 如果不为 null 那么就结果，否则上层方法跳出循环
+     */
+    private BaseResponse getCaptchaAnswer(CaptchaConfig captchaConfig, UserConfig userConfig, String captchaName) {
         // 空结果
         BaseResponse response = TjResponse.buildEmptyResponse();
-
         // 遍历所有的打码方式
         boolean first = true;
         for (Integer captchaWay : captchaConfig.getCaptchaWay()) {
@@ -251,7 +293,7 @@ public class Captcha extends BaseType {
 
             if (!first && !findCaptcha()) {
                 // 没找到验证码（二次验证是否有验证码）
-                return;
+                return null;
             }
             first = false;
 
@@ -290,7 +332,7 @@ public class Captcha extends BaseType {
             basePredictDto.build(captchaConfig, captchaName);
             response = CaptchaUtil.waitToGetChoice(getHwnd(), countDownTime - 2000L, userConfig.getKeyPressDelayAfterCaptchaDisappear(), basePredictDto);
             if (!basePredictDto.getResponseClass().isInstance(response)) {
-                log.info("[{}] 解析返回结果失败", getHwnd());
+                log.info("[{}] 解析返回结果失败，可能是网络波动或者平台暂时出现问题等", getHwnd());
                 // 解析错误直接返回
                 continue;
             }
@@ -316,9 +358,10 @@ public class Captcha extends BaseType {
             // 非 ABCD 选项，报错
             BaseResponse.reportError(getHwnd(), captchaInfo, true);
         }
+        return response;
+    }
 
-        // 获取结果
-        ChoiceEnum choiceEnum = response.getChoiceEnum();
+    private void clickCaptchaAnswer(ChoiceEnum choiceEnum, String defaultChoiceAnswer, String captchaName) {
         // 判断是否还是 flash
         if (!getDm().isWindowClassFlashPlayerActiveX()) {
             return;
@@ -326,7 +369,6 @@ public class Captcha extends BaseType {
 
         if (ChoiceEnum.UNDEFINED.equals(choiceEnum)) {
             // 识别错误，那么走用户自定义
-            String defaultChoiceAnswer = userConfig.getDefaultChoiceAnswer();
             if (defaultChoiceAnswer == null || defaultChoiceAnswer.length() == 0) {
                 log.info("[{}] 用户没有设置默认选项，跳过选择，等待 5000 毫秒继续下一轮检测", getHwnd());
                 Util.sleep(5000L);
@@ -343,7 +385,9 @@ public class Captcha extends BaseType {
 
             // 上传结果到服务器
             final ChoiceEnum answer = choiceEnum;
-            GlobalVariable.THREAD_POOL.execute(() -> Util.uploadToServer(captchaName, answer));
+            if (!StringUtils.isBlank(captchaName)) {
+                GlobalVariable.THREAD_POOL.execute(() -> Util.uploadToServer(captchaName, answer));
+            }
         }
 
         // 点击选项
@@ -355,8 +399,6 @@ public class Captcha extends BaseType {
         // 提交答案
         Util.sleep(300L);
         getDm().leftClick(CaptchaConstants.SUBMIT_BUTTON_POINT, 100);
-
-        Util.sleep(1000L);
     }
 
     public void identifyPveFlopBonus() {
@@ -395,8 +437,8 @@ public class Captcha extends BaseType {
         return true;
     }
 
-    public static boolean isSameCaptcha(BufferedImage last, BufferedImage current) {
-        if (last == null) {
+    public static boolean isSameCaptcha(LastCaptchaImg last, BufferedImage current) {
+        if (last == null || last.getImg() == null) {
             return false;
         }
         if (current == null) {
@@ -410,7 +452,7 @@ public class Captcha extends BaseType {
         int repeatCount = 0;
         int totalDelta = 0;
         for (int[] point : points) {
-            int[] avgColor0 = ImgUtil.getAvgColor(last.getSubimage(point[0], point[1], w, h));
+            int[] avgColor0 = ImgUtil.getAvgColor(last.getImg().getSubimage(point[0], point[1], w, h));
             int[] avgColor1 = ImgUtil.getAvgColor(current.getSubimage(point[0], point[1], w, h));
             for (int i = 0; i < avgColor0.length; i++) {
                 int abs = Math.abs(avgColor0[i] - avgColor1[i]);

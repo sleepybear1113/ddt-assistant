@@ -1,10 +1,15 @@
 let offlineDetectionApp = new Vue({
     el: '#offlineDetection',
     data: {
-        tabName:"掉线检测",
-        offlineDetection:{
-            delay:"",
+        tabName: "游戏异常检测",
+        offlineDetection: {
+            delay: "",
             emailRemind: false,
+            disconnect: true,
+            tokenExpired: false,
+            offsite: false,
+            leaveGame: false,
+            whiteScreen: false,
         }
 
     },

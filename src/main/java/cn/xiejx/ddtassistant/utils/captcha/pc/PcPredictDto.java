@@ -120,7 +120,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
         return RequestConfig.custom()
                 .setConnectionRequestTimeout(1000 * 3)
                 .setConnectTimeout(1000 * 3)
-                .setSocketTimeout(1000 * 10)
+                .setSocketTimeout(1000 * 15)
                 .build();
     }
 
@@ -137,6 +137,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T extends BaseResponse> Class<T> getResponseClass() {
         return (Class<T>) PcResponse.class;
     }

@@ -2,6 +2,7 @@ package cn.xiejx.ddtassistant.test;
 
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.type.captcha.Captcha;
+import cn.xiejx.ddtassistant.type.captcha.LastCaptchaImg;
 import cn.xiejx.ddtassistant.utils.ImageClean;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
@@ -37,7 +38,7 @@ public class SimpleTest {
         BufferedImage[] bufferedImages = {image1, image2, image3, image4};
         for (BufferedImage bufferedImage : bufferedImages) {
             for (BufferedImage image : bufferedImages) {
-                System.out.println(Captcha.isSameCaptcha(bufferedImage, image));
+                System.out.println(Captcha.isSameCaptcha(new LastCaptchaImg(bufferedImage, null), image));
             }
             System.out.println();
         }

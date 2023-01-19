@@ -30,7 +30,6 @@ import java.util.Objects;
  */
 @Slf4j
 public class Auction extends BaseType {
-
     private static final long serialVersionUID = 8932679197291875438L;
     private boolean stop;
 
@@ -95,10 +94,6 @@ public class Auction extends BaseType {
 
         putBackItem();
         AuctionData auctionData = SpringContextUtil.getBean(AuctionData.class);
-        if (auctionData == null) {
-            remove();
-            return;
-        }
 
         AuctionConstants.AuctionPosition.SellType sellType = AuctionConstants.AuctionPosition.SellType.getSellType(auctionData.getSellType());
         // 选择装备栏或者道具栏的点击位置
@@ -231,12 +226,6 @@ public class Auction extends BaseType {
         log.info("物品：{}, 数量：{}", itemName, num);
 
         AuctionData auctionData = SpringContextUtil.getBean(AuctionData.class);
-
-        if (auctionData == null) {
-            log.info("auctionData 为空！");
-            putItemBack(num);
-            return null;
-        }
 
         // 获取物品名
         AuctionItem auctionItem = auctionData.getItem(itemName);

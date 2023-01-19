@@ -5,6 +5,7 @@ import cn.xiejx.ddtassistant.base.UserConfig;
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
+import cn.xiejx.ddtassistant.dto.AbnormalDetectionCountDto;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.Cacher;
@@ -13,14 +14,13 @@ import javafx.util.Pair;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class MonitorLogic {
+    private static final Logger logMore = LoggerFactory.getLogger("MORE");
 
     public static final Cacher<String, Long> TIME_CACHER = new CacherBuilder<String, Long>().scheduleName("timeCacher").delay(30, TimeUnit.SECONDS).build();
     public static final Cacher<String, Pair<Long, DmDdt>> FLOP_BONUS_CACHER = new CacherBuilder<String, Pair<Long, DmDdt>>().scheduleName("flopBonusCacher").delay(30, TimeUnit.SECONDS).build();
@@ -56,14 +57,9 @@ public class MonitorLogic {
     @Resource
     private DmDdt defaultDm;
 
-    private Set<Integer> offlineHwndSet;
-    private Set<Integer> offsiteHwndSet;
-
     @PostConstruct
     public void init() {
         startMonitorActionLoopThread();
-        offlineHwndSet = new HashSet<>();
-        offsiteHwndSet = new HashSet<>();
     }
 
     /**
@@ -211,9 +207,9 @@ public class MonitorLogic {
         try {
             captchaLogic.bindAll();
         } catch (FrontException e) {
-            log.info("{}", e.getMessage());
+            logMore.info("{}", e.getMessage());
         }
-        log.info("[监控线程] 等待 {} 毫秒后检测新增窗口", interval);
+        logMore.info("[监控线程] 等待 {} 毫秒后检测新增窗口", interval);
         monitorVariable.finish();
     }
 
@@ -231,30 +227,26 @@ public class MonitorLogic {
         }
 
         GlobalVariable.THREAD_POOL.execute(() -> {
-            int offlineHwndSetBeforeSize = offlineHwndSet.size();
-            int offsiteHwndSetBeforeSize = offsiteHwndSet.size();
-            List<Integer> offlineAlerts = offlineDetectionLogic.getOfflineAlerts();
-            List<Integer> offsiteAlerts = offlineDetectionLogic.getOffsiteAlerts();
-            offlineHwndSet.addAll(offlineAlerts);
-            offsiteHwndSet.addAll(offsiteAlerts);
-            int offlineHwndSetAfterSize = offlineHwndSet.size();
-            int offsiteHwndSetAfterSize = offsiteHwndSet.size();
-            int offlineHwndSetSub = offlineHwndSetAfterSize - offlineHwndSetBeforeSize;
-            int offsiteHwndSetSub = offsiteHwndSetAfterSize - offsiteHwndSetBeforeSize;
-            int totalSub = offlineHwndSetSub + offsiteHwndSetSub;
-            if (totalSub > 0) {
-                try {
-                    log.warn("掉线数量：{}, 异地数量：{}", offlineHwndSetSub, offsiteHwndSetSub);
-                    if (Boolean.TRUE.equals(offlineDetectionConfig.getEmailRemind())) {
-                        log.warn("发送掉线邮件");
-                        emailLogic.sendOfflineRemindEmail(offlineHwndSetSub, offsiteHwndSetSub);
-                    }
-                } catch (Exception e) {
-                    log.info(e.getMessage(), e);
-                }
-            }
+            offlineDetect();
             monitorVariable.finish();
         });
+    }
+
+    private void offlineDetect() {
+        AbnormalDetectionCountDto detect = offlineDetectionLogic.detect();
+        if (detect.empty()) {
+            return;
+        }
+
+        try {
+            log.warn(detect.toString());
+            if (Boolean.TRUE.equals(offlineDetectionConfig.getEmailRemind())) {
+                log.warn("发送游戏异常邮件");
+                emailLogic.sendOfflineRemindEmail(detect);
+            }
+        } catch (Exception e) {
+            log.info(e.getMessage(), e);
+        }
     }
 
     @Data

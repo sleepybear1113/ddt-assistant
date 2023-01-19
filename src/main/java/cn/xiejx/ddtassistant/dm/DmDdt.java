@@ -55,7 +55,7 @@ public class DmDdt extends Dm {
 
     public static DmDdt createInstance(Integer hwnd) {
         if (hwnd == null) {
-            return new DmDdt(hwnd);
+            return new DmDdt(null);
         }
         DmDdt dmDdt = GlobalVariable.DM_DDT_MAP.get(hwnd);
         if (dmDdt == null) {

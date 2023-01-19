@@ -17,8 +17,22 @@ import java.io.Serializable;
 public class OfflineDetectionConfig extends BaseConfig implements Serializable {
     private static final long serialVersionUID = 4033525747498353766L;
 
+    public static final long MIN_DELAY = 5000;
+
     private Long delay;
     private Boolean emailRemind;
+
+    private Boolean disconnect;
+    private Boolean tokenExpired;
+    private Boolean offsite;
+    private Boolean leaveGame;
+    private Boolean whiteScreen;
+
+    public void validMinDelay() {
+        if (delay != null && delay < MIN_DELAY) {
+            delay = MIN_DELAY;
+        }
+    }
 
     @Override
     @JsonIgnore

@@ -2,9 +2,11 @@ package cn.xiejx.ddtassistant.logic;
 
 import cn.xiejx.ddtassistant.base.EmailConfig;
 import cn.xiejx.ddtassistant.base.SettingConfig;
+import cn.xiejx.ddtassistant.dto.AbnormalDetectionCountDto;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.utils.MailUtil;
 import cn.xiejx.ddtassistant.utils.Util;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -18,6 +20,7 @@ import java.util.Random;
  * @date 2022/06/23 01:44
  */
 @Component
+@Slf4j
 public class EmailLogic {
     public static final Random RANDOM = new Random();
 
@@ -47,6 +50,30 @@ public class EmailLogic {
         try {
             MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), subject, String.format(body, email.getHostName(), timeString, offlineNum, offsiteNum));
         } catch (MessagingException ignored) {
+        }
+        return true;
+    }
+
+    public Boolean sendOfflineRemindEmail(AbnormalDetectionCountDto abnormalDetectionCountDto) {
+        EmailConfig email = settingConfig.getEmail();
+        valid(email);
+        String subject = "掉线提醒";
+        String body = "主机名：%s\n时间：%s\n%s\n这个是由 ddt-assistant 发出的掉线提醒邮件。";
+        String timeString = Util.getTimeString(Util.TIME_ALL_FORMAT_EASY);
+        try {
+            MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), subject, String.format(body, email.getHostName(), timeString, abnormalDetectionCountDto.toString()));
+        } catch (MessagingException ignored) {
+        }
+        return true;
+    }
+
+    public Boolean sendEmail(String title, String body) {
+        EmailConfig email = settingConfig.getEmail();
+        valid(email);
+        try {
+            MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), title, body);
+        } catch (MessagingException e) {
+            log.warn("邮件发送失败：{}", e.getMessage());
         }
         return true;
     }

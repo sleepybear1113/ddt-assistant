@@ -20,16 +20,28 @@ public class Dm {
     public static final String PROGRAM_ID_DM = "dm.dmsoft";
     public static final String DEFAULT_MOUSE_MODE = "windows";
     public static final String DEFAULT_KEY_PAD_MODE = "windows";
+
+    private String programId = PROGRAM_ID_DM;
     private Dispatch dmDispatch;
 
     public Dm() {
         newInstance();
     }
 
-    public void newInstance() {
+    public Dm(String programId) {
+        this.programId = programId;
+        newInstance();
+    }
+
+    public void newInstance(String programId) {
+        this.programId = programId;
         ComThread.InitSTA();
-        ActiveXComponent dmComponent = new ActiveXComponent(PROGRAM_ID_DM);
+        ActiveXComponent dmComponent = new ActiveXComponent(this.programId);
         dmDispatch = dmComponent.getObject();
+    }
+
+    public void newInstance() {
+        newInstance(this.programId);
     }
 
     public void release() {
@@ -115,6 +127,10 @@ public class Dm {
             hwnds[i] = Integer.parseInt(split[i]);
         }
         return hwnds;
+    }
+
+    public int[] enumWindow(int parent, String title, String className, DmConstants.EnumWindowFilter filter) {
+        return enumWindow(parent, title, className, filter.getType());
     }
 
     public void bindWindow(Integer hwnd) {
