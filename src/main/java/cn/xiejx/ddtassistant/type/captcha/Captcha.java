@@ -52,7 +52,7 @@ public class Captcha extends BaseType {
      * 上一张验证码图
      */
 
-    private LastCaptchaImg lastCaptchaImg;
+    private final LastCaptchaImg lastCaptchaImg = new LastCaptchaImg();
 
     /**
      * 是否发送过低余额邮件通知

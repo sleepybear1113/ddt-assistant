@@ -17,6 +17,9 @@ public class LastCaptchaImg {
     private ChoiceEnum choiceEnum;
     private Integer sameTimes = 0;
 
+    public LastCaptchaImg() {
+    }
+
     public LastCaptchaImg(BufferedImage img, ChoiceEnum choiceEnum) {
         this.img = img;
         this.choiceEnum = choiceEnum;
