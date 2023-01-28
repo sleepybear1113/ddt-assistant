@@ -238,14 +238,10 @@ public class MonitorLogic {
             return;
         }
 
-        try {
-            log.warn(detect.toString());
-            if (Boolean.TRUE.equals(offlineDetectionConfig.getEmailRemind())) {
-                log.warn("发送游戏异常邮件");
-                emailLogic.sendOfflineRemindEmail(detect);
-            }
-        } catch (Exception e) {
-            log.info(e.getMessage(), e);
+        log.warn(detect.toString());
+        if (Boolean.TRUE.equals(offlineDetectionConfig.getEmailRemind())) {
+            log.warn("发送游戏异常邮件");
+            emailLogic.sendOfflineRemindEmail(detect);
         }
     }
 

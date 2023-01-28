@@ -19,10 +19,45 @@ import java.net.UnknownHostException;
 public class EmailConfig implements Serializable {
     private static final long serialVersionUID = 6460329356645762654L;
 
+    /**
+     * 发件人
+     */
     private String emailFrom;
+
+    /**
+     * 发件人密码/授权码
+     */
     private String emailPassword;
+
+    /**
+     * 收件人列表
+     */
     private String emailTo;
+
+    /**
+     * 发件主机名
+     */
     private String hostName;
+
+    /**
+     * 是否允许远程连接的发送方使用本机邮箱配置
+     */
+    private Boolean allowRemoteUseLocalConfig;
+
+    /**
+     * 使用的发送方的地址
+     */
+    private String remoteSenderAddr;
+
+    /**
+     * 启动远程发送方功能
+     */
+    private Boolean enableRemoteSender;
+
+    /**
+     * 优先使用发送方的邮箱配置发送邮件
+     */
+    private Boolean useRemoteLocalConfigFirst;
 
     public void update(EmailConfig emailConfig) {
         BeanUtils.copyProperties(emailConfig, this);
