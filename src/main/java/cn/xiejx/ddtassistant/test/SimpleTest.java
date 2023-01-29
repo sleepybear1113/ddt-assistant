@@ -1,6 +1,8 @@
 package cn.xiejx.ddtassistant.test;
 
+import cn.xiejx.ddtassistant.base.EmailConfig;
 import cn.xiejx.ddtassistant.constant.Constants;
+import cn.xiejx.ddtassistant.logic.EmailLogic;
 import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.type.captcha.LastCaptchaImg;
 import cn.xiejx.ddtassistant.utils.ImageClean;
@@ -27,7 +29,13 @@ public class SimpleTest {
     private static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
 
     public static void main(String[] args) throws Exception {
-        testSamePic();
+        sendEmail();
+    }
+
+    public static void sendEmail() {
+        EmailConfig emailConfig = new EmailConfig();
+        emailConfig.setRemoteSenderAddr("http://lh:17171/email/sendEmailByRemote");
+        EmailLogic.sendRemoteEmail(emailConfig, "test", "body", 1L);
     }
 
     public static void testSamePic() throws IOException {

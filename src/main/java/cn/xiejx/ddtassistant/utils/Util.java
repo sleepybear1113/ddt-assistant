@@ -87,6 +87,25 @@ public class Util {
         }
     }
 
+    public static String parseObjectToJsonString(Object obj) {
+        return parseObjectToJsonString(obj, false);
+    }
+
+    public static String parseObjectToJsonString(Object obj, boolean prettyPrinter) {
+        if (obj == null) {
+            return null;
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            if (prettyPrinter) {
+                return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+            }
+            return mapper.writeValueAsString(obj);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
+    }
+
     public static <T> T readFile(String path, Class<T> clazz) {
         try {
             String s = readFile(path);

@@ -10,7 +10,13 @@ import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.Cacher;
 import cn.xiejx.ddtassistant.utils.cacher.CacherBuilder;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
+import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
+import cn.xiejx.ddtassistant.utils.http.enumeration.MethodEnum;
+import cn.xiejx.ddtassistant.vo.ResultCode;
+import cn.xiejx.ddtassistant.vo.ResultCodeConstant;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.http.entity.ContentType;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -62,7 +68,7 @@ public class EmailLogic {
             return false;
         }
 
-        sendEmail(merge.toEmailConfig(), merge.getTitle(), merge.getBody());
+        sendEmail(merge.toEmailConfig(), merge.getTitle(), merge.getBody(), merge.getId());
         return true;
     }
 
@@ -83,12 +89,16 @@ public class EmailLogic {
     }
 
     public static Boolean sendEmail(EmailConfig email, String title, String body) {
+        return sendEmail(email, title, body, null);
+    }
+
+    public static Boolean sendEmail(EmailConfig email, String title, String body, Long id) {
         valid(email);
         try {
             if (!Boolean.TRUE.equals(email.getEnableRemoteSender())) {
                 MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), title, body);
             } else {
-
+                sendRemoteEmail(email, title, body, id);
             }
         } catch (MessagingException e) {
             log.warn("邮件发送失败：{}", e.getMessage());
@@ -101,8 +111,31 @@ public class EmailLogic {
         return sendLowBalanceNotify(email, balance);
     }
 
-    public static void sendRemoteEmail(EmailConfig email) {
-        HttpHelper httpHelper = new HttpHelper(email.getRemoteSenderAddr());
+    public static void sendRemoteEmail(EmailConfig email, String title, String body, Long id) {
+        EmailConfigDto emailConfigDto = EmailConfigDto.toEmailConfigDto(email);
+        emailConfigDto.setId(id);
+        emailConfigDto.setTitle(title);
+        emailConfigDto.setBody(body);
+
+        HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(email.getRemoteSenderAddr(), MethodEnum.METHOD_POST);
+        String jsonString = Util.parseObjectToJsonString(emailConfigDto);
+        httpHelper.setPostBody(jsonString, ContentType.APPLICATION_JSON);
+        HttpResponseHelper responseHelper = httpHelper.request();
+        String responseBody = responseHelper.getResponseBody();
+        if (StringUtils.isBlank(responseBody)) {
+            log.info("发送失败！远程机器没有响应");
+            return;
+        }
+        ResultCode resultCode = Util.parseJsonToObject(responseBody, ResultCode.class);
+        if (resultCode == null||resultCode.getCode()==null) {
+            log.info("发送失败！远程机器没有响应");
+            return;
+        }
+        if (resultCode.getCode().equals(ResultCodeConstant.CodeEnum.SUCCESS.getCode())) {
+            log.info("发送成功！返回为：{}", resultCode.getResult());
+            return;
+        }
+        log.info("发送成功！但结果出现问题，返回为：{}", resultCode.getMessage());
     }
 
     public static Boolean sendLowBalanceNotify(EmailConfig emailConfig, double balance) {
