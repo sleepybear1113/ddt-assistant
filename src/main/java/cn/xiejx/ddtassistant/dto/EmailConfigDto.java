@@ -44,9 +44,9 @@ public class EmailConfigDto implements Serializable {
     private String hostName;
 
     /**
-     * 是否允许远程连接的发送方使用本机邮箱配置
+     * 是否允许远程方连接到本机
      */
-    private Boolean allowRemoteUseLocalConfig;
+    private Boolean allowRemoteConnect;
 
     /**
      * 使用的发送方的地址
@@ -89,9 +89,14 @@ public class EmailConfigDto implements Serializable {
         if (remote == null) {
             throw new FrontException("未获取到发送邮件的信息");
         }
-        if (!Boolean.TRUE.equals(local.getAllowRemoteUseLocalConfig())) {
+        if (!Boolean.TRUE.equals(local.getAllowRemoteConnect())) {
             throw new FrontException("远程机器未开启远程发送邮件功能");
         }
+
+        remote.setAllowRemoteConnect(local.getAllowRemoteConnect());
+        remote.setEnableRemoteSender(local.getEnableRemoteSender());
+        remote.setRemoteSenderAddr(local.getRemoteSenderAddr());
+        remote.setUseRemoteLocalConfigFirst(local.getUseRemoteLocalConfigFirst());
         if (!Boolean.TRUE.equals(remote.useRemoteLocalConfigFirst)) {
             return remote;
         }
@@ -111,10 +116,7 @@ public class EmailConfigDto implements Serializable {
         if (!remote.toEmailConfig().valid()) {
             throw new FrontException("邮箱配置错误");
         }
-        remote.setAllowRemoteUseLocalConfig(local.getAllowRemoteUseLocalConfig());
-        remote.setEnableRemoteSender(local.getEnableRemoteSender());
-        remote.setRemoteSenderAddr(local.getRemoteSenderAddr());
-        remote.setUseRemoteLocalConfigFirst(local.getUseRemoteLocalConfigFirst());
+
         return remote;
     }
 }

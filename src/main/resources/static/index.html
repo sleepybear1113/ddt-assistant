@@ -49,19 +49,19 @@
             <h3>首页</h3>
             <hr>
             <div>
-                <span>版本号：</span><u>{{getVersion()}}</u><br/>
-                <span>作者：sleepybear</span><br/>
+                <span>版本号：</span><u>{{getVersion()}}</u>。<br/>
+                <span>作者：sleepybear。</span><br/>
                 <span>免费交流群：879596615</span>
-                <a href="https://jq.qq.com/?_wv=1027&k=G5Ju4kBf" target="_blank">点击唤起QQ打开群</a><br/>
-                <span>设置完毕之后，本页面可以关闭，但不要关闭后台程序</span><br/>
+                <a href="https://jq.qq.com/?_wv=1027&k=G5Ju4kBf" target="_blank">点击唤起QQ打开群</a>。<br/>
+                <span>设置完毕之后，本页面可以关闭，但不要关闭后台程序。</span><br/>
+                <span>本页面基于 Java 控制台，需要开启后台程序才能开启本页面。</span><br/>
                 <span>若页面显示和预期不一致，请使用 Ctrl + F5 强制刷新本页面。</span>
             </div>
             <hr>
             <div>
                 <h3>说明</h3>
-                <span>本程序现已有在线文档，里面有较为详细的使用说明</span><br/>
-                <span>地址为：</span><a target="_blank" href="https://gitee.com/sleepybear1113/ddt-assistant-manual">https://gitee.com/sleepybear1113/ddt-assistant-manual</a><br/>
-                <br/>
+                <span>本程序现已有在线文档，里面有较为详细的使用说明。</span><br/>
+                <span>地址为：</span><a target="_blank" href="https://gitee.com/sleepybear1113/ddt-assistant-manual">https://gitee.com/sleepybear1113/ddt-assistant-manual</a>。
             </div>
             <hr>
             <div>
@@ -719,12 +719,9 @@
         <div class="tab" id="setting">
             <h3>设置相关</h3>
             <hr>
-            <button v-on:click="update()">保存设置</button>
-            <hr>
-
             <span v-for="tab in tabs">
              <button v-on:click="changeTab(tab)">{{tab.name}}</button>
-        </span>
+            </span>
             <hr>
 
             <div v-show="selectedTab === '按键设置'">
@@ -740,6 +737,8 @@
                 <label for="keyPadPressWay-robot">| Java Robot</label>
                 <input id="keyPadPressWay-robot" type="radio" name="keyPadPressGroup" value="robot"
                        v-model="settingConfig.keyPadPressWay">
+                <hr>
+                <button v-on:click="update()">保存设置</button>
             </div>
 
             <div v-show="selectedTab === '邮箱设置'">
@@ -758,6 +757,28 @@
                 <label for="hostNameInput">主机名</label>
                 <input id="hostNameInput" v-model="settingConfig.email.hostName">
                 <hr>
+                <h5>高级设置</h5>
+                <span>本机设置：</span>
+                <br/>
+                <input type="checkbox" id="input-allowRemoteConnect" v-model="settingConfig.email.allowRemoteConnect">
+                <label for="input-allowRemoteConnect">是否允许远程方连接到本机</label>
+                <br/>
+                <span>远程设置：</span>
+                <br/>
+                <label for="input-remoteSenderAddr">链接到远程的主机ip/域名地址</label>
+                <input id="input-remoteSenderAddr" v-model="settingConfig.email.remoteSenderAddr">
+                <br/>
+                <input type="checkbox" id="input-enableRemoteSender" v-model="settingConfig.email.enableRemoteSender">
+                <label for="input-enableRemoteSender">启动远程发送功能</label>
+                <br/>
+                <input type="checkbox" id="input-useRemoteLocalConfigFirst" v-model="settingConfig.email.useRemoteLocalConfigFirst">
+                <label for="input-useRemoteLocalConfigFirst">优先使用远程发送方的邮箱配置发送邮件</label>
+                <br/>
+                <label>此项功能为，一台电脑不能/不想发送邮件，那么使用远程有启用本程序的电脑进行发送。</label>
+                <hr>
+                <button v-on:click="update()">保存设置</button>
+                <hr>
+
                 <span>保存相关内容后，测试邮箱功能是否可用</span><br/>
                 <button v-on:click="testEmailSend()">测试邮箱发送</button>
                 <hr>
@@ -774,6 +795,7 @@
                 <a href="https://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac21b8ba4d48ed49ebc"
                    target="_blank">点击此处查看网易邮箱如何获取授权码</a>
             </div>
+            <hr>
         </div>
 
 

@@ -48,15 +48,17 @@ public class EmailLogic {
         if (!email.valid()) {
             throw new FrontException("邮箱设置错误！");
         }
-        String subject = "测试邮件主题-" + RANDOM.nextInt(1000);
-        String body = "测试邮件内容-" + RANDOM.nextInt(1000) + "\n主机名：%s\n这个是由 ddt-assistant 发出的测试邮件。";
-        sendEmail(subject, body);
+        String subject = "这个是测试邮件的主题-" + RANDOM.nextInt(1000);
+        String body = "这里测试邮件内容，时间：" + Util.getTimeString(Util.TIME_ALL_FORMAT_EASY) + "\n主机名：%s\n这个是由 ddt-assistant 发出的测试邮件。";
+        sendEmail(subject, String.format(body, email.getHostName()));
         return true;
     }
 
     public Boolean sendEmailByRemote(EmailConfigDto emailConfigDto) {
+        log.info("接收到远程邮件发送请求...");
         EmailConfig emailConfig = settingConfig.getEmail();
         EmailConfigDto merge = EmailConfigDto.merge(emailConfigDto, emailConfig);
+        log.info("远程主机名：{}", emailConfigDto.getHostName());
 
         Integer times = EMAIL_RECEIVER_CACHER.get(merge.getId());
         if (times == null) {
@@ -95,10 +97,11 @@ public class EmailLogic {
     public static Boolean sendEmail(EmailConfig email, String title, String body, Long id) {
         valid(email);
         try {
-            if (!Boolean.TRUE.equals(email.getEnableRemoteSender())) {
-                MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), title, body);
-            } else {
+            if (Boolean.TRUE.equals(email.getEnableRemoteSender())) {
                 sendRemoteEmail(email, title, body, id);
+            } else {
+                log.info("发送邮件......");
+                MailUtil.sendMail(email.getEmailFrom(), email.getEmailPassword(), email.getEmailToList(), title, body);
             }
         } catch (MessagingException e) {
             log.warn("邮件发送失败：{}", e.getMessage());
@@ -113,29 +116,46 @@ public class EmailLogic {
 
     public static void sendRemoteEmail(EmailConfig email, String title, String body, Long id) {
         EmailConfigDto emailConfigDto = EmailConfigDto.toEmailConfigDto(email);
+        if (id == null) {
+            id = System.currentTimeMillis();
+        }
         emailConfigDto.setId(id);
         emailConfigDto.setTitle(title);
         emailConfigDto.setBody(body);
 
-        HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(email.getRemoteSenderAddr(), MethodEnum.METHOD_POST);
+        String remoteSenderAddr = email.getRemoteSenderAddr();
+        if (StringUtils.isBlank(remoteSenderAddr)) {
+            log.info("远程地址没有输入，发送邮件失败！");
+            return;
+        }
+        if (!remoteSenderAddr.startsWith("http")) {
+            remoteSenderAddr = "http://" + remoteSenderAddr;
+        }
+
+        String ss = "/email/sendEmailByRemote";
+        if (!remoteSenderAddr.endsWith(ss)) {
+            remoteSenderAddr = remoteSenderAddr + ss;
+        }
+
+        HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(remoteSenderAddr, MethodEnum.METHOD_POST);
         String jsonString = Util.parseObjectToJsonString(emailConfigDto);
         httpHelper.setPostBody(jsonString, ContentType.APPLICATION_JSON);
         HttpResponseHelper responseHelper = httpHelper.request();
         String responseBody = responseHelper.getResponseBody();
         if (StringUtils.isBlank(responseBody)) {
-            log.info("发送失败！远程机器没有响应");
+            log.info("远程邮件发送失败！远程机器没有响应");
             return;
         }
         ResultCode resultCode = Util.parseJsonToObject(responseBody, ResultCode.class);
-        if (resultCode == null||resultCode.getCode()==null) {
-            log.info("发送失败！远程机器没有响应");
+        if (resultCode == null || resultCode.getCode() == null) {
+            log.info("远程邮件发送失败！远程机器没有响应");
             return;
         }
         if (resultCode.getCode().equals(ResultCodeConstant.CodeEnum.SUCCESS.getCode())) {
-            log.info("发送成功！返回为：{}", resultCode.getResult());
+            log.info("远程邮件发送成功！返回为：{}", resultCode.getResult());
             return;
         }
-        log.info("发送成功！但结果出现问题，返回为：{}", resultCode.getMessage());
+        log.info("远程邮件发送成功！但结果出现问题，返回为：{}", resultCode.getMessage());
     }
 
     public static Boolean sendLowBalanceNotify(EmailConfig emailConfig, double balance) {

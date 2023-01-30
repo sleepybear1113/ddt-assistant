@@ -244,6 +244,10 @@ class Email {
         this.emailPassword = props.emailPassword;
         this.emailTo = props.emailTo;
         this.hostName = props.hostName;
+        this.allowRemoteConnect = props.allowRemoteConnect;
+        this.remoteSenderAddr = props.remoteSenderAddr;
+        this.enableRemoteSender = props.enableRemoteSender;
+        this.useRemoteLocalConfigFirst = props.useRemoteLocalConfigFirst;
     }
 }
 

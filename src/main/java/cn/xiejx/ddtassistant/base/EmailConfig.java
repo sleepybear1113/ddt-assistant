@@ -40,9 +40,9 @@ public class EmailConfig implements Serializable {
     private String hostName;
 
     /**
-     * 是否允许远程连接的发送方使用本机邮箱配置
+     * 是否允许远程方连接到本机
      */
-    private Boolean allowRemoteUseLocalConfig;
+    private Boolean allowRemoteConnect;
 
     /**
      * 使用的发送方的地址

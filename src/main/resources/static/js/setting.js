@@ -13,6 +13,10 @@ let settingApp = new Vue({
                 emailPassword: "",
                 emailTo: "",
                 hostName: "",
+                allowRemoteConnect: false,
+                remoteSenderAddr: "",
+                enableRemoteSender: false,
+                useRemoteLocalConfigFirst: false,
             }
         }
     },
