@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class AppProperties {
 
     private String appVersion;
-    private Integer appVersionNum;
+    private Integer version;
 
     public String getAppVersion() {
         return appVersion;
@@ -22,11 +22,11 @@ public class AppProperties {
     }
 
     @Value("${app.versionNum}")
-    public void setAppVersionNum(Integer appVersionNum) {
-        this.appVersionNum = appVersionNum;
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
-    public Integer getAppVersionNum() {
-        return appVersionNum;
+    public Integer getVersion() {
+        return version;
     }
 }

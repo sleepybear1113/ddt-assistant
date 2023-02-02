@@ -2,10 +2,7 @@ package cn.xiejx.ddtassistant.config;
 
 import cn.xiejx.ddtassistant.constant.Constants;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistration;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -13,7 +10,7 @@ import javax.annotation.Resource;
  * @author sleepybear
  */
 @Configuration
-public class MyConfig implements WebMvcConfigurer {
+public class MyWebMvcConfigurer implements WebMvcConfigurer {
     @Resource
     private UserLoginInterceptor userLoginInterceptor;
 
@@ -42,5 +39,16 @@ public class MyConfig implements WebMvcConfigurer {
                 "/**/*.js",
                 "/**/*.css"
         );
+    }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedMethods("*")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .allowCredentials(false)
+                .exposedHeaders("")
+                .maxAge(3600);
     }
 }

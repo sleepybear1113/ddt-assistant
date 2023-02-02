@@ -1,6 +1,5 @@
 package cn.xiejx.ddtassistant.base;
 
-import cn.xiejx.ddtassistant.config.PortAdd;
 import cn.xiejx.ddtassistant.dm.Dm;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -10,8 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author sleepybear
@@ -107,10 +104,6 @@ public class UserConfig extends BaseConfig implements Serializable {
     private String mouseMode;
     private String keyPadMode;
 
-    private String extPorts;
-
-    private Boolean showExtPorts;
-
     @Override
     @JsonIgnore
     public String getFileName() {
@@ -137,12 +130,7 @@ public class UserConfig extends BaseConfig implements Serializable {
         userConfig.setLogPrintInterval(30000L);
         userConfig.setMouseMode(Dm.DEFAULT_MOUSE_MODE);
         userConfig.setKeyPadMode(Dm.DEFAULT_KEY_PAD_MODE);
-        userConfig.setExtPorts(null);
         return userConfig;
-    }
-
-    public Boolean getShowExtPorts() {
-        return PortAdd.isSelf();
     }
 
     public void setUserConfig(UserConfig userConfig) {
@@ -254,42 +242,5 @@ public class UserConfig extends BaseConfig implements Serializable {
 
     public void setKeyPadMode(String keyPadMode) {
         this.keyPadMode = keyPadMode;
-    }
-
-    public String getExtPorts() {
-        return extPorts;
-    }
-
-    @JsonIgnore
-    public List<Integer> getPortArray() {
-        if (StringUtils.isBlank(this.extPorts)) {
-            return null;
-        }
-
-        List<Integer> res = new ArrayList<>();
-        String[] ps = extPorts.replace("，", ",").split(",");
-        for (String p : ps) {
-            if (StringUtils.isNumeric(p)) {
-                res.add(Integer.valueOf(p));
-            }
-        }
-
-        return res;
-    }
-
-    public void setExtPorts(String extPorts) {
-        if (StringUtils.isBlank(extPorts)) {
-            this.extPorts = null;
-            return;
-        }
-
-        StringBuilder s = new StringBuilder();
-        String[] ps = extPorts.replace("，", ",").split(",");
-        for (String p : ps) {
-            if (StringUtils.isNumeric(p)) {
-                s.append(p).append(",");
-            }
-        }
-        this.extPorts = s.toString();
     }
 }

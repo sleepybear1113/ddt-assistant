@@ -9,20 +9,21 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 
 import java.io.*;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -326,6 +327,35 @@ public class Util {
                 return false;
             }
         }
+    }
+
+    public static List<List<String>> getLocalIPList() {
+        List<List<String>> ipList = new ArrayList<>();
+        List<String> ipv4List = new ArrayList<>();
+        List<String> ipv6List = new ArrayList<>();
+        try {
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
+                Enumeration<InetAddress> inetAddresses = networkInterface.getInetAddresses();
+                while (inetAddresses.hasMoreElements()) {
+                    InetAddress inetAddress = inetAddresses.nextElement();
+                    String ip = inetAddress.getHostAddress();
+                    if (ip.contains("%")) {
+                        ip = ip.split("%")[0];
+                    }
+                    if (inetAddress instanceof Inet4Address) {
+                        ipv4List.add(ip);
+                    } else {
+                        ipv6List.add(ip);
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        ipList.add(ipv4List);
+        ipList.add(ipv6List);
+        return ipList;
     }
 
     public static void main(String[] args) {

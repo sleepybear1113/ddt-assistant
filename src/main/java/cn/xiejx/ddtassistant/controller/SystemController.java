@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * There is description
@@ -40,5 +41,10 @@ public class SystemController {
     @RequestMapping("/system/testAdmin")
     public Boolean testAdmin() {
         return Util.testAdmin();
+    }
+
+    @RequestMapping("/system/getAvailableIpAddr")
+    public List<List<String>> getAvailableIpAddr() {
+        return systemLogic.getAvailableIpAddr();
     }
 }

@@ -19,8 +19,6 @@ let captchaApp = new Vue({
             keyPressAfterPveFlopBonusDisappear: "",
             logPrintInterval: "",
             detectNewWindowInterval: "",
-            extPorts: "",
-            showExtPorts: false,
             defaultChoiceAnswer: "",
             lowBalanceRemind: "",
             lowBalanceNum: "",

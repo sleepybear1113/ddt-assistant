@@ -181,13 +181,15 @@ public class DmDdt extends Dm {
     }
 
     public boolean isWindowClassFlashPlayerActiveX() {
-        String windowClass = this.getWindowClass();
-        return DDT_FLASH_CLASS_NAME.equalsIgnoreCase(windowClass);
+        return this.isWindowClassFlashPlayerActiveX(this.hwnd);
     }
 
     public boolean isWindowClassFlashPlayerActiveX(Integer hwnd) {
         String windowClass = this.getWindowClass(hwnd);
-        return DDT_FLASH_CLASS_NAME.equalsIgnoreCase(windowClass);
+        if (StringUtils.isBlank(windowClass)) {
+            return false;
+        }
+        return windowClass.toLowerCase().contains(DDT_FLASH_CLASS_NAME.toLowerCase());
     }
 
     public List<Integer> enumDdtWindowHwnd() {

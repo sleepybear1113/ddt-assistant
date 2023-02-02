@@ -72,6 +72,20 @@
                 <span>或者可以查看“相关介绍”->“工程介绍”，更多内容可以查看在线文档。</span>
                 <br/>
             </div>
+
+            <hr>
+            <button v-on:click="showAvailableIpAddr = !showAvailableIpAddr">隐藏/展开可用ip地址</button>
+            <div v-show="showAvailableIpAddr">
+                <div v-for="(addrList, index) in ipList">
+                    <p>{{ipInfoList[index]}}</p>
+                    <span v-for="addr in addrList">{{addr}}<br/></span>
+                </div>
+                <hr>
+                <p>内网地址只能在同一个局域网下访问，比如同一台路由器下面（甚至只有本机）。</p>
+                <p>公网地址可以在任何有网络的地方访问，如在外使用移动数据。</p>
+                <p>上述内网/公网的获取、区分未必准确，仅供参考。</p>
+                <p>可以将上述地址中的某一个复制到浏览器中打开（不限手机/电脑），观察是否能够访问。</p>
+            </div>
         </div>
 
         <div class="tab" id="captcha">
@@ -198,12 +212,6 @@
                         <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
                         <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval" type="number"
                                class="ms-input">
-                    </li>
-                    <li v-show="userConfig.showExtPorts">
-                        <label for="input-extPorts"
-                               v-show="userConfig.showExtPorts">开启额外端口(逗号分割端口号，需要保存重启)</label>
-                        <input id="input-extPorts" v-model="userConfig.extPorts" class="string-input"
-                               placeholder="例：80,20400">
                     </li>
                 </ul>
 
@@ -568,6 +576,7 @@
             <br/>
             <span v-for="i in intervalList"><button v-on:click="changeInterval(i)">{{i}}</button></span>
             <button v-on:click="changeInterval(interval - 100)">-100</button>
+            <button v-on:click="changeInterval(interval + 50)">+50</button>
             <button v-on:click="changeInterval(interval + 100)">+100</button>
             <button v-on:click="clearIntervalFunc()">清空</button>
             <br/>
