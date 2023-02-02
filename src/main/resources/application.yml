@@ -3,3 +3,4 @@ server:
 
 app:
   version: @project.version@
+  versionNum: @versions@

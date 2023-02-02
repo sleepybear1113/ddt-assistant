@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>弹弹堂Java辅助-登录页</title>
+</head>
+<body>
+<form action="/login">
+    <label for="username">用户名</label><input id="username" name="username">
+    <br>
+    <label for="password">密　码</label><input type="password" id="password" name="password">
+    <br>
+    <button type="submit">登录</button>
+</form>
+<span id="login-fail" style="display: none; color: red">用户名或者密码错误！</span>
+<br>
+<span>要想删除登录验证，有 2 种方法：</span>
+<br>
+<span>1. 可以登录后至设置页-->设置-->登录设置 处，取消登录选项。</span>
+<br>
+<span>2. 打开 Java 程序的文件夹，打开“用户配置文件夹”，找到“设置信息.json”文件，右键该文件，点击“编辑”（或者使用记事本打开），删除【"enableLogin" : true,】的那一整行（千万不要多删！）并保存，然后重启。</span>
+
+<script>
+    let search = window.location.search;
+    if (search.indexOf("login-fail") >= 0) {
+        document.getElementById("login-fail").style.display = "block";
+        console.log(123);
+    }
+    console.log(search);
+</script>
+</body>
+</html>

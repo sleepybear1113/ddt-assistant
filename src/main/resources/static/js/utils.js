@@ -49,3 +49,10 @@ function showGameShot(hwnd, imgQuality) {
         showImg(res.data.result.string);
     });
 }
+
+function logout() {
+    let url = "logout";
+    axios.get(url).then((res) => {
+        window.location.reload();
+    });
+}

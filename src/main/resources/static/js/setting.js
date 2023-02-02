@@ -5,6 +5,7 @@ let settingApp = new Vue({
         tabs: [
             {name: "按键设置"},
             {name: "邮箱设置"},
+            {name: "登录设置"},
         ],
         settingConfig: {
             keyPadPressWay: "dm",
@@ -17,7 +18,8 @@ let settingApp = new Vue({
                 remoteSenderAddr: "",
                 enableRemoteSender: false,
                 useRemoteLocalConfigFirst: false,
-            }
+            },
+            loginConfig: new LoginConfig(),
         }
     },
     created() {

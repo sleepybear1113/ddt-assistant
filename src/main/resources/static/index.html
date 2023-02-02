@@ -27,6 +27,7 @@
     <div id="index">
         <div>
             <span>版本号：</span><u>{{appVersion}}</u>
+            <button id="logout" v-show="hasLoginCookie" onclick="logout()">退出登录</button>
         </div>
         <label for="textarea-info">信息：</label>
         <textarea id="textarea-info" style="width: 400px; height: 70px" readonly></textarea>
@@ -795,6 +796,31 @@
                 <a href="https://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac21b8ba4d48ed49ebc"
                    target="_blank">点击此处查看网易邮箱如何获取授权码</a>
             </div>
+
+            <div v-show="selectedTab === '登录设置'">
+                <h5>登录设置</h5>
+                <label>
+                    启用用户名密码登录
+                    <input type="checkbox" v-model="settingConfig.loginConfig.enableLogin">
+                </label>
+                <br/>
+                <label>
+                    用户名：
+                    <input v-model="settingConfig.loginConfig.username">
+                </label>
+                <br/>
+
+                <label>
+                    密　码：
+                    <input type="password" v-model="settingConfig.loginConfig.password">
+                </label>
+                <hr>
+                <button v-on:click="update()">保存设置</button>
+                <hr>
+                <span>此项功能最主要是为了部署在公网服务器运行的 Java 程序的安全性。</span>
+                <br/>
+                <span>通过公网服务器 ip:17171 即可访问到本设置页。当不设置权限访问时，若被其他人进入了，则可能篡改设置或者泄漏卡密等。</span>
+            </div>
             <hr>
         </div>
 
@@ -918,7 +944,7 @@
             </div>
 
             <div v-show="selectedTab === '工程介绍'">
-                <p>本项目后端使用 Spring Boot 2.7.2 基于 32 位 Java 8 开发。</p>
+                <p>本项目后端使用 Spring Boot 2.x 基于 32 位 Java 8 开发。</p>
                 <p>本项目前端使用非 node 非 cli 的纯 vue.js 文件开发，不使用前端其他复杂框架。</p>
                 <p>
                     本项目已开源（开放全部源代码），地址：

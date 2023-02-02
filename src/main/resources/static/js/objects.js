@@ -231,6 +231,7 @@ class SettingConfig {
 
         this.keyPadPressWay = props.keyPadPressWay;
         this.email = new Email(props.email);
+        this.loginConfig = new LoginConfig(props.loginConfig);
     }
 }
 
@@ -248,6 +249,18 @@ class Email {
         this.remoteSenderAddr = props.remoteSenderAddr;
         this.enableRemoteSender = props.enableRemoteSender;
         this.useRemoteLocalConfigFirst = props.useRemoteLocalConfigFirst;
+    }
+}
+
+class LoginConfig {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.enableLogin = props.enableLogin;
+        this.username = props.username;
+        this.password = props.password;
     }
 }
 

@@ -22,6 +22,12 @@ public class SettingConfig extends BaseConfig implements Serializable {
 
     private EmailConfig email;
 
+    private LoginConfig loginConfig;
+
+    public boolean enableLogin() {
+        return loginConfig != null && Boolean.TRUE.equals(loginConfig.getEnableLogin());
+    }
+
     @Override
     @JsonIgnore
     public String getFileName() {
