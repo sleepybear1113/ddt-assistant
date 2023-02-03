@@ -1,5 +1,6 @@
-package cn.xiejx.ddtassistant.update.domain;
+package cn.xiejx.ddtassistant.update.vo;
 
+import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,11 +9,11 @@ import java.io.Serializable;
  * There is description
  *
  * @author sleepybear
- * @date 2023/02/02 21:02
+ * @date 2023/02/03 10:26
  */
 @Data
-public class MainVersionInfo implements Serializable {
-    private static final long serialVersionUID = -7870026818406318355L;
+public class MainVersionInfoVo implements Serializable {
+    private static final long serialVersionUID = 2214785625403706020L;
 
     /**
      * 工程的版本号，如 2.3.3, 2.4.5-beta-1 等
@@ -30,6 +31,8 @@ public class MainVersionInfo implements Serializable {
      */
     private Integer version;
 
+    private String versionName;
+
     /**
      * 这个版本更新文件的链接路径
      */
@@ -39,4 +42,8 @@ public class MainVersionInfo implements Serializable {
      * 该版本的提示信息
      */
     private String info;
+
+    public void build() {
+        this.versionName = UpdateConstants.VersionTypeEnum.getVersionTypeEnumByVersion(this.version);
+    }
 }

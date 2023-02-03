@@ -1,6 +1,7 @@
-package cn.xiejx.ddtassistant.update.domain;
+package cn.xiejx.ddtassistant.update.vo;
 
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 
@@ -8,11 +9,11 @@ import java.io.Serializable;
  * There is description
  *
  * @author sleepybear
- * @date 2023/02/02 20:30
+ * @date 2023/02/03 16:16
  */
 @Data
-public class FileInfo implements Serializable {
-    private static final long serialVersionUID = 3883492306959472399L;
+public class FileInfoVo implements Serializable {
+    private static final long serialVersionUID = 3904341239457981111L;
 
     /**
      * 文件名
@@ -53,4 +54,20 @@ public class FileInfo implements Serializable {
      * 文件的备注信息
      */
     private String info;
+
+    public void build(String baseUrl) {
+        buildUrl(baseUrl);
+    }
+
+    public void buildUrl(String baseUrl) {
+        if (StringUtils.isBlank(this.url)) {
+            return;
+        }
+
+        if (this.url.startsWith("http")) {
+            return;
+        }
+
+        this.url = baseUrl + this.url;
+    }
 }

@@ -12,9 +12,11 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.springframework.beans.BeanUtils;
 
 import java.io.*;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -68,6 +70,35 @@ public class Util {
             return String.format("%02d_%02d_%02d", hour, minute, second);
         }
         return String.format("%d_%02d_%02d-%02d_%02d_%02d", year, month, day, hour, minute, second);
+    }
+
+    public static <T, V> T copyBean(V src, Class<T> clazz) {
+        if (src == null) {
+            return null;
+        }
+        try {
+            T t = clazz.getDeclaredConstructor().newInstance();
+            BeanUtils.copyProperties(src, t);
+            return t;
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                 NoSuchMethodException e) {
+            return null;
+        }
+    }
+
+    public static <T, V> List<T> copyBean(List<V> src, Class<T> clazz) {
+        if (src == null) {
+            return null;
+        }
+        if (src.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<T> list = new ArrayList<>();
+        for (V v : src) {
+            T t = copyBean(v, clazz);
+            list.add(t);
+        }
+        return list;
     }
 
     public static <T> T parseJsonToObject(String s, Class<T> clazz) {

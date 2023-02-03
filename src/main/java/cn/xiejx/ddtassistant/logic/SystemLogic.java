@@ -36,7 +36,6 @@ public class SystemLogic {
             return new MyString("");
         }
         String s = Util.readFile(hostFilename);
-//        updateHost(s);
         return new MyString(s);
     }
 

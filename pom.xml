@@ -15,7 +15,7 @@
     <description>ddt-assistant</description>
     <properties>
         <java.version>1.8</java.version>
-        <versions>10100</versions>
+        <versions>10102</versions>
     </properties>
     <dependencies>
         <dependency>

@@ -30,7 +30,7 @@ public class LoginController {
         LoginConfig loginConfig = settingConfig.getLoginConfig();
         if (!loginConfig.login(username, password)) {
             response.addCookie(LoginConfig.loginExpireCookie());
-            return "redirect:login.html?page=login-fail";
+            return "redirect:/login.html?page=login-fail";
         }
 
         response.addCookie(loginConfig.loginSuccessCookie());
