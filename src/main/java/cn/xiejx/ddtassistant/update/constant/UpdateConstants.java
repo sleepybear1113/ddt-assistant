@@ -48,4 +48,25 @@ public class UpdateConstants {
             return getVersionTypeEnum(version % 100 % 5);
         }
     }
+
+    public enum updateStrategyEnum {
+        /**
+         * 更新策略
+         */
+        UPDATE_ALL(0),
+        UPDATE_RECOMMEND(0),
+        DELETE(-1),
+        ;
+
+        private final Integer type;
+
+        updateStrategyEnum(Integer type) {
+            this.type = type;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+    }
+
 }

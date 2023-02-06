@@ -1,15 +1,15 @@
 package cn.xiejx.ddtassistant.utils;
 
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
-import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.springframework.beans.BeanUtils;
@@ -25,6 +25,7 @@ import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.MessageDigest;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -182,6 +183,26 @@ public class Util {
             bufferedWriter.write(s);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static String calcMd5(File file) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        try {
+            MessageDigest messageDigestMd5 = MessageDigest.getInstance("MD5");
+            FileInputStream fileInputStream = new FileInputStream(file);
+            byte[] buffer = new byte[8192];
+            int length;
+            while ((length = fileInputStream.read(buffer)) != -1) {
+                messageDigestMd5.update(buffer, 0, length);
+            }
+            fileInputStream.close();
+            return new String(Hex.encodeHex(messageDigestMd5.digest()));
+        } catch (Exception e) {
+            log.info(e.getMessage(), e);
+            return null;
         }
     }
 

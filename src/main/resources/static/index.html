@@ -798,12 +798,9 @@
                 <br/>
                 <span>各大邮箱为了安全，不把邮箱密码作为发件密码，只用授权码，这样子即使泄漏也不会危害到自身邮箱。</span>
                 <br/>
-                <a href="https://service.mail.qq.com/cgi-bin/help?subtype=1&id=28&no=1001256" target="_blank">点击此处查看
-                    QQ
-                    邮箱如何获取授权码</a>
-                <br/>
-                <a href="https://help.mail.163.com/faqDetail.do?code=d7a5dc8471cd0c0e8b4b8f4f8e49998b374173cfe9171305fa1ce630d7f67ac21b8ba4d48ed49ebc"
-                   target="_blank">点击此处查看网易邮箱如何获取授权码</a>
+                <a href="https://blog.csdn.net/qq_36670734/article/details/128895818" target="_blank">
+                    点击此处查看常见邮箱如何获取授权码
+                </a>
             </div>
 
             <div v-show="selectedTab === '登录设置'">
@@ -843,7 +840,7 @@
             <hr>
 
             <div v-show="selectedTab === '简介'">
-                <a class="red-font">本软件为免费软件！</a>
+                <a class="red-font">本软件当前版本为免费软件！</a>
                 <a>本软件是个人出于兴趣爱好，在业余时间随性而作，可能会存在不少 bug，敬请谅解。</a>
                 <br/>
                 <a>本软件暂未授权给任何人付费分发、倒卖。欢迎免费分享。</a>
@@ -854,96 +851,7 @@
                 <br/>
                 <strong>本软件相关使用问题，请加群进行咨询，并且群内不定期更新新版脚本，下载即用。</strong>
                 <hr>
-                <h5>程序目录介绍</h5>
-                <table>
-                    <thead>
-                    <tr>
-                        <th>文件夹/文件名</th>
-                        <th></th>
-                        <th>说明</th>
-                    </tr>
-                    </thead>
-
-                    <tr>
-                        <td>tessdata</td>
-                        <td></td>
-                        <td>OCR 的训练字库。</td>
-                    </tr>
-                    <tr>
-                        <td>大漠插件注册</td>
-                        <td></td>
-                        <td>如果大漠插件不起作用，那么进去双击注册到系统。</td>
-                    </tr>
-                    <tr>
-                        <td>临时文件</td>
-                        <td></td>
-                        <td>保存运行时的临时文件，如找图的图片等。</td>
-                    </tr>
-                    <tr>
-                        <td>图片</td>
-                        <td></td>
-                        <td>相关运行时产生的需要保存到本地的图片，如验证码截图、副本收益图等。</td>
-                    </tr>
-                    <tr>
-                        <td>日志文件</td>
-                        <td></td>
-                        <td>日志文件夹，每日形成一个 app.log 文件。</td>
-                    </tr>
-                    <tr>
-                        <td>用户配置文件</td>
-                        <td></td>
-                        <td>保存的是用户的各种配置信息，如账号密码、各种设置。</td>
-                    </tr>
-                    <tr>
-                        <td>资源图片</td>
-                        <td></td>
-                        <td>保存模板图片，用来匹配游戏画面；还有验证码测试图。</td>
-                    </tr>
-                    <tr>
-                        <td>资源文件</td>
-                        <td></td>
-                        <td>该文件夹暂无使用，先占位。</td>
-                    </tr>
-                    <tr>
-                        <td>ddt-assistant.jar</td>
-                        <td></td>
-                        <td>主 Java 文件。后缀为 .jar 是包含了所有功能的包。</td>
-                    </tr>
-                    <tr>
-                        <td>Java的运行版本.txt</td>
-                        <td></td>
-                        <td>指定当前需要运行的 ddt-assistant 的版本。如果当前目录有多个 jar
-                            包，那么第一行需要指定，否则不需要。
-                        </td>
-                    </tr>
-                </table>
-
-                <h5>软件更新相关</h5>
-                <ol>
-                    <li>
-                        <strong>小更新</strong>
-                        <br/>
-                        <a>方法一：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，删除旧版 jar 文件。</a>
-                        <br/>
-                        <a>方法二：下载群文件“jar”文件夹最新的“ddt-assistant-xxx.jar”文件，打开“Java的运行版本.txt”记事本文件，第一行改为最新版的文件名。</a>
-                    </li>
-                    <li>
-                        <a>中等更新：在“小更新”的替换 jar
-                            的基础上，可能会有一些资源文件的替换，比如在“资源图片”文件夹添加几个文件，从群文件下载复制进去即可。</a>
-                    </li>
-                    <li>
-                        <a>大更新：需要全量下载完整包，在整个项目存在实质性底层架构改变才会使用，一般不会涉及。</a>
-                    </li>
-                    <li>
-                        <a>无脑更新：直接下载全量包，使用即可。不用考虑资源文件的额外下载。由于个人配置文件在脚本文件夹，所以可以把上一个版本的“用户配置”文件夹复制过来，就能保持配置复用。</a>
-                    </li>
-                    <li>
-                        <a class="red-font">
-                            每次更新完成，第一次打开设置页面，切记，强制刷新浏览器，使用 Ctrl + F5 或者 Ctrl +
-                            点击刷新按钮，来避免旧版本页面的缓存。
-                        </a>
-                    </li>
-                </ol>
+                <span>本程序的使用说明，请移步在线文档地址：</span><a href="https://gitee.com/sleepybear1113/ddt-assistant-manual" target="_blank">https://gitee.com/sleepybear1113/ddt-assistant-manual</a>
             </div>
 
             <div v-show="selectedTab === '请我吃点东西'">

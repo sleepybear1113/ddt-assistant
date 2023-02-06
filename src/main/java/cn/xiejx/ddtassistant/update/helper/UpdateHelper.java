@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.update.helper;
 import cn.xiejx.ddtassistant.update.domain.MainVersion;
 import cn.xiejx.ddtassistant.update.domain.UpdateList;
 import cn.xiejx.ddtassistant.update.vo.UpdateInfoVo;
+import cn.xiejx.ddtassistant.update.vo.UpdateListVo;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
@@ -50,7 +51,9 @@ public class UpdateHelper {
     }
 
     public static void main(String[] args) {
-        System.out.println(getUpdateList("http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/versions/2.3.3/main.json"));
+        UpdateList updateList = getUpdateList("http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/versions/2.3.3/main.json");
+        UpdateListVo updateListVo = UpdateListVo.build(updateList);
+        System.out.println(updateListVo);
 
     }
 }

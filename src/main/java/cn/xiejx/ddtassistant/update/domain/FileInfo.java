@@ -40,11 +40,6 @@ public class FileInfo implements Serializable {
     private Long size;
 
     /**
-     * 文件类型
-     */
-    private Integer type;
-
-    /**
      * 文件更新的策略
      */
     private Integer updateStrategy;
