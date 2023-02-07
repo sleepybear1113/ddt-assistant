@@ -20,7 +20,7 @@ public class LoginController {
     @Resource
     private SettingConfig settingConfig;
 
-    @RequestMapping("/login")
+    @RequestMapping("login")
     public String login(String username, String password, HttpServletResponse response) {
         if (!settingConfig.enableLogin()) {
             response.addCookie(LoginConfig.loginExpireCookie());

@@ -39,6 +39,10 @@ div {
     width: 130px;
 }
 
+.string-input-large-xxx {
+    width: 600px;
+}
+
 #large-pic-div {
     position: absolute;
     top: 30%;

@@ -24,6 +24,8 @@ public class SettingConfig extends BaseConfig implements Serializable {
 
     private LoginConfig loginConfig;
 
+    private UpdateConfig updateConfig;
+
     public boolean enableLogin() {
         return loginConfig != null && Boolean.TRUE.equals(loginConfig.getEnableLogin());
     }
@@ -39,6 +41,8 @@ public class SettingConfig extends BaseConfig implements Serializable {
         SettingConfig settingConfig = new SettingConfig();
         settingConfig.setKeyPadPressWay("dm");
         settingConfig.setEmail(new EmailConfig());
+        settingConfig.setLoginConfig(new LoginConfig());
+        settingConfig.setUpdateConfig(UpdateConfig.defaultConfig());
         return settingConfig;
     }
 

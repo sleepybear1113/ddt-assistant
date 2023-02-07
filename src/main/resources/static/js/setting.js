@@ -6,6 +6,7 @@ let settingApp = new Vue({
             {name: "按键设置"},
             {name: "邮箱设置"},
             {name: "登录设置"},
+            {name: "更新设置"},
         ],
         settingConfig: {
             keyPadPressWay: "dm",
@@ -20,6 +21,7 @@ let settingApp = new Vue({
                 useRemoteLocalConfigFirst: false,
             },
             loginConfig: new LoginConfig(),
+            updateConfig: new UpdateConfig(),
         }
     },
     created() {
@@ -46,6 +48,12 @@ let settingApp = new Vue({
             let url = "setting/get";
             axios.get(url).then((res) => {
                 this.settingConfig = new SettingConfig(res.data.result);
+            });
+        },
+        getUpdateInfo: function () {
+            let url = "setting/getUpdateInfoVo";
+            axios.get(url).then((res) => {
+                console.log(res.data.result);
             });
         },
     }

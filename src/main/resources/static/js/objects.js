@@ -230,6 +230,7 @@ class SettingConfig {
         this.keyPadPressWay = props.keyPadPressWay;
         this.email = new Email(props.email);
         this.loginConfig = new LoginConfig(props.loginConfig);
+        this.updateConfig = new UpdateConfig(props.updateConfig);
     }
 }
 
@@ -302,5 +303,17 @@ class RecaptureDomain {
         if (this.url.startsWith("/")) {
             this.url = this.url.slice(1);
         }
+    }
+}
+
+class UpdateConfig {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.url = props.url;
+        this.enableAutoCheckUpdate = props.enableAutoCheckUpdate;
+        this.enableAutoUpdate = props.enableAutoUpdate;
     }
 }

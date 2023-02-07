@@ -39,7 +39,11 @@ public class Ioc {
 
     @Bean
     public SettingConfig initSettingConfig() {
-        return new SettingConfig().load();
+        SettingConfig settingConfig = new SettingConfig().load();
+        if (settingConfig.getUpdateConfig() == null) {
+            settingConfig.setUpdateConfig(UpdateConfig.defaultConfig());
+        }
+        return settingConfig;
     }
 
     @Bean

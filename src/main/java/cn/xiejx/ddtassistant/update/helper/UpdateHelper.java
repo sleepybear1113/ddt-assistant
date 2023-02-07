@@ -1,7 +1,9 @@
 package cn.xiejx.ddtassistant.update.helper;
 
+import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import cn.xiejx.ddtassistant.update.domain.MainVersion;
 import cn.xiejx.ddtassistant.update.domain.UpdateList;
+import cn.xiejx.ddtassistant.update.vo.FileInfoVo;
 import cn.xiejx.ddtassistant.update.vo.MainVersionInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateListVo;
@@ -11,6 +13,8 @@ import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -67,9 +71,21 @@ public class UpdateHelper {
         return Util.parseJsonToObject(responseBody, UpdateList.class);
     }
 
+    public static void calcAllMd5() {
+        String path = "D:\\XJXCode\\Raw\\ddt-assistant-static\\versions\\2.3.3\\files\\";
+        List<File> files = Util.listFiles(path);
+
+        List<FileInfoVo> list = new ArrayList<>();
+        for (File file : files) {
+            list.add(FileInfoVo.buildRemote(file, path));
+        }
+
+        System.out.println(Util.parseObjectToJsonString(list).replace("\\\\", "/"));
+    }
+
     public static void main(String[] args) {
-        UpdateList updateList = getUpdateList("http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/versions/2.3.3/main.json");
-        UpdateListVo updateListVo = UpdateListVo.build(updateList);
-        System.out.println(updateListVo);
+//        calcAllMd5();
+        UpdateInfoVo updateInfoVo = checkUpdate(1000, "http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/version.json");
+        System.out.println(updateInfoVo);
     }
 }

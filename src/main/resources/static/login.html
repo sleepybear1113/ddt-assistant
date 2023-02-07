@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>弹弹堂Java辅助-登录页</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
 </head>
 <body>
-<form action="/login">
+<form action="login">
     <label for="username">用户名</label><input id="username" name="username">
     <br>
     <label for="password">密　码</label><input type="password" id="password" name="password">
@@ -22,11 +23,10 @@
 
 <script>
     let search = window.location.search;
-    if (search.indexOf("login-fail") >= 0) {
-        document.getElementById("login-fail").style.display = "block";
-        console.log(123);
+    let loginFail = "login-fail";
+    if (search.indexOf(loginFail) >= 0) {
+        document.getElementById(loginFail).style.display = "block";
     }
-    console.log(search);
 </script>
 </body>
 </html>

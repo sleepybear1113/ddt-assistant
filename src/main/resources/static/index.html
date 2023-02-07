@@ -115,7 +115,7 @@
                 <div v-show="captchaWayTabIndex === 2">
                     <h3>平川服务器打码</h3>
                     <label for="input-pc-server-addr">服务器地址</label>
-                    <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr" style="width: 600px">
+                    <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr" class="string-input-large-xxx">
                     <br/>
                     <label for="input-pc-cami">卡密</label>
                     <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
@@ -826,6 +826,27 @@
                 <span>此项功能最主要是为了部署在公网服务器运行的 Java 程序的安全性。</span>
                 <br/>
                 <span>通过公网服务器 ip:17171 即可访问到本设置页。当不设置权限访问时，若被其他人进入了，则可能篡改设置或者泄漏卡密等。</span>
+            </div>
+
+            <div v-show="selectedTab === '更新设置'">
+                <label>
+                    更新地址：
+                    <input v-model="settingConfig.updateConfig.url" class="string-input-large-xxx">
+                </label>
+                <br/>
+
+                <label>
+                    <input type="checkbox" v-model="settingConfig.updateConfig.enableAutoCheckUpdate">
+                    开启自动检测更新
+                </label>
+                <br/>
+
+                <label>
+                    <input type="checkbox" v-model="settingConfig.updateConfig.enableAutoUpdate">
+                    开启自动更新
+                </label>
+                <hr>
+                <button v-on:click="getUpdateInfo()">获取更新</button>
             </div>
             <hr>
         </div>

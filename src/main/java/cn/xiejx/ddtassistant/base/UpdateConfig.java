@@ -12,9 +12,10 @@ import java.io.Serializable;
  * @date 2023/02/03 09:23
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class UpdateConfig  extends BaseConfig implements Serializable {
+public class UpdateConfig implements Serializable {
     private static final long serialVersionUID = 987539769954299743L;
+
+    private String url;
 
     /**
      * 开启自动检测更新
@@ -26,14 +27,9 @@ public class UpdateConfig  extends BaseConfig implements Serializable {
      */
     private Boolean enableAutoUpdate;
 
-    @Override
-    public String getFileName() {
-        return "更新设置";
-    }
-
-    @Override
-    public BaseConfig defaultConfig() {
+    public static UpdateConfig defaultConfig() {
         UpdateConfig updateConfig = new UpdateConfig();
+        updateConfig.setUrl("http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/version.json");
         updateConfig.setEnableAutoCheckUpdate(true);
         updateConfig.setEnableAutoUpdate(false);
         return updateConfig;

@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.update.vo;
 
+import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import cn.xiejx.ddtassistant.update.domain.FileInfo;
 import cn.xiejx.ddtassistant.utils.Util;
 import lombok.Data;
@@ -89,14 +90,25 @@ public class FileInfoVo implements Serializable {
     }
 
     public void buildUrl(String baseUrl) {
-        if (StringUtils.isBlank(this.url)) {
+        if (StringUtils.isNotBlank(this.url)) {
             return;
         }
 
-        if (this.url.startsWith("http")) {
-            return;
+        this.url = baseUrl + this.path + this.filename;
+    }
+
+    public static FileInfoVo buildRemote(File file, String path) {
+        if (file == null) {
+            return null;
         }
 
-        this.url = baseUrl + this.url;
+        FileInfoVo fileInfoVo = new FileInfoVo();
+        fileInfoVo.setFilename(file.getName());
+        fileInfoVo.setMd5(Util.calcMd5(file));
+        fileInfoVo.setSize(file.length());
+        fileInfoVo.setUpdateStrategy(UpdateConstants.updateStrategyEnum.UPDATE_RECOMMEND.getType());
+        String substring = file.getAbsolutePath().substring(path.length());
+        fileInfoVo.setPath(substring.substring(0, substring.length() - file.getName().length()));
+        return fileInfoVo;
     }
 }

@@ -4,12 +4,14 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.captcha.ChoiceEnum;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.springframework.beans.BeanUtils;
@@ -129,6 +131,7 @@ public class Util {
             return null;
         }
         ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         try {
             if (prettyPrinter) {
                 return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
@@ -304,6 +307,36 @@ public class Util {
 
         Util.delayDeleteFile(path, 3000L);
         return bytes;
+    }
+
+    public static List<File> listFiles(String path) {
+        List<File> list = new ArrayList<>();
+        if (StringUtils.isBlank(path)) {
+            return list;
+        }
+
+        listFiles(new File(path), list);
+        return list;
+    }
+
+    public static void listFiles(File file, List<File> list) {
+        if (list == null) {
+            return;
+        }
+        if (!file.exists()) {
+            return;
+        }
+        if (file.isFile()) {
+            list.add(file);
+            return;
+        }
+        File[] files = file.listFiles();
+        if (files == null) {
+            return;
+        }
+        for (File f : files) {
+            listFiles(f, list);
+        }
     }
 
     public static boolean isNumber(String s) {
