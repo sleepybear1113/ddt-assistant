@@ -43,6 +43,8 @@ public class MainVersionInfoVo implements Serializable {
      */
     private String info;
 
+    private UpdateListVo updateListVo;
+
     public void build() {
         this.versionName = UpdateConstants.VersionTypeEnum.getVersionTypeEnumByVersion(this.version);
     }

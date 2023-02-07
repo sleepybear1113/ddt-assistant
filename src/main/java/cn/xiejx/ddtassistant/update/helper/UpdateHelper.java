@@ -2,12 +2,16 @@ package cn.xiejx.ddtassistant.update.helper;
 
 import cn.xiejx.ddtassistant.update.domain.MainVersion;
 import cn.xiejx.ddtassistant.update.domain.UpdateList;
+import cn.xiejx.ddtassistant.update.vo.MainVersionInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateListVo;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpResponseHelper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * There is description
@@ -34,6 +38,19 @@ public class UpdateHelper {
     public static UpdateInfoVo checkUpdate(int currentVersion, String url) {
         MainVersion mainVersion = getMainVersion(url);
         UpdateInfoVo updateInfoVo = UpdateInfoVo.build(mainVersion, currentVersion);
+        List<MainVersionInfoVo> versionInfoList = updateInfoVo.getVersionInfoList();
+
+        if (CollectionUtils.isEmpty(versionInfoList)) {
+            return updateInfoVo;
+        }
+
+        for (MainVersionInfoVo mainVersionInfoVo : versionInfoList) {
+            String updateMainFilePath = mainVersionInfoVo.getUpdateMainFilePath();
+            UpdateList updateList = getUpdateList(updateMainFilePath);
+            UpdateListVo updateListVo = UpdateListVo.build(updateList);
+            mainVersionInfoVo.setUpdateListVo(updateListVo);
+        }
+
         return updateInfoVo;
     }
 
@@ -54,6 +71,5 @@ public class UpdateHelper {
         UpdateList updateList = getUpdateList("http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/versions/2.3.3/main.json");
         UpdateListVo updateListVo = UpdateListVo.build(updateList);
         System.out.println(updateListVo);
-
     }
 }
