@@ -29,13 +29,13 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        //注册TestInterceptor拦截器
         InterceptorRegistration registration = registry.addInterceptor(userLoginInterceptor);
         registration.addPathPatterns("/**");
         registration.excludePathPatterns(
                 "/login.html",
                 "/**/login.html",
                 "/**/login/**",
+                "/**/app/info",
                 "/**/*.js",
                 "/**/*.css"
         );
