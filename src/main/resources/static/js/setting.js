@@ -22,7 +22,8 @@ let settingApp = new Vue({
             },
             loginConfig: new LoginConfig(),
             updateConfig: new UpdateConfig(),
-        }
+        },
+        updateInfoVo: new UpdateInfoVo(),
     },
     created() {
         this.get();
@@ -52,9 +53,17 @@ let settingApp = new Vue({
         },
         getUpdateInfo: function () {
             let url = "setting/getUpdateInfoVo";
+            this.updateInfoVo = new UpdateInfoVo();
             axios.get(url).then((res) => {
-                console.log(res.data.result);
+                let result = res.data.result;
+                this.updateInfoVo = new UpdateInfoVo(result);
             });
+        },
+        getReadableFileSizeString(size) {
+            return getReadableFileSizeString(size);
+        },
+        updateFile(id, index) {
+            console.log(id, index);
         },
     }
 });

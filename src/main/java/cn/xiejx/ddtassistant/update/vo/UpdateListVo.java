@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.update.vo;
 
+import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import cn.xiejx.ddtassistant.update.domain.FileInfo;
 import cn.xiejx.ddtassistant.update.domain.UpdateList;
 import lombok.Data;
@@ -38,6 +39,11 @@ public class UpdateListVo implements Serializable {
             List<FileInfoVo> list = new ArrayList<>();
             for (FileInfo fileInfo : updateList.getStatics()) {
                 list.add(FileInfoVo.build(fileInfo, updateListVo.baseUrl));
+            }
+            list.removeIf(FileInfoVo::getSame);
+            list.removeIf(vo -> UpdateConstants.updateStrategyEnum.getUpdateStrategyEnumByType(vo.getUpdateStrategy()).equals(UpdateConstants.updateStrategyEnum.NO_ACTION));
+            for (int i = 0; i < list.size(); i++) {
+                list.get(i).setId(i + 1);
             }
             updateListVo.statics = list;
         }

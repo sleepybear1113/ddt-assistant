@@ -85,7 +85,7 @@ public class UpdateHelper {
 
     public static void main(String[] args) {
 //        calcAllMd5();
-        UpdateInfoVo updateInfoVo = checkUpdate(1000, "http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/version.json");
+        UpdateInfoVo updateInfoVo = checkUpdate(1000, "https://gitee.com/sleepybear1113/ddt-assistant-static/raw/test/version.json");
         System.out.println(updateInfoVo);
     }
 }

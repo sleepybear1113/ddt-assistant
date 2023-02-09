@@ -145,20 +145,8 @@ class AuctionData {
         if (props == null) {
             return;
         }
-        let items = props.auctionItemList;
-        let list = [];
-        if (items != null) {
-            for (let i = 0; i < items.length; i++) {
-                let item = items[i];
-                let auctionItem = new AuctionItem(item);
-                if (auctionItem == null) {
-                    continue
-                }
-                list.push(auctionItem);
-            }
-        }
 
-        this.auctionItemList = list;
+        this.auctionItemList = props.auctionItemList.map(e => new AuctionItem(e));
         this.autoAddUnknown = props.autoAddUnknown;
         this.confirm = props.confirm;
         this.sellType = props.sellType == null ? 1 : props.sellType;
@@ -180,44 +168,6 @@ class AuctionItem {
         this.minNum = props.minNum;
         this.auctionTime = props.auctionTime;
         this.drop = props.drop;
-    }
-}
-
-class MemoryUseList {
-    constructor(props) {
-        if (props == null) {
-            return;
-        }
-        this.memoryUserList = [];
-        this.currentMemoryUse = props[props.length - 1].memory;
-        this.maxMemoryUse = 0;
-        for (let i = 0; i < props.length; i++) {
-            let item = props[i];
-            let memoryUse = new MemoryUse(item);
-            this.memoryUserList.push(memoryUse);
-            this.maxMemoryUse = Math.max(this.maxMemoryUse, memoryUse.memory);
-        }
-    }
-
-    getData() {
-        let list = [];
-        for (let i = 0; i < this.memoryUserList.length; i++) {
-            let item = this.memoryUserList[i];
-            let memory = (item.memory / 1024 / 1024).toFixed(2);
-            list.push([item.time, memory]);
-        }
-        return list;
-    }
-}
-
-class MemoryUse {
-    constructor(props) {
-        if (props == null) {
-            return;
-        }
-
-        this.memory = props.memory;
-        this.time = props.time;
     }
 }
 
@@ -315,5 +265,65 @@ class UpdateConfig {
         this.url = props.url;
         this.enableAutoCheckUpdate = props.enableAutoCheckUpdate;
         this.enableAutoUpdate = props.enableAutoUpdate;
+    }
+}
+
+class UpdateInfoVo {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+        this.versionInfoList = props.versionInfoList.map(e => new MainVersionInfoVo(e));
+        this.message = props.message;
+        this.id = props.id;
+    }
+}
+
+class MainVersionInfoVo {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.id = props.id;
+        this.appVersion = props.appVersion;
+        this.version = props.version;
+        this.versionName = props.versionName;
+        this.updateMainFilePath = props.updateMainFilePath;
+        this.info = props.info;
+        this.updateListVo = new UpdateListVo(props.updateListVo);
+    }
+}
+
+class UpdateListVo {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.appVersion = props.appVersion;
+        this.version = props.version;
+        this.baseUrl = props.baseUrl;
+        this.statics = props.statics.map(e => new FileInfoVo(e));
+    }
+}
+
+class FileInfoVo {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.id = props.id;
+        this.filename = props.filename;
+        this.path = props.path;
+        this.url = props.url;
+        this.md5 = props.md5;
+        this.remoteMd5 = props.remoteMd5;
+        this.size = props.size;
+        this.remoteSize = props.remoteSize;
+        this.updateStrategy = props.updateStrategy;
+        this.info = props.info;
+        this.same = props.same;
     }
 }

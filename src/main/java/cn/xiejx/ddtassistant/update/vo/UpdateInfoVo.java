@@ -24,9 +24,15 @@ public class UpdateInfoVo implements Serializable {
     private List<MainVersionInfoVo> versionInfoList = new ArrayList<>();
 
     private String message;
+    private Long id;
+
+    public void generateId() {
+        this.id = System.currentTimeMillis();
+    }
 
     public static UpdateInfoVo build(MainVersion mainVersion, int currentVersion) {
         UpdateInfoVo updateInfoVo = new UpdateInfoVo();
+        updateInfoVo.generateId();
         if (mainVersion == null) {
             updateInfoVo.setMessage("更新信息获取失败！");
             return updateInfoVo;

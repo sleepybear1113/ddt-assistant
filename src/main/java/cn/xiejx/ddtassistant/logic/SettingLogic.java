@@ -22,6 +22,8 @@ public class SettingLogic {
     @Resource
     private AppProperties appProperties;
 
+    private UpdateInfoVo updateInfoVo;
+
     public boolean update(SettingConfig settingConfig) {
         if (settingConfig == null) {
             throw new FrontException("参数为空");
@@ -37,6 +39,19 @@ public class SettingLogic {
     }
 
     public UpdateInfoVo getUpdateInfoVo() {
-        return UpdateHelper.checkUpdate(appProperties.getVersion(), settingConfig.getUpdateConfig().getUrl());
+        UpdateInfoVo updateInfoVo = UpdateHelper.checkUpdate(appProperties.getVersion(), settingConfig.getUpdateConfig().getUrl());
+        this.updateInfoVo = updateInfoVo;
+        return updateInfoVo;
+    }
+
+    public Boolean updateFile(Long id, Integer versionId, Long index) {
+        if (this.updateInfoVo == null) {
+            throw new FrontException("请先获取更新！");
+        }
+        if (!this.updateInfoVo.getId().equals(id)) {
+            throw new FrontException("更新信息过时，请重新获取更新！");
+        }
+
+        return true;
     }
 }

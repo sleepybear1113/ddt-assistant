@@ -53,8 +53,9 @@ public class UpdateConstants {
         /**
          * 更新策略
          */
-        UPDATE_ALL(0),
-        UPDATE_RECOMMEND(0),
+        NO_ACTION(0),
+        UPDATE_ALL(1),
+        UPDATE_RECOMMEND(2),
         DELETE(-1),
         ;
 
@@ -66,6 +67,19 @@ public class UpdateConstants {
 
         public Integer getType() {
             return type;
+        }
+
+        public static updateStrategyEnum getUpdateStrategyEnumByType(Integer type) {
+            if (type == null) {
+                return NO_ACTION;
+            }
+
+            for (updateStrategyEnum updateStrategyEnum : values()) {
+                if (updateStrategyEnum.getType().equals(type)) {
+                    return updateStrategyEnum;
+                }
+            }
+            return NO_ACTION;
         }
     }
 

@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Random;
 
 /**
  * There is description
@@ -14,6 +15,10 @@ import java.io.Serializable;
 @Data
 public class MainVersionInfoVo implements Serializable {
     private static final long serialVersionUID = 2214785625403706020L;
+
+    public static final Random RANDOM = new Random();
+
+    private Integer id;
 
     /**
      * 工程的版本号，如 2.3.3, 2.4.5-beta-1 等
@@ -46,6 +51,7 @@ public class MainVersionInfoVo implements Serializable {
     private UpdateListVo updateListVo;
 
     public void build() {
+        this.id = RANDOM.nextInt(10000000);
         this.versionName = UpdateConstants.VersionTypeEnum.getVersionTypeEnumByVersion(this.version);
     }
 }

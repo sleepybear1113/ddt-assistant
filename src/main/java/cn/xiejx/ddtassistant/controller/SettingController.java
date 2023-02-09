@@ -37,4 +37,9 @@ public class SettingController {
     public UpdateInfoVo getUpdateInfoVo() {
         return settingLogic.getUpdateInfoVo();
     }
+
+    @RequestMapping("/setting/updateFile")
+    public Boolean updateFile(Long id, Integer versionId, Long index) {
+        return settingLogic.updateFile(id, versionId, index);
+    }
 }

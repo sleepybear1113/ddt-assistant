@@ -845,8 +845,60 @@
                     <input type="checkbox" v-model="settingConfig.updateConfig.enableAutoUpdate">
                     开启自动更新
                 </label>
+                <br/>
+                <button v-on:click="update()">保存设置</button>
                 <hr>
                 <button v-on:click="getUpdateInfo()">获取更新</button>
+                <hr>
+
+                <div v-show="updateInfoVo.versionInfoList != null && updateInfoVo.versionInfoList.length >= 0">
+                    <p>新版本信息</p>
+                    <p v-show="!updateInfoVo.message">{{updateInfoVo.message}}</p>
+
+                    <div v-for="versionInfo in updateInfoVo.versionInfoList">
+                        <span>{{versionInfo.appVersion}}({{versionInfo.versionName}})</span>
+                        <br/>
+                        <span>更新信息：</span>
+                        <br/>
+                        <span>{{versionInfo.info}}</span>
+                        <br/>
+                        <span>改动文件数量：{{versionInfo.updateListVo.statics.length}}</span>
+                        <br/>
+                        <br/>
+                        <div class="border-table">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <td>序号</td>
+                                    <td>文件名</td>
+                                    <td>本地大小</td>
+                                    <td>新文件大小</td>
+                                    <td>路径</td>
+                                    <td>状态</td>
+                                    <td>信息</td>
+                                    <td>操作</td>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <template v-for="fileInfo in versionInfo.updateListVo.statics">
+                                    <tr>
+                                        <td>{{fileInfo.id}}</td>
+                                        <td>{{fileInfo.filename}}</td>
+                                        <td>{{fileInfo.size || fileInfo.size === 0? "无": getReadableFileSizeString(fileInfo.size)}}</td>
+                                        <td>{{getReadableFileSizeString(fileInfo.remoteSize)}}</td>
+                                        <td>Java文件夹/{{fileInfo.path}} </td>
+                                        <td>{{fileInfo.updateStrategy}}</td>
+                                        <td>{{fileInfo.info}}</td>
+                                        <td><button v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">更新</button></td>
+                                    </tr>
+                                </template>
+                                </tbody>
+                            </table>
+                            <br/>
+                        </div>
+                    </div>
+                </div>
             </div>
             <hr>
         </div>

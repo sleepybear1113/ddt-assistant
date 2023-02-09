@@ -19,6 +19,8 @@ import java.io.Serializable;
 public class FileInfoVo implements Serializable {
     private static final long serialVersionUID = 3904341239457981111L;
 
+    private Integer id;
+
     /**
      * 文件名
      */

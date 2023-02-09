@@ -56,3 +56,17 @@ function logout() {
         window.location.reload();
     });
 }
+
+function getReadableFileSizeString(fileSizeInBytes) {
+    if (!fileSizeInBytes) {
+        fileSizeInBytes = 0;
+    }
+    let i = -1;
+    let byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
+    do {
+        fileSizeInBytes /= 1024;
+        i++;
+    } while (fileSizeInBytes > 1024);
+
+    return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
+}
