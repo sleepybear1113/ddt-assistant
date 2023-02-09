@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.springframework.beans.BeanUtils;
@@ -63,8 +62,9 @@ public class Util {
         int minute = instance.get(Calendar.MINUTE);
         int second = instance.get(Calendar.SECOND);
 
+        String allFormat = String.format("%d_%02d_%02d-%02d_%02d_%02d", year, month, day, hour, minute, second);
         if (type == TIME_ALL_FORMAT) {
-            return String.format("%d_%02d_%02d-%02d_%02d_%02d", year, month, day, hour, minute, second);
+            return allFormat;
         } else if (type == TIME_ALL_FORMAT_EASY) {
             return String.format("%d-%02d-%02d %02d:%02d:%02d", year, month, day, hour, minute, second);
         } else if (type == TIME_YMD_FORMAT) {
@@ -72,7 +72,7 @@ public class Util {
         } else if (type == TIME_HMS_FORMAT) {
             return String.format("%02d_%02d_%02d", hour, minute, second);
         }
-        return String.format("%d_%02d_%02d-%02d_%02d_%02d", year, month, day, hour, minute, second);
+        return allFormat;
     }
 
     public static <T, V> T copyBean(V src, Class<T> clazz) {

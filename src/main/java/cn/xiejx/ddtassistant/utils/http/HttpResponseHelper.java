@@ -11,7 +11,6 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**

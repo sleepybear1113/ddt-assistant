@@ -1,9 +1,7 @@
 package cn.xiejx.ddtassistant.controller;
 
 import cn.xiejx.ddtassistant.base.SettingConfig;
-import cn.xiejx.ddtassistant.config.AppProperties;
 import cn.xiejx.ddtassistant.logic.SettingLogic;
-import cn.xiejx.ddtassistant.update.helper.UpdateHelper;
 import cn.xiejx.ddtassistant.update.vo.DownloadFileInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateInfoVo;
 import org.springframework.web.bind.annotation.RequestBody;

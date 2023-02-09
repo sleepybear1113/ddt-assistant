@@ -1,8 +1,6 @@
 package cn.xiejx.ddtassistant.update.vo;
 
-import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import cn.xiejx.ddtassistant.update.domain.MainVersion;
-import cn.xiejx.ddtassistant.update.domain.MainVersionInfo;
 import cn.xiejx.ddtassistant.utils.Util;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
