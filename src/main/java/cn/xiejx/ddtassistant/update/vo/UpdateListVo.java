@@ -41,7 +41,7 @@ public class UpdateListVo implements Serializable {
                 list.add(FileInfoVo.build(fileInfo, updateListVo.baseUrl));
             }
             list.removeIf(FileInfoVo::getSame);
-            list.removeIf(vo -> UpdateConstants.updateStrategyEnum.getUpdateStrategyEnumByType(vo.getUpdateStrategy()).equals(UpdateConstants.updateStrategyEnum.NO_ACTION));
+            list.removeIf(vo -> UpdateConstants.UpdateStrategyEnum.getUpdateStrategyEnumByType(vo.getUpdateStrategy()).equals(UpdateConstants.UpdateStrategyEnum.NO_ACTION));
             for (int i = 0; i < list.size(); i++) {
                 list.get(i).setId(i + 1);
             }

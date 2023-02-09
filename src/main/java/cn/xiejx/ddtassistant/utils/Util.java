@@ -182,7 +182,6 @@ public class Util {
         }
         ensureParentDir(path);
         try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(Files.newOutputStream(Paths.get(path)), StandardCharsets.UTF_8))) {
-//            bufferedWriter.write(s.replace("\\n", ""));
             bufferedWriter.write(s);
         } catch (IOException e) {
             throw new RuntimeException(e);

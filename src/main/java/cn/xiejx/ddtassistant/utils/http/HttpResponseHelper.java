@@ -27,6 +27,7 @@ public class HttpResponseHelper {
     private Header[] headers;
     private StatusLine statusLine;
     private String responseBody;
+    private byte[] responseBodyBytes;
     private String exceptionMessage;
     private HttpClientContext context;
 
@@ -48,7 +49,8 @@ public class HttpResponseHelper {
             this.statusLine = closeableHttpResponse.getStatusLine();
             this.headers = closeableHttpResponse.getAllHeaders();
             try {
-                this.responseBody = EntityUtils.toString(closeableHttpResponse.getEntity(), StandardCharsets.UTF_8);
+                this.responseBodyBytes = EntityUtils.toByteArray(closeableHttpResponse.getEntity());
+                this.responseBody = new String(this.responseBodyBytes);
             } catch (IOException e) {
                 this.exceptionMessage = e.getMessage();
             }
@@ -85,6 +87,10 @@ public class HttpResponseHelper {
 
     public void setResponseBody(String responseBody) {
         this.responseBody = responseBody;
+    }
+
+    public byte[] getResponseBodyBytes() {
+        return responseBodyBytes;
     }
 
     public String getExceptionMessage() {

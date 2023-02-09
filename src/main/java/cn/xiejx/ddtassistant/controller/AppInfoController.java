@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant.controller;
 
 
+import cn.xiejx.ddtassistant.annotation.WithoutLogin;
 import cn.xiejx.ddtassistant.logic.AppInfoLogic;
 import cn.xiejx.ddtassistant.vo.AppInfoVo;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ public class AppInfoController {
     @Resource
     private AppInfoLogic appInfoLogic;
 
+    @WithoutLogin
     @RequestMapping("/app/info")
     public AppInfoVo getAppInfo() {
         return appInfoLogic.getAppInfo();

@@ -34,8 +34,6 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
         registration.excludePathPatterns(
                 "/login.html",
                 "/**/login.html",
-                "/**/login/**",
-                "/**/app/info",
                 "/**/*.js",
                 "/**/*.css"
         );

@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.base.SettingConfig;
 import cn.xiejx.ddtassistant.config.AppProperties;
 import cn.xiejx.ddtassistant.logic.SettingLogic;
 import cn.xiejx.ddtassistant.update.helper.UpdateHelper;
+import cn.xiejx.ddtassistant.update.vo.DownloadFileInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateInfoVo;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +40,7 @@ public class SettingController {
     }
 
     @RequestMapping("/setting/updateFile")
-    public Boolean updateFile(Long id, Integer versionId, Long index) {
+    public DownloadFileInfoVo updateFile(Long id, Integer versionId, Integer index) {
         return settingLogic.updateFile(id, versionId, index);
     }
 }

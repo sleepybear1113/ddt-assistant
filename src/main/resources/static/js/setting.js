@@ -24,6 +24,7 @@ let settingApp = new Vue({
             updateConfig: new UpdateConfig(),
         },
         updateInfoVo: new UpdateInfoVo(),
+        versionInfo: new MainVersionInfoVo(),
     },
     created() {
         this.get();
@@ -54,6 +55,7 @@ let settingApp = new Vue({
         getUpdateInfo: function () {
             let url = "setting/getUpdateInfoVo";
             this.updateInfoVo = new UpdateInfoVo();
+            this.versionInfo = new MainVersionInfoVo();
             axios.get(url).then((res) => {
                 let result = res.data.result;
                 this.updateInfoVo = new UpdateInfoVo(result);
@@ -62,8 +64,27 @@ let settingApp = new Vue({
         getReadableFileSizeString(size) {
             return getReadableFileSizeString(size);
         },
-        updateFile(id, index) {
-            console.log(id, index);
+        updateFile(id, versionId, index) {
+            let url = "setting/updateFile";
+            let params = {
+                "params": {
+                    id: id, versionId: versionId, index: index,
+                }
+            };
+
+            showInfo("开始下载，请稍后...");
+            axios.get(url, params).then((res) => {
+                let downloadFileInfoVo = new DownloadFileInfoVo(res.data.result);
+                showInfo(downloadFileInfoVo.info());
+            });
+        },
+        showUpdateFiles(id) {
+            this.versionInfo = new MainVersionInfoVo();
+            this.updateInfoVo.versionInfoList.forEach(v => {
+                if (v.id === id) {
+                    this.versionInfo = v;
+                }
+            });
         },
     }
 });

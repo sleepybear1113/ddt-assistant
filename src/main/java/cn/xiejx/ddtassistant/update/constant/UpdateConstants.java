@@ -1,5 +1,11 @@
 package cn.xiejx.ddtassistant.update.constant;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * There is description
  *
@@ -49,19 +55,19 @@ public class UpdateConstants {
         }
     }
 
-    public enum updateStrategyEnum {
+    public enum TypeEnum {
         /**
-         * 更新策略
+         * 类型
          */
-        NO_ACTION(0),
-        UPDATE_ALL(1),
-        UPDATE_RECOMMEND(2),
-        DELETE(-1),
+        TEXT(0),
+        BINARY(1),
         ;
+
+        static final Set<String> FILE_TYPE_SET = new HashSet<>(Arrays.asList(".bat", ".json", ".txt", ".xml", ".pom", ".java", ".yml"));
 
         private final Integer type;
 
-        updateStrategyEnum(Integer type) {
+        TypeEnum(Integer type) {
             this.type = type;
         }
 
@@ -69,12 +75,59 @@ public class UpdateConstants {
             return type;
         }
 
-        public static updateStrategyEnum getUpdateStrategyEnumByType(Integer type) {
+        public static TypeEnum getType(Integer type) {
+            for (TypeEnum typeEnum : values()) {
+                if (typeEnum.getType().equals(type)) {
+                    return typeEnum;
+                }
+            }
+            return BINARY;
+        }
+
+        public static TypeEnum getTypeByFilename(String filename) {
+            if (StringUtils.isBlank(filename)) {
+                return BINARY;
+            }
+
+            if (!filename.contains(".")) {
+                return TEXT;
+            }
+
+            String fileExtension = filename.substring(filename.lastIndexOf("."));
+            if (FILE_TYPE_SET.contains(fileExtension.toLowerCase())) {
+                return TEXT;
+            }
+            return BINARY;
+        }
+    }
+
+    public enum UpdateStrategyEnum {
+        /**
+         * 更新策略
+         */
+        NO_ACTION(0),
+        UPDATE_ALL(1),
+        UPDATE_RECOMMEND(2),
+        DOWNLOAD_ONLY_NOT_EXIST(3),
+        DELETE(-1),
+        ;
+
+        private final Integer type;
+
+        UpdateStrategyEnum(Integer type) {
+            this.type = type;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+
+        public static UpdateStrategyEnum getUpdateStrategyEnumByType(Integer type) {
             if (type == null) {
                 return NO_ACTION;
             }
 
-            for (updateStrategyEnum updateStrategyEnum : values()) {
+            for (UpdateStrategyEnum updateStrategyEnum : values()) {
                 if (updateStrategyEnum.getType().equals(type)) {
                     return updateStrategyEnum;
                 }

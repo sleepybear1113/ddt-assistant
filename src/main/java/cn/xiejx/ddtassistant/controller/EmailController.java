@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.controller;
 
+import cn.xiejx.ddtassistant.annotation.WithoutLogin;
 import cn.xiejx.ddtassistant.dto.EmailConfigDto;
 import cn.xiejx.ddtassistant.logic.EmailLogic;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +25,7 @@ public class EmailController {
         return emailLogic.sendTestEmail();
     }
 
+    @WithoutLogin
     @RequestMapping("/email/sendEmailByRemote")
     public Boolean sendEmailByRemote(@RequestBody EmailConfigDto emailConfigDto) {
         return emailLogic.sendEmailByRemote(emailConfigDto);

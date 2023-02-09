@@ -1,8 +1,10 @@
 package cn.xiejx.ddtassistant.config;
 
+import cn.xiejx.ddtassistant.annotation.WithoutLogin;
 import cn.xiejx.ddtassistant.base.LoginConfig;
 import cn.xiejx.ddtassistant.base.SettingConfig;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -25,9 +27,17 @@ public class UserLoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (handler instanceof HandlerMethod) {
+            WithoutLogin withoutLogin = ((HandlerMethod) handler).getMethod().getAnnotation(WithoutLogin.class);
+            if (withoutLogin != null) {
+                return true;
+            }
+        }
+
         if (!settingConfig.enableLogin()) {
             return true;
         }
+
         Cookie[] cookies = request.getCookies();
         if (cookies == null || cookies.length == 0) {
             response.sendRedirect("/login.html");

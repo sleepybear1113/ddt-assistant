@@ -857,6 +857,7 @@
 
                     <div v-for="versionInfo in updateInfoVo.versionInfoList">
                         <span>{{versionInfo.appVersion}}({{versionInfo.versionName}})</span>
+                        <button v-on:click="showUpdateFiles(versionInfo.id)">查看更新文件</button>
                         <br/>
                         <span>更新信息：</span>
                         <br/>
@@ -865,40 +866,43 @@
                         <span>改动文件数量：{{versionInfo.updateListVo.statics.length}}</span>
                         <br/>
                         <br/>
-                        <div class="border-table">
-                            <table>
-                                <thead>
-                                <tr>
-                                    <td>序号</td>
-                                    <td>文件名</td>
-                                    <td>本地大小</td>
-                                    <td>新文件大小</td>
-                                    <td>路径</td>
-                                    <td>状态</td>
-                                    <td>信息</td>
-                                    <td>操作</td>
-                                </tr>
-                                </thead>
-
-                                <tbody>
-                                <template v-for="fileInfo in versionInfo.updateListVo.statics">
-                                    <tr>
-                                        <td>{{fileInfo.id}}</td>
-                                        <td>{{fileInfo.filename}}</td>
-                                        <td>{{fileInfo.size || fileInfo.size === 0? "无": getReadableFileSizeString(fileInfo.size)}}</td>
-                                        <td>{{getReadableFileSizeString(fileInfo.remoteSize)}}</td>
-                                        <td>Java文件夹/{{fileInfo.path}} </td>
-                                        <td>{{fileInfo.updateStrategy}}</td>
-                                        <td>{{fileInfo.info}}</td>
-                                        <td><button v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">更新</button></td>
-                                    </tr>
-                                </template>
-                                </tbody>
-                            </table>
-                            <br/>
-                        </div>
                     </div>
                 </div>
+
+                <hr>
+                <div class="border-table" v-if="versionInfo.updateListVo">
+                    <table>
+                        <thead>
+                        <tr>
+                            <td>序号</td>
+                            <td>文件名</td>
+                            <td>本地大小</td>
+                            <td>新文件大小</td>
+                            <td>路径</td>
+                            <td>状态</td>
+                            <td>信息</td>
+                            <td>操作</td>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <template v-for="fileInfo in versionInfo.updateListVo.statics">
+                            <tr>
+                                <td>{{fileInfo.id}}</td>
+                                <td>{{fileInfo.filename}}</td>
+                                <td>{{fileInfo.size || fileInfo.size === 0? "无": getReadableFileSizeString(fileInfo.size)}}</td>
+                                <td>{{getReadableFileSizeString(fileInfo.remoteSize)}}</td>
+                                <td>Java文件夹/{{fileInfo.path}} </td>
+                                <td>{{fileInfo.updateStrategy}}</td>
+                                <td>{{fileInfo.info}}</td>
+                                <td><button v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">更新</button></td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                    <br/>
+                </div>
+
             </div>
             <hr>
         </div>

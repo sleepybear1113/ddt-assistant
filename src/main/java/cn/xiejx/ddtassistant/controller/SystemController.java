@@ -28,8 +28,6 @@ public class SystemController {
 
     @RequestMapping("/system/getHost")
     public MyString getHost() {
-        String s = "sss\n555";
-//        return new MyString(s);
         return systemLogic.getHost();
     }
 

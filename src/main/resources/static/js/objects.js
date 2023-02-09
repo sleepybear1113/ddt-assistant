@@ -327,3 +327,18 @@ class FileInfoVo {
         this.same = props.same;
     }
 }
+
+class DownloadFileInfoVo {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.successCount = props.successCount;
+        this.failCount = props.failCount;
+    }
+
+    info() {
+        return `更新成功:${this.successCount}, 更新失败:${this.failCount}`;
+    }
+}

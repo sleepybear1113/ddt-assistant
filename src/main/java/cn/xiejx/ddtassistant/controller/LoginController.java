@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.controller;
 
+import cn.xiejx.ddtassistant.annotation.WithoutLogin;
 import cn.xiejx.ddtassistant.base.LoginConfig;
 import cn.xiejx.ddtassistant.base.SettingConfig;
 import org.springframework.stereotype.Controller;
@@ -20,7 +21,8 @@ public class LoginController {
     @Resource
     private SettingConfig settingConfig;
 
-    @RequestMapping("login")
+    @WithoutLogin
+    @RequestMapping("/login")
     public String login(String username, String password, HttpServletResponse response) {
         if (!settingConfig.enableLogin()) {
             response.addCookie(LoginConfig.loginExpireCookie());
@@ -37,6 +39,7 @@ public class LoginController {
         return "redirect:/";
     }
 
+    @WithoutLogin
     @RequestMapping("/logout")
     @ResponseBody
     public Boolean logout(HttpServletResponse response) {

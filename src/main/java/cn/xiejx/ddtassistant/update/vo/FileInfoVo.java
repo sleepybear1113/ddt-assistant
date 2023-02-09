@@ -48,6 +48,8 @@ public class FileInfoVo implements Serializable {
     private Long size;
     private Long remoteSize;
 
+    private Integer type;
+
     /**
      * 文件更新的策略
      */
@@ -108,7 +110,8 @@ public class FileInfoVo implements Serializable {
         fileInfoVo.setFilename(file.getName());
         fileInfoVo.setMd5(Util.calcMd5(file));
         fileInfoVo.setSize(file.length());
-        fileInfoVo.setUpdateStrategy(UpdateConstants.updateStrategyEnum.UPDATE_RECOMMEND.getType());
+        fileInfoVo.setType(UpdateConstants.TypeEnum.getTypeByFilename(file.getName()).getType());
+        fileInfoVo.setUpdateStrategy(UpdateConstants.UpdateStrategyEnum.UPDATE_RECOMMEND.getType());
         String substring = file.getAbsolutePath().substring(path.length());
         fileInfoVo.setPath(substring.substring(0, substring.length() - file.getName().length()));
         return fileInfoVo;
