@@ -5,6 +5,7 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
+import cn.xiejx.ddtassistant.vo.FileInfoVo;
 import cn.xiejx.ddtassistant.vo.MyString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -132,4 +133,36 @@ public class SystemLogic {
         return res;
     }
 
+    public String getLastSomeRows(String filename, Integer n) {
+        if (n == null || n <= 0) {
+            n = 100;
+        }
+        return Util.readLastSomeRows(new File(filename), n);
+    }
+
+    public List<String> getLocalAllFiles(String path, Boolean excludePath) {
+        List<File> fileList = Util.listFiles(path);
+        List<String> filePath = new ArrayList<>();
+
+        for (File file : fileList) {
+            String absolutePath = file.getAbsolutePath().replace("\\", "/");
+            if (absolutePath.startsWith(GlobalVariable.ROOT_PATH)) {
+                absolutePath = absolutePath.replace(GlobalVariable.ROOT_PATH, "");
+            }
+            if (Boolean.TRUE.equals(excludePath)) {
+                if (absolutePath.startsWith(path)) {
+                    absolutePath = absolutePath.replace(path, "");
+                }
+            }
+            filePath.add(absolutePath);
+        }
+        return filePath;
+    }
+
+    public List<String> getLocalFileWithDir(String path, Boolean excludePath) {
+        List<File> fileList = Util.listFiles(path, true);
+
+        List<FileInfoVo> list = new ArrayList<>();
+        return null;
+    }
 }

@@ -24,13 +24,13 @@ public class UpdateConfig implements Serializable {
     /**
      * 开启自动更新文件
      */
-    private Boolean enableAutoUpdate;
+    private Integer updateVersionType;
 
     public static UpdateConfig defaultConfig() {
         UpdateConfig updateConfig = new UpdateConfig();
         updateConfig.setUrl("http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/version.json");
         updateConfig.setEnableAutoCheckUpdate(true);
-        updateConfig.setEnableAutoUpdate(false);
+        updateConfig.setUpdateVersionType(16);
         return updateConfig;
     }
 }

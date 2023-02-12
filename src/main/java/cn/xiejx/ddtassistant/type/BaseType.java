@@ -127,6 +127,7 @@ public class BaseType implements Serializable {
             }
             if (Objects.equals(baseType.getDm().getHwnd(), hwnd)) {
                 baseType.remove();
+                break;
             }
         }
     }

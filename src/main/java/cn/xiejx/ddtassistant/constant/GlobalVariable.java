@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.SynchronousQueue;
@@ -20,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 public class GlobalVariable {
 
     public static boolean isAdmin = false;
+
+    public static final String ROOT_PATH = new File("").getAbsolutePath().replace("\\", "/") + "/";
 
     public static Map<String, List<String>> templateImgMap = new HashMap<>();
     public static final Map<String, String> GLOBAL_MAP = new ConcurrentHashMap<>();

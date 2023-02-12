@@ -37,4 +37,11 @@ public class ResultCode implements Serializable {
         this.message = message;
         this.result = null;
     }
+
+    public static ResultCode buildString(String s) {
+        ResultCode resultCode = new ResultCode();
+        resultCode.code = ResultCodeConstant.CodeEnum.SUCCESS.getCode();
+        resultCode.setResult(s);
+        return resultCode;
+    }
 }

@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        whiteTest();
+        ocrWind();
     }
 
     public static void whiteTest() throws IOException {
@@ -99,7 +99,7 @@ public class Test {
                 {blue, ImgUtil.WHITE, blue},
 //                {ImgUtil.WHITE, ImgUtil.BLACK, ImgUtil.COLOR_40},
         };
-        BufferedImage bufferedImage = ImgUtil.changeImgColor(Constants.TEMP_DIR + "wind/1658028220368.png", colors, ImgUtil.DeltaInOut.DELTA_IN);
+        BufferedImage bufferedImage = ImgUtil.changeImgColor("tmp/113.png", colors, ImgUtil.DeltaInOut.DELTA_IN);
 
         String ocr = OcrUtil.ocr(bufferedImage);
         System.out.println(ocr);
@@ -210,7 +210,7 @@ public class Test {
         DmDdt dm = DmDdt.createInstance(hwnd);
         dm.bind();
         System.out.println(Arrays.toString(dm.getWindowRect(hwnd)));
-        dm.leftClick(1000,600);
+        dm.leftClick(1000, 600);
         Util.sleep(100L);
         dm.capturePicByRegion("test/white-225.png", DmDdt.GAME_FULL_REACT);
 

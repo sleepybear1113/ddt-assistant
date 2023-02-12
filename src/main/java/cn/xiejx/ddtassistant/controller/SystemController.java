@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.controller;
 import cn.xiejx.ddtassistant.logic.SystemLogic;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.vo.MyString;
+import cn.xiejx.ddtassistant.vo.ResultCode;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +45,20 @@ public class SystemController {
     @RequestMapping("/system/getAvailableIpAddr")
     public List<List<String>> getAvailableIpAddr() {
         return systemLogic.getAvailableIpAddr();
+    }
+
+    @RequestMapping("/system/getLocalAllFiles")
+    public List<String> getLocalAllFiles(String path, Boolean excludePath) {
+        return systemLogic.getLocalAllFiles(path, excludePath);
+    }
+
+    @RequestMapping("/system/getLocalFileWithDir")
+    public List<String> getLocalFileWithDir(String path, Boolean excludePath) {
+        return systemLogic.getLocalFileWithDir(path, excludePath);
+    }
+
+    @RequestMapping("/system/getLastSomeRows")
+    public ResultCode getLastSomeRows(String filename, Integer n) {
+        return ResultCode.buildString(systemLogic.getLastSomeRows(filename, n));
     }
 }

@@ -66,7 +66,7 @@ public class OfflineDetectionLogic {
             }
         }
 
-        if (Boolean.TRUE.equals(offlineDetectionConfig.getDisconnect())) {
+        if (Boolean.TRUE.equals(offlineDetectionConfig.getOffsite())) {
             int[] hwnds = defaultDm.enumWindow(0, OFFSITE_LOGIN_MSG, "", DmConstants.EnumWindowFilter.TITLE);
             if (hwnds != null) {
                 for (int hwnd : hwnds) {
@@ -77,7 +77,7 @@ public class OfflineDetectionLogic {
             }
         }
 
-        if (Boolean.TRUE.equals(offlineDetectionConfig.getDisconnect())) {
+        if (Boolean.TRUE.equals(offlineDetectionConfig.getTokenExpired())) {
             int[] hwnds = defaultDm.enumWindow(0, OFFSITE_LOGOUT_MSG, "", DmConstants.EnumWindowFilter.TITLE);
             if (hwnds != null) {
                 for (int hwnd : hwnds) {
@@ -88,7 +88,7 @@ public class OfflineDetectionLogic {
             }
         }
 
-        if (Boolean.TRUE.equals(offlineDetectionConfig.getDisconnect())) {
+        if (Boolean.TRUE.equals(offlineDetectionConfig.getLeaveGame())) {
             int[] hwnds = defaultDm.enumWindow(0, LEAVE_GAME_TITLE, "", DmConstants.EnumWindowFilter.TITLE);
             if (hwnds != null) {
                 for (int hwnd : hwnds) {

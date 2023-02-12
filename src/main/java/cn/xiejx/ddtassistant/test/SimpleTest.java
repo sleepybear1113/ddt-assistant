@@ -7,6 +7,7 @@ import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.type.captcha.LastCaptchaImg;
 import cn.xiejx.ddtassistant.utils.ImageClean;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
+import cn.xiejx.ddtassistant.utils.Util;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -29,7 +30,12 @@ public class SimpleTest {
     private static final Logger log = LoggerFactory.getLogger(SimpleTest.class);
 
     public static void main(String[] args) throws Exception {
-        sendEmail();
+        testFile();
+    }
+
+    public static void testFile() {
+        File file = new File("");
+        System.out.println(file.getAbsoluteFile());
     }
 
     public static void sendEmail() {

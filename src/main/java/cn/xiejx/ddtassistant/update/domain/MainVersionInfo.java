@@ -29,6 +29,7 @@ public class MainVersionInfo implements Serializable {
      * 4 - 正式版本
      */
     private Integer version;
+    private Integer versionType;
 
     /**
      * 这个版本更新文件的链接路径

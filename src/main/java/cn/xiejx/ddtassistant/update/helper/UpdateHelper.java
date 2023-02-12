@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.update.helper;
 
+import cn.xiejx.ddtassistant.base.UpdateConfig;
 import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import cn.xiejx.ddtassistant.update.domain.MainVersion;
 import cn.xiejx.ddtassistant.update.domain.UpdateList;
@@ -38,6 +39,7 @@ public class UpdateHelper {
 
         String url = fileInfoVo.getUrl();
         if (StringUtils.isBlank(url)) {
+            log.info("远程文件[{}]没有提供下载链接", fileInfoVo.getFilename());
             return false;
         }
 
@@ -119,7 +121,8 @@ public class UpdateHelper {
                 return true;
             }
         } else {
-            log.warn("文件[{}]校验失败", fileInfoVo.getFilename());
+            log.warn("文件[{}]校验失败，删除已下载的文件", fileInfoVo.getFilename());
+            Util.delayDeleteFile(file, 0L);
             return false;
         }
     }
@@ -144,12 +147,13 @@ public class UpdateHelper {
     /**
      * 获取更新的主方法
      *
-     * @param currentVersion 当前版本
-     * @param url            更新链接
+     * @param currentVersion    当前版本
+     * @param url               更新链接
+     * @param updateVersionType
      * @return 更新 vo
      */
-    public static UpdateInfoVo checkUpdate(int currentVersion, String url) {
-        MainVersion mainVersion = getMainVersion(url);
+    public static UpdateInfoVo checkUpdate(int currentVersion, UpdateConfig updateConfig) {
+        MainVersion mainVersion = getMainVersion(updateConfig.getUrl());
         UpdateInfoVo updateInfoVo = UpdateInfoVo.build(mainVersion, currentVersion);
         List<MainVersionInfoVo> versionInfoList = updateInfoVo.getVersionInfoList();
 
@@ -157,11 +161,19 @@ public class UpdateHelper {
             return updateInfoVo;
         }
 
+        versionInfoList.removeIf(v -> (v.getVersionType() & updateConfig.getUpdateVersionType()) <= 0);
+
+        StringBuilder sb = new StringBuilder();
         for (MainVersionInfoVo mainVersionInfoVo : versionInfoList) {
             String updateMainFilePath = mainVersionInfoVo.getUpdateMainFilePath();
             UpdateList updateList = getUpdateList(updateMainFilePath);
             UpdateListVo updateListVo = UpdateListVo.build(updateList);
             mainVersionInfoVo.setUpdateListVo(updateListVo);
+            sb.append(mainVersionInfoVo.updateInfo());
+        }
+        String info = sb.toString();
+        if (StringUtils.isNotBlank(info)) {
+            log.info(info);
         }
 
         return updateInfoVo;

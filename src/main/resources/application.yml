@@ -1,5 +1,7 @@
 server:
   port: 17171
+  compression:
+    enabled: true
 
 app:
   version: @project.version@

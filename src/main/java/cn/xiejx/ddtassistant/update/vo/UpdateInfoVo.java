@@ -23,6 +23,7 @@ public class UpdateInfoVo implements Serializable {
 
     private String message;
     private Long id;
+    private Integer currentVersion;
 
     public void generateId() {
         this.id = System.currentTimeMillis();

@@ -35,7 +35,7 @@ public class MainVersionInfoVo implements Serializable {
      * 4 - 正式版本
      */
     private Integer version;
-
+    private Integer versionType;
     private String versionName;
 
     /**
@@ -52,6 +52,13 @@ public class MainVersionInfoVo implements Serializable {
 
     public void build() {
         this.id = RANDOM.nextInt(10000000);
-        this.versionName = UpdateConstants.VersionTypeEnum.getVersionTypeEnumByVersion(this.version);
+        this.versionName = UpdateConstants.VersionTypeEnum.getVersionTypeEnumByVersion(this.versionType);
+    }
+
+    public String updateInfo() {
+        return "\n======================\n" +
+                String.format("版本号：%s(%s)", this.getAppVersion(), this.getVersionName()) +
+                "\n更新信息：" +
+                this.info;
     }
 }

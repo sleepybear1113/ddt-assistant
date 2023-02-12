@@ -264,7 +264,7 @@ class UpdateConfig {
 
         this.url = props.url;
         this.enableAutoCheckUpdate = props.enableAutoCheckUpdate;
-        this.enableAutoUpdate = props.enableAutoUpdate;
+        this.updateVersionType = props.updateVersionType;
     }
 }
 
@@ -276,6 +276,7 @@ class UpdateInfoVo {
         this.versionInfoList = props.versionInfoList.map(e => new MainVersionInfoVo(e));
         this.message = props.message;
         this.id = props.id;
+        this.currentVersion = props.currentVersion;
     }
 }
 

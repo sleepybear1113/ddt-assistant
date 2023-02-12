@@ -8,8 +8,9 @@
 </head>
 <script src="lib/js/vue.js"></script>
 <script src="lib/js/axios.min.js"></script>
-<script src="lib/js/echarts.min.js"></script>
 <script src="js/config/axios-config.js"></script>
+<script src="lib/js/draggabilly.pkgd.min.js"></script>
+
 <body>
 <script>
     setTimeout(function () {
@@ -88,6 +89,39 @@
             </div>
         </div>
 
+        <div class="tab" id="server-log-tab">
+            <h3>日志</h3>
+            <hr>
+            <button v-on:click="listServerLogs()">刷新日志列表</button>
+            <label>
+                最后
+                <input type="number" v-model="n" class="ms-input">
+                行
+            </label>
+            <br/>
+            <button v-for="file in logFiles" v-on:click="fetchLog(file)">{{file}}</button>
+            <br/>
+            <label for="server-log-textarea">日志信息：</label>
+            <br/>
+            <textarea id="server-log-textarea" v-model="serverLogAll" readonly="readonly"></textarea>
+
+            <div id="log-div">
+                <div id="log-control">
+                    <button onclick="changeMode()">切换模式</button>
+                    <button v-on:click="shown = !shown">隐藏显示控制台</button>
+                </div>
+                <div v-show="shown" class="move-handle">
+                    <span>日志控制台 模式：</span>
+                    <span v-if="mode">可拖动不可复制</span>
+                    <span v-if="!mode">不可拖动可复制</span>
+                    <hr/>
+                </div>
+                <div v-show="shown" class="move-handle" id="server-log">
+                    {{serverLog}}
+                </div>
+            </div>
+        </div>
+
         <div class="tab" id="captcha">
             <h3>副本验证码功能</h3>
             <hr>
@@ -99,7 +133,8 @@
 
                 <div v-show="captchaWayTabIndex === 1">
                     <h3>图鉴打码</h3>
-                    <label>打码平台：</label><a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
+                    <label>打码平台：</label><a href="http://www.ttshitu.com"
+                                               target="_blank">http://www.ttshitu.com</a><br/>
                     <label for="input-username">用户名</label>
                     <input id="input-username" v-model="captchaConfig.tj.username"><br/>
                     <label for="input-password">密码　</label>
@@ -115,7 +150,8 @@
                 <div v-show="captchaWayTabIndex === 2">
                     <h3>平川服务器打码</h3>
                     <label for="input-pc-server-addr">服务器地址</label>
-                    <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr" class="string-input-large-xxx">
+                    <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr"
+                           class="string-input-large-xxx">
                     <br/>
                     <label for="input-pc-cami">卡密</label>
                     <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
@@ -181,18 +217,21 @@
                                v-model="userConfig.keyPressDelayAfterCaptchaDisappear"
                                type="number" class="ms-input">
                         <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
-                        <input id="input-keyPressAfterCaptchaDisappear" v-model="userConfig.keyPressAfterCaptchaDisappear"
+                        <input id="input-keyPressAfterCaptchaDisappear"
+                               v-model="userConfig.keyPressAfterCaptchaDisappear"
                                class="string-input">
                     </li>
                     <li>
                         <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
-                        <input id="input-pveFlopBonusAppearDelay" v-model="userConfig.pveFlopBonusAppearDelay" type="number"
+                        <input id="input-pveFlopBonusAppearDelay" v-model="userConfig.pveFlopBonusAppearDelay"
+                               type="number"
                                class="ms-input">
                         <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
                         <input id="input-keyPressAfterPveFlopBonus" v-model="userConfig.keyPressAfterPveFlopBonus"
                                class="string-input">
                         <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
-                        <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture" type="checkbox">
+                        <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture"
+                               type="checkbox">
                         <br/>
                         <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
                         <input id="input-pveFlopBonusDisappearDelay" v-model="userConfig.pveFlopBonusDisappearDelay"
@@ -210,7 +249,8 @@
                     </li>
                     <li>
                         <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
-                        <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval" type="number"
+                        <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval"
+                               type="number"
                                class="ms-input">
                     </li>
                 </ul>
@@ -231,17 +271,24 @@
             <hr>
 
             <label for="input-detectOfflineDelay">检测时间间隔</label>
-            <input id="input-detectOfflineDelay" type="number" class="ms-input" v-model="offlineDetection.delay" min="5000">
+            <input id="input-detectOfflineDelay" type="number" class="ms-input" v-model="offlineDetection.delay"
+                   min="5000">
             <label for="checkbox-detectOfflineCheckbox">毫秒，并且邮件提醒</label>
             <input id="checkbox-detectOfflineCheckbox" type="checkbox" v-model="offlineDetection.emailRemind">
-            <button onclick="jumpToMailSettingPage()">转到邮箱设置页</button><br/>
+            <button onclick="jumpToMailSettingPage()">转到邮箱设置页</button>
+            <br/>
             <span>请根据自身情况设置间隔，出于性能考虑，请不要低于 5000 毫秒。</span>
             <hr>
-            <label for="offline-checkBox">游戏断线提醒</label><input id="offline-checkBox" type="checkbox" v-model="offlineDetection.disconnect"><br/>
-            <label for="token-checkBox">凭证过期提醒</label><input id="token-checkBox" type="checkbox" v-model="offlineDetection.tokenExpired"><br/>
-            <label for="offsite-checkBox">异地登录提醒</label><input id="offsite-checkBox" type="checkbox" v-model="offlineDetection.offsite"><br/>
-            <label for="leave-game-checkBox">离开游戏弹窗</label><input id="leave-game-checkBox" type="checkbox" v-model="offlineDetection.leaveGame"><br/>
-            <label for="white-game-checkBox">游戏白屏检测</label><input id="white-game-checkBox" type="checkbox" v-model="offlineDetection.whiteScreen">
+            <label for="offline-checkBox">游戏断线提醒</label><input id="offline-checkBox" type="checkbox"
+                                                                     v-model="offlineDetection.disconnect"><br/>
+            <label for="token-checkBox">凭证过期提醒</label><input id="token-checkBox" type="checkbox"
+                                                                   v-model="offlineDetection.tokenExpired"><br/>
+            <label for="offsite-checkBox">异地登录提醒</label><input id="offsite-checkBox" type="checkbox"
+                                                                     v-model="offlineDetection.offsite"><br/>
+            <label for="leave-game-checkBox">离开游戏弹窗</label><input id="leave-game-checkBox" type="checkbox"
+                                                                        v-model="offlineDetection.leaveGame"><br/>
+            <label for="white-game-checkBox">游戏白屏检测</label><input id="white-game-checkBox" type="checkbox"
+                                                                        v-model="offlineDetection.whiteScreen">
             <span>（试验版）</span><br/>
             <hr>
             <button v-on:click="update()">保存</button>
@@ -431,7 +478,8 @@
 
                             <td>
                                 <label>
-                                    <input :id="'input-auction-item-argue-unit-price-'+index" v-model="item.argueUnitPrice"
+                                    <input :id="'input-auction-item-argue-unit-price-'+index"
+                                           v-model="item.argueUnitPrice"
                                            class="string-input">
                                 </label>
                             </td>
@@ -452,17 +500,21 @@
                             </td>
 
                             <td>
-                                <button v-show="item.auctionTime === '8'" v-on:click="changeAuctionTime(item, '24')">&nbsp;&nbsp;8
+                                <button v-show="item.auctionTime === '8'" v-on:click="changeAuctionTime(item, '24')">
+                                    &nbsp;&nbsp;8
                                 </button>
                                 <button v-show="item.auctionTime === '24'" v-on:click="changeAuctionTime(item, '48')">24
                                 </button>
-                                <button v-show="item.auctionTime === '48'" v-on:click="changeAuctionTime(item, '8')">48</button>
+                                <button v-show="item.auctionTime === '48'" v-on:click="changeAuctionTime(item, '8')">
+                                    48
+                                </button>
                             </td>
 
                             <td>
                                 <label :for="'checkbox-auction-item-drop-'+index">&nbsp;&nbsp;</label>
                                 <label>
-                                    <input :id="'checkbox-auction-item-drop-'+index" type="checkbox" v-model="item.drop">
+                                    <input :id="'checkbox-auction-item-drop-'+index" type="checkbox"
+                                           v-model="item.drop">
                                 </label>
                             </td>
 
@@ -525,7 +577,8 @@
                     </li>
                     <li>
                         物品名和 OCR 名：物品名就是实际的物品的名称，需要手动填入。OCR
-                        名就是识别游戏画面的文字，提取出来的文字，由于字库较少，所以识别可能会有一定的不一致。但是假如物品 ABC
+                        名就是识别游戏画面的文字，提取出来的文字，由于字库较少，所以识别可能会有一定的不一致。但是假如物品
+                        ABC
                         被识别为了
                         QWE，那么 OCR 名就为 QWE，可以手动在物品名中写上 ABC。但是程序内部还是按照 QWE 来识别。
                         <br/>
@@ -649,7 +702,8 @@
                         <tr>
                             <td>{{templateInfo.msg}}</td>
                             <td>
-                                <button v-on:click="reCaptureSampleImg(templateInfo.msg, templateInfo.url)">截图</button>
+                                <button v-on:click="reCaptureSampleImg(templateInfo.msg, templateInfo.url)">截图
+                                </button>
                                 <button v-on:click="showTemplates(templateInfo.prefix)">查看已有样图</button>
                             </td>
                         </tr>
@@ -664,7 +718,8 @@
                     <br/>
                     <button v-on:click="openDir(template, true)">打开文件所在位置</button>
                     <button v-on:click="deleteSampleImg(template)">删除该截图</button>
-                    <button v-show="template.indexOf('非正式模板-') > 0" v-on:click="convertToOfficialTemplate(template)">转为正式模板</button>
+                    <button v-show="template.indexOf('非正式模板-') > 0"
+                            v-on:click="convertToOfficialTemplate(template)">转为正式模板</button>
                     <template>
                         <hr>
                     </template>
@@ -703,8 +758,8 @@
             <h3>其他功能</h3>
             <hr>
             <span v-for="tab in tabs">
-             <button v-on:click="changeTab(tab)">{{tab.name}}</button>
-        </span>
+                <button v-on:click="changeTab(tab)">{{tab.name}}</button>
+            </span>
             <div v-show="selectedTab === 'host文件查看/修改'">
                 <h5>host文件查看/修改</h5>
                 <a class="red-font">修改 host 文件需要管理员权限</a>
@@ -781,7 +836,8 @@
                 <input type="checkbox" id="input-enableRemoteSender" v-model="settingConfig.email.enableRemoteSender">
                 <label for="input-enableRemoteSender">启动远程发送功能</label>
                 <br/>
-                <input type="checkbox" id="input-useRemoteLocalConfigFirst" v-model="settingConfig.email.useRemoteLocalConfigFirst">
+                <input type="checkbox" id="input-useRemoteLocalConfigFirst"
+                       v-model="settingConfig.email.useRemoteLocalConfigFirst">
                 <label for="input-useRemoteLocalConfigFirst">优先使用远程发送方的邮箱配置发送邮件</label>
                 <br/>
                 <label>此项功能为，一台电脑不能/不想发送邮件，那么使用远程有启用本程序的电脑进行发送。</label>
@@ -840,10 +896,28 @@
                     开启自动检测更新
                 </label>
                 <br/>
-
                 <label>
-                    <input type="checkbox" v-model="settingConfig.updateConfig.enableAutoUpdate">
-                    开启自动更新
+                    <input type="checkbox" :checked="settingConfig.updateConfig.updateVersionType & 2"
+                           v-on:click="changeUpdateConfigType(2)">
+                    包括内部测试版
+                </label>
+                <br/>
+                <label>
+                    <input type="checkbox" :checked="settingConfig.updateConfig.updateVersionType & 4"
+                           v-on:click="changeUpdateConfigType(4)">
+                    包括alpha测试版
+                </label>
+                <br/>
+                <label>
+                    <input type="checkbox" :checked="settingConfig.updateConfig.updateVersionType & 8"
+                           v-on:click="changeUpdateConfigType(8)">
+                    包括beta测试版
+                </label>
+                <br/>
+                <label>
+                    <input type="checkbox" :checked="settingConfig.updateConfig.updateVersionType & 16"
+                           v-on:click="changeUpdateConfigType(16)">
+                    包括正式版
                 </label>
                 <br/>
                 <button v-on:click="update()">保存设置</button>
@@ -857,6 +931,7 @@
 
                     <div v-for="versionInfo in updateInfoVo.versionInfoList">
                         <span>{{versionInfo.appVersion}}({{versionInfo.versionName}})</span>
+                        <span v-if="versionInfo.version === updateInfoVo.currentVersion">--当前版本</span>
                         <button v-on:click="showUpdateFiles(versionInfo.id)">查看更新文件</button>
                         <br/>
                         <span>更新信息：</span>
@@ -890,12 +965,23 @@
                             <tr>
                                 <td>{{fileInfo.id}}</td>
                                 <td>{{fileInfo.filename}}</td>
-                                <td>{{fileInfo.size || fileInfo.size === 0? "无": getReadableFileSizeString(fileInfo.size)}}</td>
+                                <td>
+                                    {{fileInfo.size || fileInfo.size === 0 ? "无" : getReadableFileSizeString(fileInfo.size)}}
+                                </td>
                                 <td>{{getReadableFileSizeString(fileInfo.remoteSize)}}</td>
-                                <td>Java文件夹/{{fileInfo.path}} </td>
-                                <td>{{fileInfo.updateStrategy}}</td>
+                                <td>Java文件夹/{{fileInfo.path}}</td>
+                                <td>{{getUpdateUpdateStrategyStr(fileInfo.updateStrategy)}}</td>
                                 <td>{{fileInfo.info}}</td>
-                                <td><button v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">更新</button></td>
+                                <td>
+                                    <button v-if="fileInfo.updateStrategy === 1 || fileInfo.updateStrategy === 2"
+                                            v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">更新
+                                    </button>
+                                    <button v-if="fileInfo.updateStrategy === 3" v-on:click="">覆盖</button>
+                                    <button v-if="fileInfo.updateStrategy === 0" v-on:click="">无</button>
+                                    <button v-if="fileInfo.updateStrategy === -1"
+                                            v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">删除
+                                    </button>
+                                </td>
                             </tr>
                         </template>
                         </tbody>
@@ -928,7 +1014,8 @@
                 <br/>
                 <strong>本软件相关使用问题，请加群进行咨询，并且群内不定期更新新版脚本，下载即用。</strong>
                 <hr>
-                <span>本程序的使用说明，请移步在线文档地址：</span><a href="https://gitee.com/sleepybear1113/ddt-assistant-manual" target="_blank">https://gitee.com/sleepybear1113/ddt-assistant-manual</a>
+                <span>本程序的使用说明，请移步在线文档地址：</span><a
+                    href="https://gitee.com/sleepybear1113/ddt-assistant-manual" target="_blank">https://gitee.com/sleepybear1113/ddt-assistant-manual</a>
             </div>
 
             <div v-show="selectedTab === '请我吃点东西'">
@@ -959,8 +1046,39 @@
         .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
 </script>
 <script type="text/javascript">
-    ["index", "first", "offlineDetection", "captcha", "capture", "auction", "test", "tab", "setting", "introduction", "reCapture", "otherFunction"]
+    ["serverLog", "index", "first", "offlineDetection", "captcha", "capture", "auction", "test", "tab", "setting", "introduction", "reCapture", "otherFunction"]
         .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
+</script>
+<script>
+    let draggie = new Draggabilly("#log-div", {
+        handle: '.move-handle',
+    });
+
+    let y = 180;
+    let logServerDiv = document.getElementById("log-div");
+    let innerWidth = window.innerWidth;
+    if (innerWidth < 200) {
+        draggie.setPosition(100, y + 60);
+        logServerDiv.style.width = "100px";
+    } else if (innerWidth < 400) {
+        draggie.setPosition(innerWidth - 220, y + 50);
+        logServerDiv.style.width = "200px";
+    } else if (innerWidth < 800) {
+        draggie.setPosition(300, y);
+        logServerDiv.style.width = innerWidth / 2 + "px";
+    } else {
+        draggie.setPosition(300, y);
+        logServerDiv.style.width = "400px";
+    }
+
+    function changeMode() {
+        if (draggie.isEnabled) {
+            draggie.disable();
+        } else {
+            draggie.enable();
+        }
+        serverLog.mode = draggie.isEnabled;
+    }
 </script>
 </body>
 </html>

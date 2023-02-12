@@ -37,6 +37,14 @@ let settingApp = new Vue({
                 showInfo("邮件已发送", 100);
             });
         },
+        changeUpdateConfigType(value) {
+            let s = this.settingConfig.updateConfig.updateVersionType & value;
+            if (s > 0) {
+                this.settingConfig.updateConfig.updateVersionType -= value;
+            } else {
+                this.settingConfig.updateConfig.updateVersionType += value;
+            }
+        },
         changeTab: function (tab) {
             this.selectedTab = tab.name;
         },
@@ -63,6 +71,20 @@ let settingApp = new Vue({
         },
         getReadableFileSizeString(size) {
             return getReadableFileSizeString(size);
+        },
+        getUpdateUpdateStrategyStr(type) {
+            switch (type) {
+                case 1:
+                    return "建议更新";
+                case 2:
+                    return "推荐更新";
+                case 3:
+                    return "不存在时下载";
+                case -1:
+                    return "删除文件";
+                default:
+                    return "无操作";
+            }
         },
         updateFile(id, versionId, index) {
             let url = "setting/updateFile";

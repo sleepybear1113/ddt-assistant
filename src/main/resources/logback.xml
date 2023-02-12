@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-    <property name="LOG_FILE" value="日志文件/日志.log"/>
-    <property name="LOG_FILE_MORE" value="日志文件/日志-详细.log"/>
+    <property name="LOG_FILE" value="日志文件/日志"/>
+    <property name="LOG_FILE_MORE" value="日志文件/日志-详细"/>
     <property name="LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN" value="${LOG_FILE}.%d{yyyy-MM-dd}.%i.log"/>
-    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="cn.xiejx.ddtassistant.config.ServerLogFilter" />
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>${FILE_LOG_CHARSET}</charset>
+        </encoder>
+        <file>${LOG_FILE}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN:-${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz}
+            </fileNamePattern>
+            <cleanHistoryOnStart>${LOGBACK_ROLLINGPOLICY_CLEAN_HISTORY_ON_START:-false}</cleanHistoryOnStart>
+            <maxFileSize>${LOGBACK_ROLLINGPOLICY_MAX_FILE_SIZE:-10MB}</maxFileSize>
+            <totalSizeCap>${LOGBACK_ROLLINGPOLICY_TOTAL_SIZE_CAP:-0}</totalSizeCap>
+            <maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-7}</maxHistory>
+        </rollingPolicy>
+    </appender>
 
     <property name="LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN_MORE" value="${LOG_FILE_MORE}.%d{yyyy-MM-dd}.%i.log"/>
     <appender name="MORE" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -12,7 +30,7 @@
             <pattern>${FILE_LOG_PATTERN}</pattern>
             <charset>${FILE_LOG_CHARSET}</charset>
         </encoder>
-        <file>${LOG_FILE_MORE}</file>
+        <file>${LOG_FILE_MORE}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN_MORE:-${LOG_FILE_MORE}.%d{yyyy-MM-dd}.%i.gz}
             </fileNamePattern>

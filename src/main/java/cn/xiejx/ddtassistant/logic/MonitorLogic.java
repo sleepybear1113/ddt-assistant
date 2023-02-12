@@ -7,6 +7,7 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.dto.AbnormalDetectionCountDto;
 import cn.xiejx.ddtassistant.exception.FrontException;
+import cn.xiejx.ddtassistant.utils.ImgUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.Cacher;
 import cn.xiejx.ddtassistant.utils.cacher.CacherBuilder;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -159,11 +159,10 @@ public class MonitorLogic {
             if (Boolean.TRUE.equals(pveFlopBonusCapture)) {
                 log.info("截图游戏，使用线程 [{}]", dmDdt.getHwnd());
                 String dir = Constants.FLOP_BONUS_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT).replace("_", "") + "/";
-                File file = new File(dir);
-                if (!file.exists() || !file.isDirectory()) {
-                    boolean mkdirs = file.mkdirs();
-                }
-                dmDdt.captureFullGamePic(dir + Util.getTimeString(Util.TIME_HMS_FORMAT).replace("_", ""));
+                Util.ensureParentDir(dir);
+                String path = dir + Util.getTimeString(Util.TIME_HMS_FORMAT).replace("_", "") + ".jpg";
+                dmDdt.captureFullGamePic(path);
+                ImgUtil.compress(path, path, 0.9f);
             }
             break;
         }

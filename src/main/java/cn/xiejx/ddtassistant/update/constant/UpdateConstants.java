@@ -17,17 +17,19 @@ public class UpdateConstants {
         /**
          * 说明
          */
-        INNER_VERSION(1, "内部测试版"),
-        ALPHA_VERSION(2, "alpha测试版"),
-        BETA_VERSION(3, "beta测试版"),
-        STABLE_VERSION(4, "正式版"),
+        INNER_VERSION(1, "内部测试版", 2),
+        ALPHA_VERSION(2, "alpha测试版", 4),
+        BETA_VERSION(3, "beta测试版", 8),
+        STABLE_VERSION(4, "正式版", 16),
         ;
         private final Integer type;
         private final String name;
+        private final Integer mask;
 
-        VersionTypeEnum(Integer type, String name) {
+        VersionTypeEnum(Integer type, String name, Integer mask) {
             this.type = type;
             this.name = name;
+            this.mask = mask;
         }
 
         public Integer getType() {
@@ -38,20 +40,24 @@ public class UpdateConstants {
             return name;
         }
 
+        public Integer getMask() {
+            return mask;
+        }
+
         public static String getVersionTypeEnum(Integer type) {
             for (VersionTypeEnum versionTypeEnum : values()) {
-                if (versionTypeEnum.getType().equals(type)) {
+                if (versionTypeEnum.getMask().equals(type)) {
                     return versionTypeEnum.name;
                 }
             }
             return "";
         }
 
-        public static String getVersionTypeEnumByVersion(Integer version) {
-            if (version == null) {
+        public static String getVersionTypeEnumByVersion(Integer versionType) {
+            if (versionType == null) {
                 return "";
             }
-            return getVersionTypeEnum(version % 100 % 5);
+            return getVersionTypeEnum(versionType);
         }
     }
 

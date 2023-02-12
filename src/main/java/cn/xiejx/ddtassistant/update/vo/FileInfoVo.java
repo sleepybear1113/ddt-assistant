@@ -94,7 +94,11 @@ public class FileInfoVo implements Serializable {
     }
 
     public void buildUrl(String baseUrl) {
-        if (StringUtils.isNotBlank(this.url)) {
+        if (this.url == null) {
+            return;
+        }
+        if (StringUtils.isBlank(this.url)) {
+            this.url = "";
             return;
         }
 
@@ -115,5 +119,14 @@ public class FileInfoVo implements Serializable {
         String substring = file.getAbsolutePath().substring(path.length());
         fileInfoVo.setPath(substring.substring(0, substring.length() - file.getName().length()));
         return fileInfoVo;
+    }
+
+    public boolean deleteFile() {
+        File file = new File(this.filename);
+        if (file.exists()) {
+            return file.delete();
+        } else {
+            return true;
+        }
     }
 }

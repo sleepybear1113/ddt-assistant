@@ -3,6 +3,7 @@ let tabApp = new Vue({
     data: {
         tabs: [
             {tabId: "first", name: "首页"},
+            {tabId: "server-log-tab", name: "日志"},
             {tabId: "captcha", name: "验证码功能"},
             {tabId: "offlineDetection", name: "游戏异常检测"},
             {tabId: "auction", name: "拍卖场功能"},

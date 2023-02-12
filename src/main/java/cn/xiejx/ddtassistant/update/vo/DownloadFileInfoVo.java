@@ -24,4 +24,12 @@ public class DownloadFileInfoVo implements Serializable {
     public void addFailCount() {
         failCount++;
     }
+
+    public void addCount(Boolean b) {
+        if (Boolean.TRUE.equals(b)) {
+            addSuccessCount();
+        } else {
+            addFailCount();
+        }
+    }
 }

@@ -294,6 +294,21 @@ public class Util {
         });
     }
 
+    public static void delayDeleteFile(File file, Long delay) {
+        if (delay == null || delay <= 0) {
+            if (!file.delete()) {
+                log.info("删除文件失败 {} 失败", file.getName());
+            }
+            return;
+        }
+        GlobalVariable.THREAD_POOL.execute(() -> {
+            sleep(delay);
+            if (!file.delete()) {
+                log.info("删除文件失败 {} 失败", file.getName());
+            }
+        });
+    }
+
     public static byte[] fileToBytes(String path) {
         File file = new File(path);
         byte[] bytes;
@@ -309,16 +324,20 @@ public class Util {
     }
 
     public static List<File> listFiles(String path) {
+        return listFiles(path, false);
+    }
+
+    public static List<File> listFiles(String path, boolean containDir) {
         List<File> list = new ArrayList<>();
         if (StringUtils.isBlank(path)) {
             return list;
         }
 
-        listFiles(new File(path), list);
+        listFiles(new File(path), containDir, list);
         return list;
     }
 
-    public static void listFiles(File file, List<File> list) {
+    public static void listFiles(File file, boolean containDir, List<File> list) {
         if (list == null) {
             return;
         }
@@ -329,12 +348,15 @@ public class Util {
             list.add(file);
             return;
         }
+        if (containDir) {
+            list.add(file);
+        }
         File[] files = file.listFiles();
         if (files == null) {
             return;
         }
         for (File f : files) {
-            listFiles(f, list);
+            listFiles(f, containDir, list);
         }
     }
 
@@ -440,6 +462,25 @@ public class Util {
         ipList.add(ipv4List);
         ipList.add(ipv6List);
         return ipList;
+    }
+
+    public static String readLastSomeRows(File file, int n) {
+        if (file == null || !file.exists()) {
+            return null;
+        }
+        try {
+            List<String> strings = Files.readAllLines(file.toPath());
+            if (strings.size() >= n) {
+                strings = new ArrayList<>(strings.subList(strings.size() - n, strings.size() - 1));
+            }
+            StringBuilder sb = new StringBuilder();
+            for (String string : strings) {
+                sb.append(string).append("\n");
+            }
+            return sb.toString();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     public static void main(String[] args) {
