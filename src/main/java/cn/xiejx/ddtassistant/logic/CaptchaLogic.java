@@ -19,6 +19,8 @@ import cn.xiejx.ddtassistant.vo.StringRet;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -35,6 +37,8 @@ import java.util.Random;
 @Slf4j
 public class CaptchaLogic {
     private static final Random RANDOM = new Random();
+
+    private static final Logger logMore = LoggerFactory.getLogger("MORE");
 
     @Resource
     private CaptchaConfig captchaConfig;
@@ -114,7 +118,7 @@ public class CaptchaLogic {
             }
         }
         Util.sleep(300L);
-        log.info(bindResultVo.buildInfo());
+        logMore.info(bindResultVo.buildInfo());
         return bindResultVo;
     }
 

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.springframework.beans.BeanUtils;
@@ -102,6 +103,24 @@ public class Util {
             list.add(t);
         }
         return list;
+    }
+
+    public static List<String> readFileToList(String path) {
+        return readFileToList(new File(path));
+    }
+
+    public static List<String> readFileToList(File file) {
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            List<String> list = new ArrayList<>();
+            while ((line = br.readLine()) != null) {
+                list.add(line);
+            }
+            return list;
+        } catch (IOException e) {
+            log.warn(e.getMessage());
+            return null;
+        }
     }
 
     public static <T> T parseJsonToObject(String s, Class<T> clazz) {
@@ -468,19 +487,19 @@ public class Util {
         if (file == null || !file.exists()) {
             return null;
         }
-        try {
-            List<String> strings = Files.readAllLines(file.toPath());
-            if (strings.size() >= n) {
-                strings = new ArrayList<>(strings.subList(strings.size() - n, strings.size() - 1));
-            }
-            StringBuilder sb = new StringBuilder();
-            for (String string : strings) {
-                sb.append(string).append("\n");
-            }
-            return sb.toString();
-        } catch (IOException e) {
+
+        List<String> strings = readFileToList(file);
+        if (CollectionUtils.isEmpty(strings)) {
             return null;
         }
+        if (strings.size() >= n) {
+            strings = new ArrayList<>(strings.subList(strings.size() - n, strings.size() - 1));
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String string : strings) {
+            sb.append(string).append("\n");
+        }
+        return sb.toString();
     }
 
     public static void main(String[] args) {

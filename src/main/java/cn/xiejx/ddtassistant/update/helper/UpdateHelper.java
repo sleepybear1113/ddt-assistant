@@ -127,34 +127,22 @@ public class UpdateHelper {
         }
     }
 
-    public static void downloadFile(String url, String filename) {
-        HttpHelper httpHelper = HttpHelper.makeDefaultGetHttpHelper(url);
-        HttpResponseHelper responseHelper = httpHelper.request();
-        long end = System.currentTimeMillis();
-        byte[] responseBodyBytes = responseHelper.getResponseBodyBytes();
-        if (responseBodyBytes == null || responseBodyBytes.length == 0) {
-            return;
-        }
-
-        try (FileOutputStream fileOutputStream = new FileOutputStream(filename)) {
-            fileOutputStream.write(responseBodyBytes);
-            fileOutputStream.flush();
-        } catch (IOException e) {
-            log.warn(e.getMessage(), e);
-        }
-    }
-
     /**
      * 获取更新的主方法
      *
-     * @param currentVersion    当前版本
-     * @param url               更新链接
-     * @param updateVersionType
+     * @param currentVersion 当前版本
+     * @param updateConfig   更新设置
      * @return 更新 vo
      */
     public static UpdateInfoVo checkUpdate(int currentVersion, UpdateConfig updateConfig) {
+        UpdateInfoVo updateInfoVo;
+        if (updateConfig.getUpdateVersionType() == null) {
+            updateInfoVo = new UpdateInfoVo();
+            updateInfoVo.setMessage("未设置更新获取版本");
+            return updateInfoVo;
+        }
         MainVersion mainVersion = getMainVersion(updateConfig.getUrl());
-        UpdateInfoVo updateInfoVo = UpdateInfoVo.build(mainVersion, currentVersion);
+        updateInfoVo = UpdateInfoVo.build(mainVersion, currentVersion);
         List<MainVersionInfoVo> versionInfoList = updateInfoVo.getVersionInfoList();
 
         if (CollectionUtils.isEmpty(versionInfoList)) {
@@ -231,17 +219,4 @@ public class UpdateHelper {
         System.out.println(strings.get(0).endsWith("\n"));
     }
 
-    public static void down() {
-        String url = "https://gitee.com/sleepybear1113/ddt-assistant-static/raw/test/versions/2.3.3/files/%E5%A4%A7%E6%BC%A0%E6%8F%92%E4%BB%B6%E6%B3%A8%E5%86%8C/dm.dll";
-        String filename = "tmp/test.xxz";
-        downloadFile(url, filename);
-        File file = new File(filename);
-        System.out.println(file.length());
-        System.out.println(Util.calcMd5(file));
-
-        String pp = "D:\\XJXCode\\Raw\\ddt-assistant-static\\versions\\2.3.3\\files\\大漠插件注册\\dm.dll";
-        File file1 = new File(pp);
-        System.out.println(file1.length());
-        System.out.println(Util.calcMd5(file1));
-    }
 }

@@ -184,12 +184,12 @@ public class Dm {
         invoke("CapturePng", x1, y1, x2, y2, path).safeRelease();
     }
 
-    public void captureJpg(int x1, int y1, int x2, int y2, String path) {
+    public void captureJpg(int x1, int y1, int x2, int y2, String path, int quality) {
         if (x2 <= x1 || y2 <= y1) {
             log.error("截图失败：坐标越界！({}, {}), ({}, {})", x1, y1, x2, y2);
             return;
         }
-        Variant variant = invoke("CaptureJpg", x1, y1, x2, y2, path);
+        Variant variant = invoke("CaptureJpg", x1, y1, x2, y2, path, quality);
         variant.safeRelease();
     }
 

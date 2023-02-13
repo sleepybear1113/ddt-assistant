@@ -219,14 +219,38 @@ public class DmDdt extends Dm {
         } else if (path.endsWith(PNG_SUFFIX)) {
             capturePng(region[0], region[1], region[2], region[3], path);
         } else if (path.endsWith(JPG_SUFFIX)) {
-            captureJpg(region[0], region[1], region[2], region[3], path);
+            captureJpg(region[0], region[1], region[2], region[3], path, 100);
         } else {
-            capturePng(region[0], region[1], region[2], region[3], path + ".jpg");
+            captureJpg(region[0], region[1], region[2], region[3], path + ".jpg", 100);
+        }
+    }
+
+    public void capturePicByRegion(String path, int[] region, Integer quality) {
+        if (path == null || path.length() == 0) {
+            log.warn("图片路径未指定");
+            return;
+        }
+        if (quality == null || quality <= 0) {
+            quality = 100;
+        }
+        Util.ensureParentDir(path);
+        if (path.endsWith(BMP_SUFFIX)) {
+            captureBmp(region[0], region[1], region[2], region[3], path);
+        } else if (path.endsWith(PNG_SUFFIX)) {
+            capturePng(region[0], region[1], region[2], region[3], path);
+        } else if (path.endsWith(JPG_SUFFIX)) {
+            captureJpg(region[0], region[1], region[2], region[3], path, quality);
+        } else {
+            captureJpg(region[0], region[1], region[2], region[3], path + ".jpg", quality);
         }
     }
 
     public void captureFullGamePic(String path) {
-        capturePicByRegion(path, GAME_FULL_REACT);
+        capturePicByRegion(path, GAME_FULL_REACT, 100);
+    }
+
+    public void captureFullGamePic(String path, Integer quality) {
+        capturePicByRegion(path, GAME_FULL_REACT, quality);
     }
 
     public int[] findPicInFullGame(String templatePath, String deltaColor, double threshold) {
