@@ -4,7 +4,7 @@ import cn.xiejx.ddtassistant.base.UpdateConfig;
 import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import cn.xiejx.ddtassistant.update.domain.MainVersion;
 import cn.xiejx.ddtassistant.update.domain.UpdateList;
-import cn.xiejx.ddtassistant.update.vo.FileInfoVo;
+import cn.xiejx.ddtassistant.update.vo.UpdateFileInfoVo;
 import cn.xiejx.ddtassistant.update.vo.MainVersionInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateListVo;
@@ -32,41 +32,41 @@ import java.util.List;
 @Slf4j
 public class UpdateHelper {
 
-    public static boolean downloadFile(FileInfoVo fileInfoVo) {
-        if (fileInfoVo == null) {
+    public static boolean downloadFile(UpdateFileInfoVo updateFileInfoVo) {
+        if (updateFileInfoVo == null) {
             return false;
         }
 
-        String url = fileInfoVo.getUrl();
+        String url = updateFileInfoVo.getUrl();
         if (StringUtils.isBlank(url)) {
-            log.info("远程文件[{}]没有提供下载链接", fileInfoVo.getFilename());
+            log.info("远程文件[{}]没有提供下载链接", updateFileInfoVo.getFilename());
             return false;
         }
 
-        if (fileInfoVo.getSame()) {
+        if (updateFileInfoVo.getSame()) {
             return false;
         }
 
-        UpdateConstants.TypeEnum typeEnum = UpdateConstants.TypeEnum.getType(fileInfoVo.getType());
+        UpdateConstants.TypeEnum typeEnum = UpdateConstants.TypeEnum.getType(updateFileInfoVo.getType());
 
 
-        String filename = fileInfoVo.getPath() + fileInfoVo.getFilename();
+        String filename = updateFileInfoVo.getPath() + updateFileInfoVo.getFilename();
         String rename;
         File file = new File(filename);
         if (file.exists()) {
             String md5 = Util.calcMd5(file);
-            if (fileInfoVo.getRemoteMd5().equals(md5)) {
+            if (updateFileInfoVo.getRemoteMd5().equals(md5)) {
                 log.info("本地文件[{}]存在，无须下载", filename);
                 return true;
             }
-            rename = fileInfoVo.getPath() + "-" + System.currentTimeMillis() + "-" + fileInfoVo.getFilename();
+            rename = updateFileInfoVo.getPath() + "-" + System.currentTimeMillis() + "-" + updateFileInfoVo.getFilename();
             file = new File(rename);
         } else {
             rename = filename;
         }
         Util.ensureParentDir(rename);
 
-        log.info("开始下载文件[{}]...", fileInfoVo.getFilename());
+        log.info("开始下载文件[{}]...", updateFileInfoVo.getFilename());
         long start = System.currentTimeMillis();
         HttpHelper httpHelper = HttpHelper.makeDefaultGetHttpHelper(url);
         HttpResponseHelper responseHelper = httpHelper.request();
@@ -75,10 +75,10 @@ public class UpdateHelper {
         if (UpdateConstants.TypeEnum.BINARY.equals(typeEnum)) {
             byte[] responseBodyBytes = responseHelper.getResponseBodyBytes();
             if (responseBodyBytes == null || responseBodyBytes.length == 0) {
-                log.warn("文件[{}]下载失败, 耗时{}ms", fileInfoVo.getFilename(), (end - start));
+                log.warn("文件[{}]下载失败, 耗时{}ms", updateFileInfoVo.getFilename(), (end - start));
                 return false;
             } else {
-                log.info("文件[{}]下载成功, 耗时{}ms, 写入磁盘中...", fileInfoVo.getFilename(), (end - start));
+                log.info("文件[{}]下载成功, 耗时{}ms, 写入磁盘中...", updateFileInfoVo.getFilename(), (end - start));
             }
 
             try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
@@ -91,17 +91,17 @@ public class UpdateHelper {
         } else {
             String responseBody = responseHelper.getResponseBody();
             if (StringUtils.isBlank(responseBody)) {
-                log.warn("文件[{}]下载失败, 耗时{}ms", fileInfoVo.getFilename(), (end - start));
+                log.warn("文件[{}]下载失败, 耗时{}ms", updateFileInfoVo.getFilename(), (end - start));
                 return false;
             }
             responseBody = responseBody.replace("\r\n", "\n").replace("\n", "\r\n");
             Util.writeFile(responseBody, rename);
-            log.info("文件[{}]下载成功, 耗时{}ms, 写入磁盘中...", fileInfoVo.getFilename(), (end - start));
+            log.info("文件[{}]下载成功, 耗时{}ms, 写入磁盘中...", updateFileInfoVo.getFilename(), (end - start));
         }
 
         String md5 = Util.calcMd5(file);
-        if (fileInfoVo.getRemoteMd5().equals(md5)) {
-            log.info("文件[{}]校验成功", fileInfoVo.getFilename());
+        if (updateFileInfoVo.getRemoteMd5().equals(md5)) {
+            log.info("文件[{}]校验成功", updateFileInfoVo.getFilename());
             if (!filename.equals(rename)) {
                 File oldFile = new File(filename);
                 if (!oldFile.delete()) {
@@ -109,7 +109,7 @@ public class UpdateHelper {
                     return false;
                 } else {
                     if (file.renameTo(oldFile)) {
-                        log.info("文件[{}]写入完成", fileInfoVo.getFilename());
+                        log.info("文件[{}]写入完成", updateFileInfoVo.getFilename());
                         return true;
                     } else {
                         log.warn("文件[{}]重命名失败", filename);
@@ -117,11 +117,11 @@ public class UpdateHelper {
                     }
                 }
             } else {
-                log.info("文件[{}]写入完成", fileInfoVo.getFilename());
+                log.info("文件[{}]写入完成", updateFileInfoVo.getFilename());
                 return true;
             }
         } else {
-            log.warn("文件[{}]校验失败，删除已下载的文件", fileInfoVo.getFilename());
+            log.warn("文件[{}]校验失败，删除已下载的文件", updateFileInfoVo.getFilename());
             Util.delayDeleteFile(file, 0L);
             return false;
         }
@@ -198,9 +198,9 @@ public class UpdateHelper {
         String path = "D:\\XJXCode\\Raw\\ddt-assistant-static\\versions\\2.3.3\\files\\";
         List<File> files = Util.listFiles(path);
 
-        List<FileInfoVo> list = new ArrayList<>();
+        List<UpdateFileInfoVo> list = new ArrayList<>();
         for (File file : files) {
-            list.add(FileInfoVo.buildRemote(file, path));
+            list.add(UpdateFileInfoVo.buildRemote(file, path));
         }
 
         System.out.println(Util.parseObjectToJsonString(list).replace("\\\\", "/"));

@@ -20,6 +20,8 @@ public class MyWebMvcConfigurer implements WebMvcConfigurer {
             registry.addResourceHandler(s + "**").addResourceLocations("file:" + s);
         }
 
+        registry.addResourceHandler("/**").addResourceLocations("file:./").addResourceLocations("classpath:/static/");
+
         String[] disks = new String[]{"C", "D", "E", "F"};
         for (String disk : disks) {
             registry.addResourceHandler(disk + "/**").addResourceLocations("file:" + disk + ":/");

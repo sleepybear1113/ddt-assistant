@@ -159,10 +159,19 @@ public class SystemLogic {
         return filePath;
     }
 
-    public List<String> getLocalFileWithDir(String path, Boolean excludePath) {
-        List<File> fileList = Util.listFiles(path, true);
+    public List<FileInfoVo> getLocalFileWithDir(String path) {
+        if (StringUtils.isBlank(path)) {
+            path = "./";
+        }
+        List<File> fileList = Util.listFiles(path, true, true);
 
         List<FileInfoVo> list = new ArrayList<>();
-        return null;
+        for (File file : fileList) {
+            list.add(FileInfoVo.build(file));
+        }
+        if (!CollectionUtils.isEmpty(list)) {
+            list.remove(0);
+        }
+        return list;
     }
 }

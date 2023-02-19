@@ -2,6 +2,7 @@ package cn.xiejx.ddtassistant.vo;
 
 import lombok.Data;
 
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -18,4 +19,16 @@ public class FileInfoVo implements Serializable {
     private String absoluteFilename;
     private Boolean isDir;
     private Long size;
+
+    public static FileInfoVo build(File file) {
+        if (!file.exists()) {
+            return null;
+        }
+        FileInfoVo fileInfoVo = new FileInfoVo();
+        fileInfoVo.setSize(file.length());
+        fileInfoVo.setFilename(file.getName());
+        fileInfoVo.setIsDir(file.isDirectory());
+        fileInfoVo.setAbsoluteFilename(fileInfoVo.absoluteFilename);
+        return fileInfoVo;
+    }
 }

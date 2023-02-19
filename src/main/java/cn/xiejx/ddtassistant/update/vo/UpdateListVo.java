@@ -24,7 +24,7 @@ public class UpdateListVo implements Serializable {
     private Integer version;
 
     private String baseUrl;
-    private List<FileInfoVo> statics;
+    private List<UpdateFileInfoVo> statics;
 
     public static UpdateListVo build(UpdateList updateList) {
         if (updateList == null) {
@@ -36,11 +36,11 @@ public class UpdateListVo implements Serializable {
         updateListVo.version = updateList.getVersion();
         updateListVo.baseUrl = updateList.getBaseUrl();
         if (CollectionUtils.isNotEmpty(updateList.getStatics())) {
-            List<FileInfoVo> list = new ArrayList<>();
+            List<UpdateFileInfoVo> list = new ArrayList<>();
             for (FileInfo fileInfo : updateList.getStatics()) {
-                list.add(FileInfoVo.build(fileInfo, updateListVo.baseUrl));
+                list.add(UpdateFileInfoVo.build(fileInfo, updateListVo.baseUrl));
             }
-            list.removeIf(FileInfoVo::getSame);
+            list.removeIf(UpdateFileInfoVo::getSame);
             list.removeIf(vo -> UpdateConstants.UpdateStrategyEnum.getUpdateStrategyEnumByType(vo.getUpdateStrategy()).equals(UpdateConstants.UpdateStrategyEnum.NO_ACTION));
             for (int i = 0; i < list.size(); i++) {
                 list.get(i).setId(i + 1);

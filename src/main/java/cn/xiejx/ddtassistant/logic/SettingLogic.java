@@ -7,7 +7,7 @@ import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.update.constant.UpdateConstants;
 import cn.xiejx.ddtassistant.update.helper.UpdateHelper;
 import cn.xiejx.ddtassistant.update.vo.DownloadFileInfoVo;
-import cn.xiejx.ddtassistant.update.vo.FileInfoVo;
+import cn.xiejx.ddtassistant.update.vo.UpdateFileInfoVo;
 import cn.xiejx.ddtassistant.update.vo.MainVersionInfoVo;
 import cn.xiejx.ddtassistant.update.vo.UpdateInfoVo;
 import cn.xiejx.ddtassistant.utils.Util;
@@ -93,22 +93,22 @@ public class SettingLogic {
             throw new FrontException("没有该版本更新信息！");
         }
 
-        List<FileInfoVo> fileInfoVoList = mainVersionInfoVo.getUpdateListVo().getStatics();
-        List<FileInfoVo> fileInfoVoListCopy = new ArrayList<>(fileInfoVoList);
+        List<UpdateFileInfoVo> updateFileInfoVoList = mainVersionInfoVo.getUpdateListVo().getStatics();
+        List<UpdateFileInfoVo> updateFileInfoVoListCopy = new ArrayList<>(updateFileInfoVoList);
         if (index != -1) {
-            fileInfoVoListCopy.removeIf(f -> !f.getId().equals(index));
+            updateFileInfoVoListCopy.removeIf(f -> !f.getId().equals(index));
         }
 
-        if (CollectionUtils.isEmpty(fileInfoVoListCopy)) {
+        if (CollectionUtils.isEmpty(updateFileInfoVoListCopy)) {
             throw new FrontException("没有要下载更新的文件！");
         }
 
         DownloadFileInfoVo downloadFileInfoVo = new DownloadFileInfoVo();
-        for (int i = 0; i < fileInfoVoListCopy.size(); i++) {
-            FileInfoVo fileInfoVo = fileInfoVoListCopy.get(i);
-            String filename = fileInfoVo.getFilename();
+        for (int i = 0; i < updateFileInfoVoListCopy.size(); i++) {
+            UpdateFileInfoVo updateFileInfoVo = updateFileInfoVoListCopy.get(i);
+            String filename = updateFileInfoVo.getFilename();
 
-            UpdateConstants.UpdateStrategyEnum updateStrategyEnumByType = UpdateConstants.UpdateStrategyEnum.getUpdateStrategyEnumByType(fileInfoVo.getUpdateStrategy());
+            UpdateConstants.UpdateStrategyEnum updateStrategyEnumByType = UpdateConstants.UpdateStrategyEnum.getUpdateStrategyEnumByType(updateFileInfoVo.getUpdateStrategy());
             if (UpdateConstants.UpdateStrategyEnum.NO_ACTION.equals(updateStrategyEnumByType)) {
                 log.info("文件[{}]没有操作类型", filename);
                 continue;
@@ -117,13 +117,13 @@ public class SettingLogic {
                 continue;
             }
 
-            log.info("正在处理第{}/{}个文件", (i + 1), fileInfoVoListCopy.size());
+            log.info("正在处理第{}/{}个文件", (i + 1), updateFileInfoVoListCopy.size());
             if (UpdateConstants.UpdateStrategyEnum.UPDATE_ALL.equals(updateStrategyEnumByType) || UpdateConstants.UpdateStrategyEnum.UPDATE_RECOMMEND.equals(updateStrategyEnumByType)) {
                 log.info("下载文件[{}]", filename);
-                boolean b = UpdateHelper.downloadFile(fileInfoVo);
+                boolean b = UpdateHelper.downloadFile(updateFileInfoVo);
                 downloadFileInfoVo.addCount(b);
             } else if (UpdateConstants.UpdateStrategyEnum.DELETE.equals(updateStrategyEnumByType)) {
-                boolean b = fileInfoVo.deleteFile();
+                boolean b = updateFileInfoVo.deleteFile();
                 downloadFileInfoVo.addCount(b);
                 log.info("删除文件[{}], 状态：{}", filename, b);
             }

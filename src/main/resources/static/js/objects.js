@@ -305,11 +305,11 @@ class UpdateListVo {
         this.appVersion = props.appVersion;
         this.version = props.version;
         this.baseUrl = props.baseUrl;
-        this.statics = props.statics.map(e => new FileInfoVo(e));
+        this.statics = props.statics.map(e => new UpdateFileInfoVo(e));
     }
 }
 
-class FileInfoVo {
+class UpdateFileInfoVo {
     constructor(props) {
         if (props == null) {
             return;
@@ -341,5 +341,18 @@ class DownloadFileInfoVo {
 
     info() {
         return `更新成功:${this.successCount}, 更新失败:${this.failCount}`;
+    }
+}
+
+class FileInfoVo {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.filename = props.filename;
+        this.size = props.size;
+        this.absoluteFilename = props.absoluteFilename;
+        this.isDir = props.isDir;
     }
 }

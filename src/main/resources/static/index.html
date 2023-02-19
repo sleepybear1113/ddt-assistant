@@ -32,7 +32,7 @@
         </div>
         <label for="textarea-info">信息：</label>
         <textarea id="textarea-info" style="width: 400px; height: 70px" readonly></textarea>
-        <div id="large-pic-div" style="display: none">
+        <div id="large-pic-div" style="display: none; position: absolute">
             <img id="cover-img" src="" width="80%" alt="1">
         </div>
         <div id="cover" onclick="hideImg()" style="display: none"></div>
@@ -89,21 +89,24 @@
             </div>
         </div>
 
-        <div class="tab" id="server-log-tab">
-            <h3>日志</h3>
-            <hr>
-            <button v-on:click="listServerLogs()">刷新日志列表</button>
-            <label>
-                最后
-                <input type="number" v-model="n" class="ms-input">
-                行
-            </label>
-            <br/>
-            <button v-for="file in logFiles" v-on:click="fetchLog(file)">{{file}}</button>
-            <br/>
-            <label for="server-log-textarea">日志信息：</label>
-            <br/>
-            <textarea id="server-log-textarea" v-model="serverLogAll" readonly="readonly"></textarea>
+
+        <div id="server-log-vue">
+            <div class="tab" id="server-log-tab">
+                <h3>日志</h3>
+                <hr>
+                <button v-on:click="listServerLogs()">刷新日志列表</button>
+                <label>
+                    最后
+                    <input type="number" v-model="n" class="ms-input">
+                    行
+                </label>
+                <br/>
+                <button v-for="file in logFiles" v-on:click="fetchLog(file)">{{file}}</button>
+                <br/>
+                <label for="server-log-textarea">日志信息：</label>
+                <br/>
+                <textarea id="server-log-textarea" v-model="serverLogAll" readonly="readonly"></textarea>
+            </div>
 
             <div id="log-div">
                 <div id="log-control">
@@ -121,6 +124,7 @@
                 </div>
             </div>
         </div>
+
 
         <div class="tab" id="captcha">
             <h3>副本验证码功能</h3>
@@ -728,6 +732,44 @@
         </div>
 
 
+        <div class="tab" id="browseFiles">
+            <h3>文件简易浏览</h3>
+            <hr>
+            <button v-on:click="getLocalFileWithDir('./')">最外层文件夹</button>
+            <button v-on:click="getLocalFileWithDir('./图片/副本翻牌截图/')">收益文件夹</button>
+            <button v-on:click="getTodayIncome()">当天收益文件夹</button>
+            <hr/>
+
+            <span>当前路径：{{currentPath}}</span>
+            <table>
+                <thead>
+                <tr>
+                    <td>序号</td>
+                    <td>文件名</td>
+                    <td>大小</td>
+                    <td>打开</td>
+                    <td>其他</td>
+                </tr>
+                </thead>
+
+                <tbody>
+                <template v-for="(file, index) in fileList">
+                    <tr>
+                        <td>{{index + 1}}</td>
+                        <td>{{file.filename}}</td>
+                        <td>{{getReadableFileSizeString(file.size)}}</td>
+                        <td>
+                            <button v-show="file.isDir" v-on:click="getLocalFileWithDir(currentPath + file.filename + '/')">进入</button>
+                            <button v-show="!file.isDir" v-on:click="browseFile(currentPath + file.filename)">打开</button>
+                        </td>
+                        <td>{{file.isDir? "文件夹": "文件"}}</td>
+                    </tr>
+                </template>
+                </tbody>
+            </table>
+        </div>
+
+
         <div class="tab" id="test">
             <h3>以下为用户第一次使用前的自行测试</h3>
             <hr>
@@ -1046,7 +1088,7 @@
         .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
 </script>
 <script type="text/javascript">
-    ["serverLog", "index", "first", "offlineDetection", "captcha", "capture", "auction", "test", "tab", "setting", "introduction", "reCapture", "otherFunction"]
+    ["serverLog", "index", "first", "offlineDetection", "captcha", "capture", "browseFiles", "auction", "test", "tab", "setting", "introduction", "reCapture", "otherFunction"]
         .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
 </script>
 <script>

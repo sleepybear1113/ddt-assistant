@@ -343,20 +343,22 @@ public class Util {
     }
 
     public static List<File> listFiles(String path) {
-        return listFiles(path, false);
+        return listFiles(path, false, false);
     }
 
-    public static List<File> listFiles(String path, boolean containDir) {
+    public static List<File> listFiles(String path, boolean containDir, boolean once) {
         List<File> list = new ArrayList<>();
         if (StringUtils.isBlank(path)) {
-            return list;
+            path = "./";
+        } else if ( path.endsWith("/")){
+            path = path.substring(0, path.length() - 1);
         }
 
-        listFiles(new File(path), containDir, list);
+        listFiles(new File(path), containDir, once, list);
         return list;
     }
 
-    public static void listFiles(File file, boolean containDir, List<File> list) {
+    public static void listFiles(File file, boolean containDir, boolean once, List<File> list) {
         if (list == null) {
             return;
         }
@@ -374,8 +376,13 @@ public class Util {
         if (files == null) {
             return;
         }
+
         for (File f : files) {
-            listFiles(f, containDir, list);
+            if (!Boolean.TRUE.equals(once)) {
+                listFiles(f, containDir, once, list);
+            } else {
+                list.add(f);
+            }
         }
     }
 

@@ -8,6 +8,7 @@ let tabApp = new Vue({
             {tabId: "offlineDetection", name: "游戏异常检测"},
             {tabId: "auction", name: "拍卖场功能"},
             {tabId: "capture", name: "截图功能"},
+            {tabId: "browseFiles", name: "浏览文件"},
             {tabId: "reCapture", name: "补偿截图"},
             {tabId: "test", name: "测试功能正常"},
             {tabId: "otherFunction", name: "其他功能"},

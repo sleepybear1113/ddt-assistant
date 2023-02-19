@@ -211,6 +211,10 @@ public class HttpHelper implements Serializable {
     }
 
     public HttpResponseHelper request() {
+        return request(true);
+    }
+
+    public HttpResponseHelper request(boolean logException) {
         CloseableHttpResponse response = null;
         HttpResponseHelper httpResponseHelper;
         IOException ee = null;
@@ -223,7 +227,9 @@ public class HttpHelper implements Serializable {
             }
         } catch (IOException e) {
             String message = e.getMessage();
-            log.warn("[HttpHelper]: " + message, e);
+            if (logException) {
+                log.warn("[HttpHelper]: " + message, e);
+            }
             ee = e;
         } finally {
             httpResponseHelper = new HttpResponseHelper(httpCookieStore, response, ee, context);

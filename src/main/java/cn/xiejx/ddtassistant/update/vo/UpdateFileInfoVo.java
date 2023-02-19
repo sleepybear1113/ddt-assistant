@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @date 2023/02/03 16:16
  */
 @Data
-public class FileInfoVo implements Serializable {
+public class UpdateFileInfoVo implements Serializable {
     private static final long serialVersionUID = 3904341239457981111L;
 
     private Integer id;
@@ -62,14 +62,14 @@ public class FileInfoVo implements Serializable {
 
     private Boolean same;
 
-    public static FileInfoVo build(FileInfo remoteFileInfo, String baseUrl) {
-        FileInfoVo fileInfoVo = Util.copyBean(remoteFileInfo, FileInfoVo.class);
-        fileInfoVo.buildUrl(baseUrl);
-        fileInfoVo.setRemoteMd5(fileInfoVo.getMd5());
-        fileInfoVo.setRemoteSize(fileInfoVo.getSize());
+    public static UpdateFileInfoVo build(FileInfo remoteFileInfo, String baseUrl) {
+        UpdateFileInfoVo updateFileInfoVo = Util.copyBean(remoteFileInfo, UpdateFileInfoVo.class);
+        updateFileInfoVo.buildUrl(baseUrl);
+        updateFileInfoVo.setRemoteMd5(updateFileInfoVo.getMd5());
+        updateFileInfoVo.setRemoteSize(updateFileInfoVo.getSize());
 
-        fileInfoVo.buildSizeMd5();
-        return fileInfoVo;
+        updateFileInfoVo.buildSizeMd5();
+        return updateFileInfoVo;
     }
 
     public void buildSizeMd5() {
@@ -105,20 +105,20 @@ public class FileInfoVo implements Serializable {
         this.url = baseUrl + this.path + this.filename;
     }
 
-    public static FileInfoVo buildRemote(File file, String path) {
+    public static UpdateFileInfoVo buildRemote(File file, String path) {
         if (file == null) {
             return null;
         }
 
-        FileInfoVo fileInfoVo = new FileInfoVo();
-        fileInfoVo.setFilename(file.getName());
-        fileInfoVo.setMd5(Util.calcMd5(file));
-        fileInfoVo.setSize(file.length());
-        fileInfoVo.setType(UpdateConstants.TypeEnum.getTypeByFilename(file.getName()).getType());
-        fileInfoVo.setUpdateStrategy(UpdateConstants.UpdateStrategyEnum.UPDATE_RECOMMEND.getType());
+        UpdateFileInfoVo updateFileInfoVo = new UpdateFileInfoVo();
+        updateFileInfoVo.setFilename(file.getName());
+        updateFileInfoVo.setMd5(Util.calcMd5(file));
+        updateFileInfoVo.setSize(file.length());
+        updateFileInfoVo.setType(UpdateConstants.TypeEnum.getTypeByFilename(file.getName()).getType());
+        updateFileInfoVo.setUpdateStrategy(UpdateConstants.UpdateStrategyEnum.UPDATE_RECOMMEND.getType());
         String substring = file.getAbsolutePath().substring(path.length());
-        fileInfoVo.setPath(substring.substring(0, substring.length() - file.getName().length()));
-        return fileInfoVo;
+        updateFileInfoVo.setPath(substring.substring(0, substring.length() - file.getName().length()));
+        return updateFileInfoVo;
     }
 
     public boolean deleteFile() {

@@ -1,5 +1,5 @@
 let serverLog = new Vue({
-    el: '#server-log-tab',
+    el: '#server-log-vue',
     data: {
         mode: true,
         serverLog: "服务器日志：\n",

@@ -34,7 +34,10 @@ function hideImg() {
 
 function showImg(src) {
     document.getElementById("cover-img").setAttribute("src", src);
-    document.getElementById("large-pic-div").style.display = "";
+    let imgOutDiv = document.getElementById("large-pic-div");
+    imgOutDiv.style.display = "";
+    imgOutDiv.style.top = window.scrollY + window.screen.height / 4 + "px";
+    imgOutDiv.style.height = "500px";
     document.getElementById("cover").style.display = "";
 }
 

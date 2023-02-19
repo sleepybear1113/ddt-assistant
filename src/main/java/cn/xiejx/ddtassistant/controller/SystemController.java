@@ -2,6 +2,7 @@ package cn.xiejx.ddtassistant.controller;
 
 import cn.xiejx.ddtassistant.logic.SystemLogic;
 import cn.xiejx.ddtassistant.utils.Util;
+import cn.xiejx.ddtassistant.vo.FileInfoVo;
 import cn.xiejx.ddtassistant.vo.MyString;
 import cn.xiejx.ddtassistant.vo.ResultCode;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -53,8 +54,8 @@ public class SystemController {
     }
 
     @RequestMapping("/system/getLocalFileWithDir")
-    public List<String> getLocalFileWithDir(String path, Boolean excludePath) {
-        return systemLogic.getLocalFileWithDir(path, excludePath);
+    public List<FileInfoVo> getLocalFileWithDir(String dir) {
+        return systemLogic.getLocalFileWithDir(dir);
     }
 
     @RequestMapping("/system/getLastSomeRows")
