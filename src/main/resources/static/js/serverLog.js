@@ -8,6 +8,7 @@ let serverLog = new Vue({
         serverLogAll: "",
         logFiles: [],
         n: 200,
+        open: true,
     },
     created() {
         this.initWebSocket();

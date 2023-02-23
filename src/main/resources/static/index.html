@@ -93,6 +93,7 @@
         <div id="server-log-vue">
             <div class="tab" id="server-log-tab">
                 <h3>日志</h3>
+                <button v-show="!open" v-on:click="open = true">显示悬浮窗</button>
                 <hr>
                 <button v-on:click="listServerLogs()">刷新日志列表</button>
                 <label>
@@ -108,10 +109,11 @@
                 <textarea id="server-log-textarea" v-model="serverLogAll" readonly="readonly"></textarea>
             </div>
 
-            <div id="log-div">
+            <div id="log-div" v-show="open">
                 <div id="log-control">
                     <button onclick="changeMode()">切换模式</button>
-                    <button v-on:click="shown = !shown">隐藏显示控制台</button>
+                    <button v-on:click="shown = !shown">{{shown? "隐藏": "显示"}}</button>
+                    <button v-on:click="open = false">关闭</button>
                 </div>
                 <div v-show="shown" class="move-handle">
                     <span>日志控制台 模式：</span>

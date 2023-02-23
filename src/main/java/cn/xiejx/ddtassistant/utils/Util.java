@@ -20,10 +20,7 @@ import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.ServerSocket;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -507,6 +504,21 @@ public class Util {
             sb.append(string).append("\n");
         }
         return sb.toString();
+    }
+
+    public static String getMacAddress()  {
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            NetworkInterface networkInterface = NetworkInterface.getByInetAddress(localHost);
+            byte[] hardwareAddress = networkInterface.getHardwareAddress();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < hardwareAddress.length; i++) {
+                sb.append(String.format("%02X%s", hardwareAddress[i], (i < hardwareAddress.length - 1) ? "-" : ""));
+            }
+            return sb.toString();
+        } catch (UnknownHostException | SocketException e) {
+            return null;
+        }
     }
 
     public static void main(String[] args) {

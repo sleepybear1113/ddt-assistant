@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.constant;
 
+import cn.xiejx.ddtassistant.collect.InfoCollectDto;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.TypeConstants;
@@ -34,6 +35,8 @@ public class GlobalVariable {
         t.setUncaughtExceptionHandler((t1, e) -> log.error(e.getMessage(), e));
         return t;
     }, new ThreadPoolExecutor.DiscardPolicy());
+
+    public static final InfoCollectDto INFO_COLLECT_DTO = new InfoCollectDto();
 
     public static List<String> getTemplateImgList(String template) {
         return getTemplateImgList(Collections.singletonList(template));

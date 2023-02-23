@@ -352,6 +352,9 @@ public class Captcha extends BaseType {
                     // 每 10 次验证码请求一次余额
                     basePredictDto.lowBalanceRemind(captchaConfig);
                 }
+
+                // 验证码次数收集
+                GlobalVariable.INFO_COLLECT_DTO.addCaptchaCount(captchaChoiceEnum);
                 // 获取到正常选项，退出
                 break;
             }
