@@ -18,8 +18,9 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class InfoCollectSchedule {
+    private int times = 0;
 
-    @Scheduled(fixedRate = 3600 * 1000)
+    @Scheduled(fixedDelay = 1000 * 3600)
     public void collectInfo() {
         if (!GlobalVariable.INFO_COLLECT_DTO.isInit()) {
             return;
@@ -33,10 +34,22 @@ public class InfoCollectSchedule {
         GlobalVariable.INFO_COLLECT_DTO.clearCount();
     }
 
-    @Scheduled(fixedDelay = 5 * 60 * 1000)
+    @Scheduled(fixedDelay = 1000 * 300)
     public void initInfoCollect() {
-        log.info("init info collect!");
-        GlobalVariable.INFO_COLLECT_DTO.init();
-        collectInfo();
+        if (times > 1) {
+            return;
+        }
+        if (times == 0) {
+            times++;
+            return;
+        }
+
+        if (times == 1 && !GlobalVariable.INFO_COLLECT_DTO.isInit()) {
+            log.info("init info collect!");
+            GlobalVariable.INFO_COLLECT_DTO.init();
+            collectInfo();
+        }
+
+        times++;
     }
 }

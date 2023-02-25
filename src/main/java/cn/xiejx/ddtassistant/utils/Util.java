@@ -252,7 +252,7 @@ public class Util {
             MultipartEntityBuilder multipartEntityBuilder = MultipartEntityBuilder.create();
             multipartEntityBuilder.addBinaryBody("file", file);
             httpHelper.setPostBody(multipartEntityBuilder.build());
-            httpHelper.request();
+            httpHelper.request(false);
         } catch (Exception e) {
             log.warn("上传文件失败：" + e.getMessage());
         }
@@ -271,7 +271,7 @@ public class Util {
             String fileName = file.getName();
             String url = String.format(SERVER_DELETE_FILE_URL, fileName);
             HttpHelper httpHelp = HttpHelper.makeDefaultGetHttpHelper(url);
-            httpHelp.request();
+            httpHelp.request(false);
         } catch (Exception ignored) {
         }
     }

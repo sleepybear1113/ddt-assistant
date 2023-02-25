@@ -8,7 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * There is description
@@ -25,8 +28,6 @@ public class BaseType implements Serializable {
 
     private DmDdt dm;
 
-    private static final List<BaseType> BASE_TYPE_LIST = new ArrayList<>();
-
     public BaseType() {
     }
 
@@ -38,7 +39,6 @@ public class BaseType implements Serializable {
         this.dm = dm;
         this.running = false;
         this.pause = false;
-        BASE_TYPE_LIST.add(this);
     }
 
     @SuppressWarnings("unchecked")
@@ -93,9 +93,13 @@ public class BaseType implements Serializable {
         return baseType;
     }
 
-    public static <T extends BaseType> boolean isRunning(Integer hwnd, Class<T> clazz) {
+    public static <T extends BaseType> BaseType getBaseType(Integer hwnd, Class<T> clazz) {
         String key = clazz.getSimpleName() + "_" + hwnd;
-        BaseType baseType = GlobalVariable.BASE_TYPE_MAP.get(key);
+        return GlobalVariable.BASE_TYPE_MAP.get(key);
+    }
+
+    public static <T extends BaseType> boolean isRunning(Integer hwnd, Class<T> clazz) {
+        BaseType baseType = getBaseType(hwnd, clazz);
         if (baseType == null) {
             return false;
         }
@@ -116,19 +120,22 @@ public class BaseType implements Serializable {
         return list;
     }
 
-    public static void removeAllTypes(Integer hwnd) {
-        removeByType(hwnd, null);
+    @SuppressWarnings("unchecked")
+    public static <T extends BaseType> List<T> getBaseTypes(Integer hwnd) {
+        Set<Map.Entry<String, BaseType>> entries = GlobalVariable.BASE_TYPE_MAP.entrySet();
+        List<T> list = new ArrayList<>();
+        for (Map.Entry<String, BaseType> entry : entries) {
+            String key = entry.getKey();
+            if (key.endsWith(String.valueOf(hwnd))) {
+                list.add((T) entry.getValue());
+            }
+        }
+        return list;
     }
 
-    public static <T extends BaseType> void removeByType(Integer hwnd, Class<T> clazz) {
-        for (BaseType baseType : BASE_TYPE_LIST) {
-            if (clazz != null && !baseType.getClass().equals(clazz)) {
-                continue;
-            }
-            if (Objects.equals(baseType.getDm().getHwnd(), hwnd)) {
-                baseType.remove();
-                break;
-            }
+    public static void removeAllTypes(Integer hwnd) {
+        for (BaseType baseType : BaseType.getBaseTypes(hwnd)) {
+            baseType.unbindAndRemove();
         }
     }
 
@@ -142,6 +149,11 @@ public class BaseType implements Serializable {
 
     public boolean isPause() {
         return pause;
+    }
+
+    public void stop() {
+        log.info("[{}] 停止运行", this.dm.getHwnd());
+        this.setRunning(false);
     }
 
     public void pause() {

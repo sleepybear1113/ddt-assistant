@@ -40,6 +40,7 @@ public class InfoCollectDto implements Serializable {
         captchaCountTj = 0;
         captchaCountTotalPc = 0;
         captchaCountTotalTj = 0;
+        hwndNum = 0;
     }
 
     public void addCaptchaCount(CaptchaChoiceEnum captchaChoiceEnum) {
@@ -58,8 +59,8 @@ public class InfoCollectDto implements Serializable {
     }
 
     public void init() {
-        init = true;
         AppProperties appProperties = SpringContextUtil.getBean(AppProperties.class);
+        init = true;
         this.appVersion = appProperties.getAppVersion();
         this.version = appProperties.getVersion();
 

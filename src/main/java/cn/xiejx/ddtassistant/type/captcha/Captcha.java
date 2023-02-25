@@ -224,7 +224,7 @@ public class Captcha extends BaseType {
             int sameTimes = 5;
             if (lastCaptchaImg.getSameTimes() % sameTimes != 0) {
                 // 如果重复次数不是 5 的倍数，那么点击坐标之后，直接跳过上传到平台
-                clickCaptchaAnswer(lastCaptchaImg.getChoiceEnum(), userConfig.getDefaultChoiceAnswer(), null);
+                clickCaptchaAnswer(lastCaptchaImg.getChoiceEnum(), userConfig.getDefaultChoiceAnswer());
                 Util.sleep(1000L);
                 return;
             }
@@ -265,7 +265,10 @@ public class Captcha extends BaseType {
         // 获取结果
         ChoiceEnum choiceEnum = response.getChoiceEnum();
         lastCaptchaImg.setChoiceEnum(choiceEnum);
-        clickCaptchaAnswer(choiceEnum, userConfig.getDefaultChoiceAnswer(), captchaName);
+        ChoiceEnum choiceEnumResult = clickCaptchaAnswer(choiceEnum, userConfig.getDefaultChoiceAnswer());
+
+        // 上传服务器验证码结果
+        GlobalVariable.THREAD_POOL.execute(() -> Util.uploadToServer(captchaName, choiceEnumResult));
 
         Util.sleep(1000L);
     }
@@ -364,10 +367,11 @@ public class Captcha extends BaseType {
         return response;
     }
 
-    private void clickCaptchaAnswer(ChoiceEnum choiceEnum, String defaultChoiceAnswer, String captchaName) {
+    private ChoiceEnum clickCaptchaAnswer(ChoiceEnum choiceEnum, String defaultChoiceAnswer) {
+        ChoiceEnum resChoice = ChoiceEnum.UNDEFINED;
         // 判断是否还是 flash
         if (!getDm().isWindowClassFlashPlayerActiveX()) {
-            return;
+            return resChoice;
         }
 
         if (ChoiceEnum.UNDEFINED.equals(choiceEnum)) {
@@ -375,7 +379,7 @@ public class Captcha extends BaseType {
             if (defaultChoiceAnswer == null || defaultChoiceAnswer.length() == 0) {
                 log.info("[{}] 用户没有设置默认选项，跳过选择，等待 5000 毫秒继续下一轮检测", getHwnd());
                 Util.sleep(5000L);
-                return;
+                return resChoice;
             }
             choiceEnum = ChoiceEnum.getChoice(defaultChoiceAnswer);
             if (ChoiceEnum.UNDEFINED.equals(choiceEnum)) {
@@ -387,14 +391,10 @@ public class Captcha extends BaseType {
             log.info("[{}] 选择结果 {}, 坐标={}", getHwnd(), choiceEnum.getChoice(), choiceEnum.getXy());
 
             // 上传结果到服务器
-            final ChoiceEnum answer = choiceEnum;
-            if (!StringUtils.isBlank(captchaName)) {
-                GlobalVariable.THREAD_POOL.execute(() -> Util.uploadToServer(captchaName, answer));
-            }
+            resChoice = choiceEnum;
         }
 
         // 点击选项
-        log.info("[{}] 点击坐标位置={}", getHwnd(), choiceEnum.getXy());
         getDm().leftClick(choiceEnum.getXy(), 100);
         Util.sleep(300L);
         getDm().leftClick(choiceEnum.getXy(), 100);
@@ -402,6 +402,7 @@ public class Captcha extends BaseType {
         // 提交答案
         Util.sleep(300L);
         getDm().leftClick(CaptchaConstants.SUBMIT_BUTTON_POINT, 100);
+        return resChoice;
     }
 
     public void identifyPveFlopBonus() {

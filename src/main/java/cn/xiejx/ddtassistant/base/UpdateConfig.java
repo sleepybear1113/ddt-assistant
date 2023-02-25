@@ -28,7 +28,7 @@ public class UpdateConfig implements Serializable {
 
     public static UpdateConfig defaultConfig() {
         UpdateConfig updateConfig = new UpdateConfig();
-        updateConfig.setUrl("http://yoga:19876/D%3A/XJXCode/Raw/ddt-assistant-static/version.json");
+        updateConfig.setUrl("https://gitee.com/sleepybear1113/ddt-assistant-static/raw/master/version.json");
         updateConfig.setEnableAutoCheckUpdate(true);
         updateConfig.setUpdateVersionType(16);
         return updateConfig;

@@ -31,7 +31,6 @@ import java.util.Objects;
 @Slf4j
 public class Auction extends BaseType {
     private static final long serialVersionUID = 8932679197291875438L;
-    private boolean stop;
 
     private boolean confirm;
 
@@ -45,14 +44,16 @@ public class Auction extends BaseType {
     @Override
     public void init(DmDdt dm) {
         super.init(dm);
-        this.stop = false;
     }
 
     public static boolean stopAuction(int hwnd) {
-        if (!isRunning(hwnd, Auction.class)) {
+        BaseType auctionType = getBaseType(hwnd, Auction.class);
+        if (auctionType == null || !auctionType.isRunning()) {
             return false;
         }
-        removeByType(hwnd, Auction.class);
+
+        auctionType.stop();
+        remove(hwnd, Auction.class);
         return true;
     }
 
@@ -145,10 +146,8 @@ public class Auction extends BaseType {
                     log.info("[{}] 绑定丢失，终止！", getHwnd());
                     break;
                 }
-                if (stop || !getDm().isWindowClassFlashPlayerActiveX()) {
-                    log.info("[{}] 运行终止！", getHwnd());
-                    break;
-                }
+                stopOrPause();
+
                 try {
                     // 开始拍卖
                     log.info("[{}] 拍卖第 {} 个！", getHwnd(), index);
