@@ -45,6 +45,9 @@ public class SettingLogic {
         GlobalVariable.THREAD_POOL.execute(() -> {
             Util.sleep(4000L);
             log.info("检测新版本中...");
+            if (!Boolean.TRUE.equals(settingConfig.getUpdateConfig().getEnableAutoCheckUpdate())) {
+                return;
+            }
             UpdateHelper.checkUpdate(appProperties.getVersion(), settingConfig.getUpdateConfig());
         });
     }

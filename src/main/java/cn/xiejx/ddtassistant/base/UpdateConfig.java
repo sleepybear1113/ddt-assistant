@@ -29,7 +29,7 @@ public class UpdateConfig implements Serializable {
     public static UpdateConfig defaultConfig() {
         UpdateConfig updateConfig = new UpdateConfig();
         updateConfig.setUrl("https://gitee.com/sleepybear1113/ddt-assistant-static/raw/master/version.json");
-        updateConfig.setEnableAutoCheckUpdate(true);
+        updateConfig.setEnableAutoCheckUpdate(null);
         updateConfig.setUpdateVersionType(16);
         return updateConfig;
     }
