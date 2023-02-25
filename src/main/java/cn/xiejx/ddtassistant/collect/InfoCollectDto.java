@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant.collect;
 
 import cn.xiejx.ddtassistant.config.AppProperties;
+import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
@@ -41,6 +42,10 @@ public class InfoCollectDto implements Serializable {
         captchaCountTotalPc = 0;
         captchaCountTotalTj = 0;
         hwndNum = 0;
+    }
+
+    public void refreshHwndNum() {
+        this.hwndNum = GlobalVariable.DM_DDT_MAP.size();
     }
 
     public void addCaptchaCount(CaptchaChoiceEnum captchaChoiceEnum) {

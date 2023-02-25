@@ -25,6 +25,7 @@ public class InfoCollectSchedule {
         if (!GlobalVariable.INFO_COLLECT_DTO.isInit()) {
             return;
         }
+        GlobalVariable.INFO_COLLECT_DTO.refreshHwndNum();
 
         String addr = "https://sleepybear.cn/ddt-assistant-collect/info/collect";
         HttpHelper httpHelper = HttpHelper.makeDefaultTimeoutHttpHelper(addr, MethodEnum.METHOD_POST);
