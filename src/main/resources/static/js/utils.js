@@ -37,13 +37,18 @@ function showImg(src) {
     let imgOutDiv = document.getElementById("large-pic-div");
     imgOutDiv.style.display = "";
     imgOutDiv.style.top = window.scrollY + window.screen.height / 4 + "px";
-    imgOutDiv.style.height = "500px";
+    // imgOutDiv.style.height = "500px";
     document.getElementById("cover").style.display = "";
 }
 
 function jumpToMailSettingPage() {
     tabApp.changeTab("setting");
     settingApp.selectedTab = '邮箱设置';
+}
+
+function jumpToDonatePage() {
+    tabApp.changeTab("introduction");
+    introductionApp.selectedTab = '请我吃点东西';
 }
 
 function showGameShot(hwnd, imgQuality) {

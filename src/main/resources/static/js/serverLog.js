@@ -97,5 +97,13 @@ let serverLog = new Vue({
                 scroll.scrollTop = scroll.scrollHeight;
             }
         },
+        scrollToBottom() {
+            let scroll = document.getElementById("server-log-textarea");
+            scroll.scrollTop = scroll.scrollHeight;
+        },
+        scrollToTop() {
+            let scroll = document.getElementById("server-log-textarea");
+            scroll.scrollTop = 0;
+        },
     }
 });

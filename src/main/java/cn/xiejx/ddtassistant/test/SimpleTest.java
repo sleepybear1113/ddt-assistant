@@ -7,7 +7,6 @@ import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.type.captcha.LastCaptchaImg;
 import cn.xiejx.ddtassistant.utils.ImageClean;
 import cn.xiejx.ddtassistant.utils.OcrUtil;
-import cn.xiejx.ddtassistant.utils.Util;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;

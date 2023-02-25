@@ -354,5 +354,6 @@ class FileInfoVo {
         this.size = props.size;
         this.absoluteFilename = props.absoluteFilename;
         this.isDir = props.isDir;
+        this.lastModified = props.lastModified;
     }
 }

@@ -50,6 +50,17 @@ let browseFilesApp = new Vue({
 
             window.open(path);
         },
+        browseFile2(path) {
+            let isPic = false;
+            for (let i = 0; i < this.picSuffix.length; i++) {
+                if (path.endsWith(this.picSuffix[i])) {
+                    isPic = true;
+                    break;
+                }
+            }
+
+            return path;
+        },
         getTodayIncome() {
             let today = new Date().Format("yyyyMMdd");
             this.currentPath = "./图片/副本翻牌截图/" + today + "/";

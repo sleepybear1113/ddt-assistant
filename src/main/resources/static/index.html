@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>弹弹堂Java辅助-设置页</title>
     <link rel="stylesheet" type="text/css" href="css/css.css">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
 </head>
 <script src="lib/js/vue.js"></script>
 <script src="lib/js/axios.min.js"></script>
@@ -32,10 +32,10 @@
         </div>
         <label for="textarea-info">信息：</label>
         <textarea id="textarea-info" style="width: 400px; height: 70px" readonly></textarea>
+        <div id="cover" onclick="hideImg()" style="display: none; z-index: 100"></div>
         <div id="large-pic-div" style="display: none; position: absolute">
             <img id="cover-img" src="" width="80%" alt="1">
         </div>
-        <div id="cover" onclick="hideImg()" style="display: none"></div>
     </div>
     <hr>
 
@@ -76,6 +76,7 @@
 
             <hr>
             <button v-on:click="showAvailableIpAddr = !showAvailableIpAddr">隐藏/展开可用ip地址</button>
+            <button onclick="jumpToDonatePage()">请我吃点东西</button>
             <div v-show="showAvailableIpAddr">
                 <div v-for="(addrList, index) in ipList">
                     <p>{{ipInfoList[index]}}</p>
@@ -95,16 +96,21 @@
                 <h3>日志</h3>
                 <button v-show="!open" v-on:click="open = true">显示悬浮窗</button>
                 <hr>
-                <button v-on:click="listServerLogs()">刷新日志列表</button>
+                <button v-on:click="fetchLog('日志.log')">今天日志</button>
+                <button v-on:click="fetchLog('日志-详细.log')">今天日志(详细)</button>
+                <br/>
                 <label>
                     最后
                     <input type="number" v-model="n" class="ms-input">
                     行
                 </label>
+                <button v-on:click="listServerLogs()">获取全部日志列表</button>
                 <br/>
                 <button v-for="file in logFiles" v-on:click="fetchLog(file)">{{file}}</button>
                 <br/>
                 <label for="server-log-textarea">日志信息：</label>
+                <button v-on:click="scrollToTop()">滚动到顶</button>
+                <button v-on:click="scrollToBottom()">滚动到底</button>
                 <br/>
                 <textarea id="server-log-textarea" v-model="serverLogAll" readonly="readonly"></textarea>
             </div>
@@ -762,7 +768,7 @@
                         <td>{{getReadableFileSizeString(file.size)}}</td>
                         <td>
                             <button v-show="file.isDir" v-on:click="getLocalFileWithDir(currentPath + file.filename + '/')">进入</button>
-                            <button v-show="!file.isDir" v-on:click="browseFile(currentPath + file.filename)">打开</button>
+                            <a v-show="!file.isDir" :href="currentPath + file.filename" target="_blank">打开</a>
                         </td>
                         <td>{{file.isDir? "文件夹": "文件"}}</td>
                     </tr>
@@ -1042,8 +1048,8 @@
             <h3>相关介绍</h3>
             <hr>
             <span v-for="tab in tabs">
-             <button v-on:click="changeTab(tab)">{{tab.name}}</button>
-        </span>
+                <button v-on:click="changeTab(tab)">{{tab.name}}</button>
+            </span>
             <hr>
 
             <div v-show="selectedTab === '简介'">
