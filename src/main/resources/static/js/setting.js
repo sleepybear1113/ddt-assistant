@@ -6,7 +6,7 @@ let settingApp = new Vue({
             {name: "按键设置"},
             {name: "邮箱设置"},
             {name: "登录设置"},
-            // {name: "更新设置"},
+            {name: "更新设置"},
         ],
         settingConfig: {
             keyPadPressWay: "dm",
@@ -95,6 +95,9 @@ let settingApp = new Vue({
             };
 
             showInfo("开始下载，请稍后...");
+            serverLog.shown = true;
+            let scroll = document.getElementById("server-log");
+            scroll.scrollTop = scroll.scrollHeight;
             axios.get(url, params).then((res) => {
                 let downloadFileInfoVo = new DownloadFileInfoVo(res.data.result);
                 showInfo(downloadFileInfoVo.info());
@@ -107,6 +110,7 @@ let settingApp = new Vue({
                     this.versionInfo = v;
                 }
             });
+            this.$forceUpdate();
         },
     }
 });

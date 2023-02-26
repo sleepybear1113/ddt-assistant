@@ -84,6 +84,7 @@ public class UserConfig extends BaseConfig implements Serializable {
      * 副本大翻牌是否截屏
      */
     private Boolean pveFlopBonusCapture;
+    private Boolean pveFlopBonusCaptureMosaic;
     /**
      * 默认选项
      */

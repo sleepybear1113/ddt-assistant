@@ -94,10 +94,7 @@ public class UpdateFileInfoVo implements Serializable {
     }
 
     public void buildUrl(String baseUrl) {
-        if (this.url == null) {
-            return;
-        }
-        if (StringUtils.isBlank(this.url)) {
+        if (this.url != null && StringUtils.isBlank(this.url)) {
             this.url = "";
             return;
         }

@@ -17,6 +17,7 @@ class UserConfig {
         this.pveFlopBonusDisappearDelay = props.pveFlopBonusDisappearDelay;
         this.keyPressAfterPveFlopBonusDisappear = props.keyPressAfterPveFlopBonusDisappear;
         this.pveFlopBonusCapture = props.pveFlopBonusCapture;
+        this.pveFlopBonusCaptureMosaic = props.pveFlopBonusCaptureMosaic;
         this.defaultChoiceAnswer = props.defaultChoiceAnswer;
         this.timeout = props.timeout;
         this.logPrintInterval = props.logPrintInterval;

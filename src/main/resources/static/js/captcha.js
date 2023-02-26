@@ -15,6 +15,7 @@ let captchaApp = new Vue({
             pveFlopBonusAppearDelay: "",
             keyPressAfterPveFlopBonus: "",
             pveFlopBonusCapture: "",
+            pveFlopBonusCaptureMosaic: "",
             pveFlopBonusDisappearDelay: "",
             keyPressAfterPveFlopBonusDisappear: "",
             logPrintInterval: "",

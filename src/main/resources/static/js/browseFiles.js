@@ -61,9 +61,9 @@ let browseFilesApp = new Vue({
 
             return path;
         },
-        getTodayIncome() {
+        getTodayIncome(ext) {
             let today = new Date().Format("yyyyMMdd");
-            this.currentPath = "./图片/副本翻牌截图/" + today + "/";
+            this.currentPath = "./图片/副本翻牌截图/" + today + ext + "/";
             this.getLocalFileWithDir(this.currentPath);
         },
     }

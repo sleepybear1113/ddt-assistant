@@ -7,6 +7,7 @@ import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.dto.AbnormalDetectionCountDto;
 import cn.xiejx.ddtassistant.exception.FrontException;
+import cn.xiejx.ddtassistant.utils.ImgUtil;
 import cn.xiejx.ddtassistant.utils.Util;
 import cn.xiejx.ddtassistant.utils.cacher.Cacher;
 import cn.xiejx.ddtassistant.utils.cacher.CacherBuilder;
@@ -161,6 +162,13 @@ public class MonitorLogic {
                 String path = dir + Util.getTimeString(Util.TIME_HMS_FORMAT).replace("_", "") + ".jpg";
                 Util.ensureParentDir(path);
                 dmDdt.captureFullGamePic(path, 70);
+
+                if (Boolean.TRUE.equals(userConfig.getPveFlopBonusCaptureMosaic())) {
+                    String mosaicDir = Constants.FLOP_BONUS_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT).replace("_", "") + "(码)/";
+                    String mosaicPath = mosaicDir + Util.getTimeString(Util.TIME_HMS_FORMAT).replace("_", "") + ".jpg";
+                    Util.ensureParentDir(mosaicPath);
+                    ImgUtil.mosaicPevIncomeName(path, mosaicPath);
+                }
             }
             break;
         }

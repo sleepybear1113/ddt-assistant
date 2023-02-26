@@ -149,6 +149,7 @@ public class UpdateHelper {
             return updateInfoVo;
         }
 
+        // 过滤旧版本
         versionInfoList.removeIf(v -> (v.getVersionType() & updateConfig.getUpdateVersionType()) <= 0);
 
         StringBuilder sb = new StringBuilder();
@@ -163,6 +164,8 @@ public class UpdateHelper {
         if (StringUtils.isNotBlank(info)) {
             log.info(info);
         }
+        // 过滤没有更新文件的
+        versionInfoList.removeIf(v -> v.getUpdateListVo() == null || CollectionUtils.isEmpty(v.getUpdateListVo().getStatics()));
 
         return updateInfoVo;
     }
@@ -195,12 +198,19 @@ public class UpdateHelper {
     }
 
     public static void calcAllMd5() {
-        String path = "D:\\XJXCode\\Raw\\ddt-assistant-static\\versions\\2.3.3\\files\\";
+        String path = "D:\\XJXCode\\Raw\\ddt-assistant-static\\versions\\2.4.1\\files\\";
         List<File> files = Util.listFiles(path);
 
         List<UpdateFileInfoVo> list = new ArrayList<>();
         for (File file : files) {
             list.add(UpdateFileInfoVo.buildRemote(file, path));
+        }
+        for (UpdateFileInfoVo updateFileInfoVo : list) {
+            String filename = updateFileInfoVo.getFilename();
+            if (filename.contains("ddt-assistant")) {
+                updateFileInfoVo.setUrl("");
+                updateFileInfoVo.setInfo("请移步群文件下载");
+            }
         }
 
         System.out.println(Util.parseObjectToJsonString(list).replace("\\\\", "/"));

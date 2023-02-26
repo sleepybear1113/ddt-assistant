@@ -244,6 +244,9 @@
                         <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
                         <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture"
                                type="checkbox">
+                        <label for="checkbox-pveFlopBonusCaptureMosaic">名字打码(另保存)</label>
+                        <input id="checkbox-pveFlopBonusCaptureMosaic" v-model="userConfig.pveFlopBonusCaptureMosaic"
+                               type="checkbox">
                         <br/>
                         <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
                         <input id="input-pveFlopBonusDisappearDelay" v-model="userConfig.pveFlopBonusDisappearDelay"
@@ -745,7 +748,8 @@
             <hr>
             <button v-on:click="getLocalFileWithDir('./')">最外层文件夹</button>
             <button v-on:click="getLocalFileWithDir('./图片/副本翻牌截图/')">收益文件夹</button>
-            <button v-on:click="getTodayIncome()">当天收益文件夹</button>
+            <button v-on:click="getTodayIncome('')">当天收益文件夹</button>
+            <button v-on:click="getTodayIncome('(码)')">当天收益文件夹(码)</button>
             <hr/>
 
             <span>当前路径：{{currentPath}}</span>
@@ -986,7 +990,7 @@
                         <br/>
                         <span>更新信息：</span>
                         <br/>
-                        <span>{{versionInfo.info}}</span>
+                        <span style="white-space: pre-line;">{{versionInfo.info}}</span>
                         <br/>
                         <span>改动文件数量：{{versionInfo.updateListVo.statics.length}}</span>
                         <br/>
@@ -1023,14 +1027,19 @@
                                 <td>{{getUpdateUpdateStrategyStr(fileInfo.updateStrategy)}}</td>
                                 <td>{{fileInfo.info}}</td>
                                 <td>
-                                    <button v-if="fileInfo.updateStrategy === 1 || fileInfo.updateStrategy === 2"
-                                            v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">更新
-                                    </button>
-                                    <button v-if="fileInfo.updateStrategy === 3" v-on:click="">覆盖</button>
-                                    <button v-if="fileInfo.updateStrategy === 0" v-on:click="">无</button>
-                                    <button v-if="fileInfo.updateStrategy === -1"
-                                            v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">删除
-                                    </button>
+                                    <template v-if="updateInfoVo.currentVersion === versionInfo.version || fileInfo.filename.indexOf('ddt-assistant') >= 0">
+                                        <button v-if="fileInfo.updateStrategy === 1 || fileInfo.updateStrategy === 2"
+                                                v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">更新
+                                        </button>
+                                        <button v-if="fileInfo.updateStrategy === 3" v-on:click="">覆盖</button>
+                                        <button v-if="fileInfo.updateStrategy === 0" v-on:click="">无</button>
+                                        <button v-if="fileInfo.updateStrategy === -1"
+                                                v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">删除
+                                        </button>
+                                    </template>
+                                    <template v-if="updateInfoVo.currentVersion !== versionInfo.version && fileInfo.filename.indexOf('ddt-assistant') < 0">
+                                        <span>请先更新Jar文件</span>
+                                    </template>
                                 </td>
                             </tr>
                         </template>

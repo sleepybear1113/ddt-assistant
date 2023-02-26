@@ -1,5 +1,6 @@
 package cn.xiejx.ddtassistant.utils;
 
+import cn.xiejx.ddtassistant.dm.DmDdt;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
@@ -10,12 +11,14 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.*;
 
 /**
@@ -245,11 +248,7 @@ public class ImgUtil {
     }
 
     public static void main(String[] args) {
-//        ImgUtil.compress("图片/A@67200-12_59_39.png", "图片/5.png",0.5f);
-        long t0 = System.currentTimeMillis();
-        compress("图片/6.png", "图片/6.png", 0.3f);
-        long t1 = System.currentTimeMillis();
-        System.out.println(t1 - t0);
+        mosaicPevIncomeName("D:\\XJXCode\\Java\\Spring\\ddt-assistant\\test\\124045.jpg", "test/mosaic-1.jpg");
     }
 
     public static void mergeImgInDir(String dir, String outputPath) {
@@ -346,6 +345,41 @@ public class ImgUtil {
         }
     }
 
+    public static void mosaicPevIncomeName(String path, String to) {
+        if (StringUtils.isBlank(path)) {
+            return;
+        }
+
+        try {
+            BufferedImage image = ImageIO.read(new File(path));
+            int height = image.getHeight();
+            int width = image.getWidth();
+            if (height < DmDdt.GAME_FULL_REACT[3] || width < DmDdt.GAME_FULL_REACT[2]) {
+                return;
+            }
+
+            int mosaicHeight = 22;
+            int mosaicWidth = 96;
+            int rgb = new Color(180, 60, 16).getRGB();
+            int[] rgbList = new int[mosaicHeight * mosaicWidth];
+            Arrays.fill(rgbList, rgb);
+
+            int xGap = 132;
+            int yGap = 179;
+            int startX = 55;
+            int startY = 200;
+
+            for (int i = 0; i < 7; i++) {
+                for (int j = 0; j < 3; j++) {
+                    image.setRGB(startX + i * xGap, startY + j * yGap, mosaicWidth, mosaicHeight, rgbList, 0, 0);
+                }
+            }
+            String[] split = path.split("\\.");
+            ImageIO.write(image, split[split.length - 1], new File(to));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public enum DeltaInOut {
         /**

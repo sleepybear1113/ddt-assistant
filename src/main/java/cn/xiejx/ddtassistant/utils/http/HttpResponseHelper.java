@@ -11,6 +11,7 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
@@ -49,7 +50,7 @@ public class HttpResponseHelper {
             this.headers = closeableHttpResponse.getAllHeaders();
             try {
                 this.responseBodyBytes = EntityUtils.toByteArray(closeableHttpResponse.getEntity());
-                this.responseBody = new String(this.responseBodyBytes);
+                this.responseBody = new String(this.responseBodyBytes, StandardCharsets.UTF_8);
             } catch (IOException e) {
                 this.exceptionMessage = e.getMessage();
             }
