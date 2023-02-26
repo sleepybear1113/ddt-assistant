@@ -69,7 +69,7 @@ public class UpdateConstants {
         BINARY(1),
         ;
 
-        static final Set<String> FILE_TYPE_SET = new HashSet<>(Arrays.asList(".bat", ".json", ".txt", ".xml", ".pom", ".java", ".yml"));
+        static final Set<String> FILE_TYPE_SET = new HashSet<>(Arrays.asList(".bat", ".json", ".txt", ".xml", ".pom", ".java", ".yml", ".html", ".js", ".css"));
 
         private final Integer type;
 
