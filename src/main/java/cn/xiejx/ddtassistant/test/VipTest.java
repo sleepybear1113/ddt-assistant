@@ -27,17 +27,22 @@ public class VipTest {
         dmDdt.clickCorner();
         Util.sleep(100L);
 
+//        dmDdt.capturePicByRegion("test/vip/VIP币.bmp", new int[]{819, 165, 849, 185});
+
 //        test();
 
 //        for (int i = 0; i < 18; i++) {
 //            captureEachPic(i, 1051762);
 //        }
 
+        List<DmDomains.PicEx> vipPicEx = dmDdt.findPicExInFullGame(Collections.singletonList("test/vip/VIP币.bmp"), "101010", 0.7);
+        DmDomains.PicEx vipPositionP = vipPicEx.get(0);
+        int[] vipPosition = new int[]{vipPositionP.getX() + 30, vipPositionP.getY() + 30};
         while (true) {
-            openVipB();
-            Util.sleep(150L);
+            openVipB(vipPosition);
+            Util.sleep(200L);
 
-            match();
+            match(false);
             if (true) {
 //                break;
             }
@@ -47,12 +52,10 @@ public class VipTest {
         }
 
 
-
 //        match(1051762);
     }
 
-    public static void openVipB() {
-        int[] p = {849, 195};
+    public static void openVipB(int[] p) {
         dmDdt.leftClick(p);
         Util.sleep(80L);
         dmDdt.leftClick(p);
@@ -75,7 +78,7 @@ public class VipTest {
         System.out.println(picEx);
     }
 
-    public static void match() {
+    public static void match(boolean add) {
         File dir = new File(vipTemplateDir);
         File[] files = dir.listFiles();
         if (files == null) {
@@ -99,6 +102,7 @@ public class VipTest {
             picEx = dmDdt.findPicEx(CaptchaConstants.VIP_B_SEARCH_RECT, existTemplates, "111111", 0.7);
 
             for (DmDomains.PicEx ex : picEx) {
+                System.out.println(ex.getPicName());
                 Integer position = getPosition(ex);
                 if (position == null) {
                     continue;
@@ -106,16 +110,22 @@ public class VipTest {
 
                 allSet.remove(position);
             }
+            System.out.println(picEx.size());
+            System.out.println("----------------------");
 
             if (allSet.size() == 0) {
                 return;
             }
             Util.sleep(50L);
         }
-        for (Integer integer : allSet) {
-            System.out.println("添加" + integer);
-            captureEachPic(integer);
+
+        if (add) {
+            for (Integer integer : allSet) {
+                System.out.println("添加" + integer);
+                captureEachPic(integer);
+            }
         }
+
     }
 
     public static Integer getPosition(DmDomains.PicEx picEx) {
