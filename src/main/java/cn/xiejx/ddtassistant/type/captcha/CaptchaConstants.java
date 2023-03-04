@@ -58,6 +58,29 @@ public class CaptchaConstants {
     public static final int[] FLOP_BONUS_SAMPLE_RECT = {160, 10, 365, 75};
 
     /**
+     * VIP 币物品搜索区域
+     */
+    public static final int[] VIP_B_SEARCH_RECT = {295, 118, 665, 427};
+    /**
+     * VIP 币一个外格子大小
+     */
+    public static final int VIP_B_GRID_LENGTH = 48;
+    /**
+     * VIP 币外格子间隔
+     */
+    public static final int VIP_B_GAP = 16;
+    /**
+     * VIP 币内边外边距差值
+     */
+    public static final int VIP_B_INNER_GAP = 10;
+    public static final int[][] VIP_B_POSITION = {
+            {0, 0}, {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5},
+            {1, 0}, {1, 5},
+            {2, 0}, {2, 5},
+            {3, 0}, {3, 5},
+            {4, 0}, {4, 1}, {4, 2}, {4, 3}, {4, 4}, {4, 5},};
+
+    /**
      * 验证码选项坐标
      */
     public final static int[] ANSWER_CHOICE_POINT = {350, 373, 568, 410};
