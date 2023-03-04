@@ -27,7 +27,7 @@ public class VipTest {
         dmDdt.clickCorner();
         Util.sleep(100L);
 
-        test();
+//        test();
 
 //        for (int i = 0; i < 18; i++) {
 //            captureEachPic(i, 1051762);
@@ -35,7 +35,7 @@ public class VipTest {
 
         while (true) {
             openVipB();
-            Util.sleep(200L);
+            Util.sleep(150L);
 
             match();
             if (true) {
@@ -52,16 +52,16 @@ public class VipTest {
     }
 
     public static void openVipB() {
-        int[] p = {815, 185};
+        int[] p = {849, 195};
         dmDdt.leftClick(p);
         Util.sleep(80L);
         dmDdt.leftClick(p);
     }
 
     public static void closeVipB() {
-        dmDdt.leftClick(675, 35);
+        dmDdt.leftClick(708, 39);
         Util.sleep(50L);
-        dmDdt.leftClick(415, 325);
+        dmDdt.leftClick(435, 345);
     }
 
 
@@ -91,12 +91,11 @@ public class VipTest {
             allSet.add(i);
         }
 
-        long ff = System.currentTimeMillis();
+
         List<DmDomains.PicEx> picEx = null;
         for (int i = 0; i < 5; i++) {
             dmDdt.clickCorner();
-            String path = "test/vip2/" + ff + "-" + i + ".bmp";
-            dmDdt.capturePicByRegion(path, CaptchaConstants.VIP_B_SEARCH_RECT);
+
             picEx = dmDdt.findPicEx(CaptchaConstants.VIP_B_SEARCH_RECT, existTemplates, "111111", 0.7);
 
             for (DmDomains.PicEx ex : picEx) {
@@ -109,24 +108,14 @@ public class VipTest {
             }
 
             if (allSet.size() == 0) {
-                System.out.println("no");
                 return;
             }
-            System.out.println("???");
             Util.sleep(50L);
         }
-
-        if (allSet.size() > 14) {
-//            return;
-        }
-
         for (Integer integer : allSet) {
             System.out.println("添加" + integer);
             captureEachPic(integer);
         }
-
-        int ae = 1;
-        ae = 1;
     }
 
     public static Integer getPosition(DmDomains.PicEx picEx) {

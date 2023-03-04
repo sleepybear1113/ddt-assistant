@@ -60,15 +60,15 @@ public class CaptchaConstants {
     /**
      * VIP 币物品搜索区域
      */
-    public static final int[] VIP_B_SEARCH_RECT = {295, 118, 665, 427};
+    public static final int[] VIP_B_SEARCH_RECT = {308, 123, 693, 446};
     /**
      * VIP 币一个外格子大小
      */
-    public static final int VIP_B_GRID_LENGTH = 48;
+    public static final int VIP_B_GRID_LENGTH = 49;
     /**
      * VIP 币外格子间隔
      */
-    public static final int VIP_B_GAP = 16;
+    public static final int VIP_B_GAP = 19;
     /**
      * VIP 币内边外边距差值
      */
