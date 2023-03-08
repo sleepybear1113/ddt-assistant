@@ -4,6 +4,7 @@ import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.DmDdt;
 import cn.xiejx.ddtassistant.dm.DmDomains;
 import cn.xiejx.ddtassistant.type.captcha.CaptchaConstants;
+import cn.xiejx.ddtassistant.type.vip.AutoVipCoinOpen;
 import cn.xiejx.ddtassistant.utils.Util;
 
 import java.io.File;
@@ -19,7 +20,7 @@ public class VipTest {
 
     public static String vipTemplateDir = "test/vip";
 
-    public static DmDdt dmDdt = DmDdt.createInstance(1575522);
+    public static DmDdt dmDdt = DmDdt.createInstance(133888);
 
 
     public static void main(String[] args) {
@@ -35,7 +36,7 @@ public class VipTest {
 //            captureEachPic(i, 1051762);
 //        }
 
-        List<DmDomains.PicEx> vipPicEx = dmDdt.findPicExInFullGame(Collections.singletonList("test/vip/VIP币.bmp"), "101010", 0.7);
+        List<DmDomains.PicEx> vipPicEx = dmDdt.findPicExInFullGame(Collections.singletonList(Constants.VIP_COIN_TEMPLATE_DIR + "VIP币.bmp"), "101010", 0.7);
         DmDomains.PicEx vipPositionP = vipPicEx.get(0);
         int[] vipPosition = new int[]{vipPositionP.getX() + 30, vipPositionP.getY() + 30};
         while (true) {
@@ -73,8 +74,8 @@ public class VipTest {
         Util.sleep(100L);
         String filename = Constants.TEMPLATE_PICTURE_DIR + "VIP币/" + path;
         System.out.println(new File(filename).length());
-        List<DmDomains.PicEx> picEx = dmDdt.findPicEx(CaptchaConstants.VIP_B_SEARCH_RECT, Collections.singletonList(filename), "101010", 0.7);
-        dmDdt.capturePicByRegion("test/a.bmp", CaptchaConstants.VIP_B_SEARCH_RECT);
+        List<DmDomains.PicEx> picEx = dmDdt.findPicEx(CaptchaConstants.VIP_COIN_SEARCH_RECT, Collections.singletonList(filename), "101010", 0.7);
+        dmDdt.capturePicByRegion("test/a.bmp", CaptchaConstants.VIP_COIN_SEARCH_RECT);
         System.out.println(picEx);
     }
 
@@ -99,11 +100,11 @@ public class VipTest {
         for (int i = 0; i < 5; i++) {
             dmDdt.clickCorner();
 
-            picEx = dmDdt.findPicEx(CaptchaConstants.VIP_B_SEARCH_RECT, existTemplates, "111111", 0.7);
+            picEx = dmDdt.findPicEx(CaptchaConstants.VIP_COIN_SEARCH_RECT, existTemplates, "111111", 0.7);
 
             for (DmDomains.PicEx ex : picEx) {
                 System.out.println(ex.getPicName());
-                Integer position = getPosition(ex);
+                Integer position = AutoVipCoinOpen.getPosition(ex);
                 if (position == null) {
                     continue;
                 }
@@ -128,41 +129,23 @@ public class VipTest {
 
     }
 
-    public static Integer getPosition(DmDomains.PicEx picEx) {
-        for (int i = 0; i < CaptchaConstants.VIP_B_POSITION.length; i++) {
-            int[] position = CaptchaConstants.VIP_B_POSITION[i];
-            int startX = CaptchaConstants.VIP_B_SEARCH_RECT[0];
-            int startY = CaptchaConstants.VIP_B_SEARCH_RECT[1];
-
-            int x = startX + position[1] * (CaptchaConstants.VIP_B_GRID_LENGTH + CaptchaConstants.VIP_B_GAP);
-            int y = startY + position[0] * (CaptchaConstants.VIP_B_GRID_LENGTH + CaptchaConstants.VIP_B_GAP);
-
-            int[] p = {x, y};
-
-            if (p[0] < picEx.getX() && p[0] + CaptchaConstants.VIP_B_GRID_LENGTH > picEx.getX() && p[1] < picEx.getY() && p[1] + CaptchaConstants.VIP_B_GRID_LENGTH > picEx.getY()) {
-                return i;
-            }
-        }
-        return null;
-    }
-
     public static void captureEachPic(int i) {
         dmDdt.clickCorner();
         Util.sleep(100L);
 
-        int x = CaptchaConstants.VIP_B_SEARCH_RECT[0] + CaptchaConstants.VIP_B_POSITION[i][1] * (CaptchaConstants.VIP_B_GRID_LENGTH + CaptchaConstants.VIP_B_GAP);
-        int y = CaptchaConstants.VIP_B_SEARCH_RECT[1] + CaptchaConstants.VIP_B_POSITION[i][0] * (CaptchaConstants.VIP_B_GRID_LENGTH + CaptchaConstants.VIP_B_GAP);
+        int x = CaptchaConstants.VIP_COIN_SEARCH_RECT[0] + CaptchaConstants.VIP_COIN_POSITION[i][1] * (CaptchaConstants.VIP_COIN_GRID_LENGTH + CaptchaConstants.VIP_COIN_GAP);
+        int y = CaptchaConstants.VIP_COIN_SEARCH_RECT[1] + CaptchaConstants.VIP_COIN_POSITION[i][0] * (CaptchaConstants.VIP_COIN_GRID_LENGTH + CaptchaConstants.VIP_COIN_GAP);
 
         String path = "test/vip/g" + i + ".bmp";
         Util.ensureParentDir(path);
 //        dmDdt.capturePicByRegion(path, new int[]{x, y, x + CaptchaConstants.VIP_B_GRID_LENGTH, y + CaptchaConstants.VIP_B_GRID_LENGTH});
 
-        x += CaptchaConstants.VIP_B_INNER_GAP;
-        y += CaptchaConstants.VIP_B_INNER_GAP;
+        x += CaptchaConstants.VIP_COIN_INNER_GAP;
+        y += CaptchaConstants.VIP_COIN_INNER_GAP;
         int fileCount = new File(vipTemplateDir).listFiles().length;
         path = "test/vip/" + fileCount + ".bmp";
         System.out.println("截图第" + fileCount);
-        dmDdt.capturePicByRegion(path, new int[]{x, y, x + CaptchaConstants.VIP_B_GRID_LENGTH - 2 * CaptchaConstants.VIP_B_INNER_GAP, y + CaptchaConstants.VIP_B_GRID_LENGTH - 2 * CaptchaConstants.VIP_B_INNER_GAP});
+        dmDdt.capturePicByRegion(path, new int[]{x, y, x + CaptchaConstants.VIP_COIN_GRID_LENGTH - 2 * CaptchaConstants.VIP_COIN_INNER_GAP, y + CaptchaConstants.VIP_COIN_GRID_LENGTH - 2 * CaptchaConstants.VIP_COIN_INNER_GAP});
     }
 
     public static void test() {

@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class Test {
     public static void main(String[] args) throws Exception {
-        ocrWind();
+        ocrCountdown();
     }
 
     public static void whiteTest() throws IOException {
@@ -93,13 +93,18 @@ public class Test {
         dm.capturePicByRegion(Constants.TEMP_DIR + "wind2/" + System.currentTimeMillis() + ".png", region);
     }
 
+    public static void ocrCountdown() {
+        Integer integer = OcrUtil.ocrCountDownPic("tmp/6817748.png");
+        System.out.println(integer);
+    }
+
     public static void ocrWind() throws IOException, TesseractException {
         int[] blue = {60, 60, 60};
         int[][][] colors = new int[][][]{
                 {blue, ImgUtil.WHITE, blue},
 //                {ImgUtil.WHITE, ImgUtil.BLACK, ImgUtil.COLOR_40},
         };
-        BufferedImage bufferedImage = ImgUtil.changeImgColor("tmp/113.png", colors, ImgUtil.DeltaInOut.DELTA_IN);
+        BufferedImage bufferedImage = ImgUtil.changeImgColor("tmp/1-1654504867036.png", colors, ImgUtil.DeltaInOut.DELTA_IN);
 
         String ocr = OcrUtil.ocr(bufferedImage);
         System.out.println(ocr);

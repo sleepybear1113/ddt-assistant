@@ -36,6 +36,8 @@ public class Constants {
      */
     public static final String CAPTCHA_COUNT_DOWN_DIR = CAPTCHA_DIR + "倒计时截图/";
 
+    public static final String VIP_COIN_TEMPLATE_DIR = TEMPLATE_PICTURE_DIR + "VIP币/";
+
     /*
      * ====================================================================
      * ====================================================================
