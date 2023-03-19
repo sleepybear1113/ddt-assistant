@@ -26,7 +26,7 @@ let serverLog = new Vue({
             } else {
                 url = "ws:";
             }
-            url += "//" + window.location.host + "/serverLogSocket";
+            url += "//" + window.location.host + window.location.pathname + "/serverLogSocket";
             let socket = new WebSocket(url); //打开事件
             socket.onopen = () => {
                 this.addServerLog("==> 已连接到服务器进行日志获取");
