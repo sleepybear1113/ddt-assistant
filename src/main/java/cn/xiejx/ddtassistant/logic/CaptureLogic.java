@@ -1,7 +1,5 @@
 package cn.xiejx.ddtassistant.logic;
 
-import cn.xiejx.ddtassistant.constant.Constants;
-import cn.xiejx.ddtassistant.dm.DmDdt;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -14,12 +12,6 @@ import javax.annotation.Resource;
  */
 @Component
 public class CaptureLogic {
-
-    public static final String DESKTOP_SCREEN_SHOT_DIR = Constants.TEMP_DIR + "screenshot/";
-    public static final String GAME_SCREEN_SHOT_DIR = Constants.TEMP_DIR + "screenshot/game/";
-
-    @Resource
-    private DmDdt defaultDm;
 
     @Resource
     private DmLogic dmLogic;

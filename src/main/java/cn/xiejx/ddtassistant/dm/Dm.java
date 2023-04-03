@@ -295,6 +295,18 @@ public class Dm {
         return string;
     }
 
+    public String[] getColor(int x, int y) {
+        Variant variant = invoke("GetColor", x, y);
+        String rrggbb = variant.getString();
+        variant.safeRelease();
+        return new String[]{rrggbb.substring(0, 2), rrggbb.substring(2, 4), rrggbb.substring(4, 6)};
+    }
+
+    public int[] getColorInt(int x, int y) {
+        String[] color = getColor(x, y);
+        return new int[]{Integer.parseInt(color[0], 16), Integer.parseInt(color[1], 16), Integer.parseInt(color[2], 16)};
+    }
+
     public int imageToBmp(String fromPicName, String toBmpName) {
         Variant variant = invoke("ImageToBmp", fromPicName, toBmpName);
         int i = variant.getInt();

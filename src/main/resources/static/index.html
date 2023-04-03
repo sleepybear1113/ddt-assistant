@@ -679,6 +679,25 @@
         </div>
 
 
+        <div class="tab" id="vipCoin">
+            <h3>自动刷/开VIP币</h3>
+            <hr>
+            <div>
+                <button @click="getDdtHwnds()">刷新获取句柄</button>
+                <button @click="stopAll()">停止全部</button>
+                <br/>
+                <div>
+                    <span v-for="hwnd in hwnds">
+                        <button @click="startVipCoinLoop(hwnd)">{{hwnd}}</button>
+                        <button @click="suspend(hwnd)">暂停</button>
+                        <button @click="resume(hwnd)">恢复</button>
+                        <button @click="stop(hwnd)">停止</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
         <div class="tab" id="reCapture">
             <h3>补偿截图</h3>
             <hr>
@@ -686,8 +705,8 @@
                 <strong>什么是补偿截图</strong>
                 <br/>
                 <span>
-                某些人的电脑可能由于设置原因，游戏画面的图片样本和默认自带的图库有些许差别，导致找图无法找到。所以这个功能是在找图找不到的情况下，自行截图游戏画面的样图，作为自己的识别图片。
-            </span>
+                    某些人的电脑可能由于设置原因，游戏画面的图片样本和默认自带的图库有些许差别，导致找图无法找到。所以这个功能是在找图找不到的情况下，自行截图游戏画面的样图，作为自己的识别图片。
+                </span>
                 <hr>
                 <button v-on:click="openResourceDir()">打开模板图片文件夹</button>
                 <hr>
@@ -1105,7 +1124,9 @@
         .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
 </script>
 <script type="text/javascript">
-    ["serverLog", "index", "first", "offlineDetection", "captcha", "capture", "browseFiles", "auction", "test", "tab", "setting", "introduction", "reCapture", "otherFunction"]
+    ["serverLog", "index", "first", "offlineDetection", "captcha", "capture", "browseFiles", "auction",
+        "test", "tab", "setting", "introduction", "reCapture", "otherFunction", "vipCoin"
+    ]
         .forEach(js => document.write("<script src='js/" + js + ".js?" + Math.random() + "'><\/script>"));
 </script>
 <script>

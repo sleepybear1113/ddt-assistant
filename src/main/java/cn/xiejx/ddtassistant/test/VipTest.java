@@ -20,10 +20,21 @@ public class VipTest {
 
     public static String vipTemplateDir = "test/vip";
 
-    public static DmDdt dmDdt = DmDdt.createInstance(133888);
+    public static DmDdt dmDdt = DmDdt.createInstance(331892);
 
 
     public static void main(String[] args) {
+        buildClick();
+        dmDdt.captureFullGamePic("test/full-vip.bmp");
+    }
+
+    public static void buildClick() {
+        dmDdt.bind();
+        dmDdt.clickCorner();
+        Util.sleep(100L);
+    }
+
+    public static void captureAll() {
         dmDdt.bind();
         dmDdt.clickCorner();
         Util.sleep(100L);

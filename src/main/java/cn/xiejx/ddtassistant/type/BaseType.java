@@ -27,6 +27,11 @@ public class BaseType implements Serializable {
     private boolean pause;
 
     private DmDdt dm;
+    public Thread thread;
+
+    public void setThread(Thread thread) {
+        this.thread = thread;
+    }
 
     public BaseType() {
     }
@@ -164,6 +169,31 @@ public class BaseType implements Serializable {
     public void continueRun() {
         log.info("[{}] 继续运行", this.dm.getHwnd());
         this.pause = true;
+    }
+
+    @SuppressWarnings("deprecation")
+    public void suspend() {
+        if (thread != null) {
+            log.info("[{}] 暂停运行 suspend", this.dm.getHwnd());
+            thread.suspend();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    public void resume() {
+        if (thread != null) {
+            log.info("[{}] 恢复运行 resume", this.dm.getHwnd());
+            thread.resume();
+        }
+    }
+
+    @SuppressWarnings("deprecation")
+    public void forceStop() {
+        if (thread != null) {
+            log.info("[{}] 强制停止 stop", this.dm.getHwnd());
+            setRunning(false);
+            thread.stop();
+        }
     }
 
     public DmDdt getDm() {
