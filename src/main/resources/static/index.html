@@ -190,7 +190,7 @@
                 <span>打码次序</span>
                 <template v-for="index in captchaConfig.captchaWay.length">
                     <label for="select-captchaWay"></label>
-                    <select id="select-captchaWay" v-model="captchaConfig.captchaWay[index]">
+                    <select id="select-captchaWay" v-model="captchaConfig.captchaWay[index - 1]">
                         <option value="0">不打码</option>
                         <option value="1">图鉴打码</option>
                         <option value="2">平川服务器打码</option>
