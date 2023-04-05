@@ -163,7 +163,7 @@ public class CaptchaLogic {
     }
 
     public CaptchaConfig resetCaptchaConfig() {
-        CaptchaConfig defaultConfig = (CaptchaConfig) this.captchaConfig.defaultConfig();
+        CaptchaConfig defaultConfig = this.captchaConfig.defaultConfig();
         updateCaptchaConfig(defaultConfig);
         return defaultConfig;
     }

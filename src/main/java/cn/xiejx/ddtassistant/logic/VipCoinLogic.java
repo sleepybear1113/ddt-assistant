@@ -1,10 +1,12 @@
 package cn.xiejx.ddtassistant.logic;
 
+import cn.xiejx.ddtassistant.base.VipCoinConfig;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.vip.AutoVipCoinOpen;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -15,6 +17,18 @@ import java.util.List;
  */
 @Component
 public class VipCoinLogic {
+
+    @Resource
+    private VipCoinConfig vipCoinConfig;
+
+    public VipCoinConfig getConfig() {
+        return vipCoinConfig;
+    }
+
+    public void resetConfig() {
+        vipCoinConfig = vipCoinConfig.defaultConfig();
+        vipCoinConfig.save();
+    }
 
     public Boolean start(int hwnd) {
         boolean running = AutoVipCoinOpen.isRunning(hwnd, AutoVipCoinOpen.class);
@@ -31,7 +45,7 @@ public class VipCoinLogic {
         }
 
         for (AutoVipCoinOpen baseType : baseTypes) {
-            baseType.stop();
+            baseType.forceStop();
         }
         return true;
     }

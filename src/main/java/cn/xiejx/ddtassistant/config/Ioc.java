@@ -47,6 +47,11 @@ public class Ioc {
     }
 
     @Bean
+    public VipCoinConfig initVipCoinConfig() {
+        return new VipCoinConfig().load();
+    }
+
+    @Bean
     public DmDdt initDmDdt() {
         DmDdt dmDdt = DmDdt.createInstance(null);
         TypeConstants.TemplatePrefix.initTemplateImgMap();

@@ -1,9 +1,7 @@
 package cn.xiejx.ddtassistant.controller;
 
-import cn.xiejx.ddtassistant.constant.GlobalVariable;
+import cn.xiejx.ddtassistant.base.VipCoinConfig;
 import cn.xiejx.ddtassistant.logic.VipCoinLogic;
-import cn.xiejx.ddtassistant.type.BaseType;
-import cn.xiejx.ddtassistant.type.vip.AutoVipCoinOpen;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +24,11 @@ public class VipCoinController {
         return true;
     }
 
+    @RequestMapping("/vipCoin/getConfig")
+    public VipCoinConfig getConfig() {
+        return vipCoinLogic.getConfig();
+    }
+
     @RequestMapping("/vipCoin/stopAll")
     public Boolean stopAll() {
         vipCoinLogic.stopAll();
@@ -39,7 +42,7 @@ public class VipCoinController {
 
     @RequestMapping("/vipCoin/suspend")
     public void suspend(Integer hwnd) {
-        GlobalVariable.THREAD_POOL.execute(() -> vipCoinLogic.suspend(hwnd));
+        vipCoinLogic.suspend(hwnd);
     }
 
     @RequestMapping("/vipCoin/resume")

@@ -142,7 +142,7 @@ public class Captcha extends BaseType {
 
         // 绑定
         getDm().bind(userConfig.getMouseMode(), userConfig.getKeyPadMode());
-        setRunning(true);
+        setToRunningStatus();
 
         long lastLogTime = System.currentTimeMillis();
         try {
@@ -182,7 +182,7 @@ public class Captcha extends BaseType {
         } catch (Exception e) {
             log.warn(e.getMessage(), e);
         }
-        setRunning(false);
+        setToNotRunningStatus();
         remove();
     }
 

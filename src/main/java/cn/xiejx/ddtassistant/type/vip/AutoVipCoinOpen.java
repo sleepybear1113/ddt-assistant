@@ -1,7 +1,6 @@
 package cn.xiejx.ddtassistant.type.vip;
 
 import cn.xiejx.ddtassistant.constant.Constants;
-import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDomains;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.captcha.CaptchaConstants;
@@ -116,7 +115,7 @@ public class AutoVipCoinOpen extends BaseType {
         }
 
         getDm().bind();
-        setRunning(true);
+        setToRunningStatus();
 
         // 激活窗口
         getDm().clickCorner();
@@ -127,8 +126,6 @@ public class AutoVipCoinOpen extends BaseType {
         int count = 0;
         // 开始刷盘子
         while (true) {
-            stopOrPause();
-
             count++;
 
             // 找 VIP 币的位置，或者每刷 10 次重新设置坐标
@@ -152,7 +149,7 @@ public class AutoVipCoinOpen extends BaseType {
             closeVipB();
         }
 
-        setRunning(false);
+        setToNotRunningStatus();
     }
 
     public List<String> match() {
@@ -215,7 +212,7 @@ public class AutoVipCoinOpen extends BaseType {
             return false;
         }
 
-        auctionType.stop();
+        auctionType.forceStop();
         remove(hwnd, AutoVipCoinOpen.class);
         return true;
     }
@@ -225,10 +222,7 @@ public class AutoVipCoinOpen extends BaseType {
             return false;
         }
         AutoVipCoinOpen instance = AutoVipCoinOpen.createInstance(hwnd, AutoVipCoinOpen.class, false);
-        Runnable runnable = instance::loop;
-        Thread thread = new Thread(runnable);
-        instance.setThread(thread);
-        thread.start();
+        instance.startThread(instance::loop);
         return true;
     }
 }

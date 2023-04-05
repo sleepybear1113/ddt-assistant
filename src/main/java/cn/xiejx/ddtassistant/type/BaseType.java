@@ -2,8 +2,6 @@ package cn.xiejx.ddtassistant.type;
 
 import cn.xiejx.ddtassistant.constant.GlobalVariable;
 import cn.xiejx.ddtassistant.dm.DmDdt;
-import cn.xiejx.ddtassistant.exception.MyInterruptException;
-import cn.xiejx.ddtassistant.utils.Util;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -23,14 +21,13 @@ import java.util.Set;
 public class BaseType implements Serializable {
     private static final long serialVersionUID = 1162668435055453032L;
 
-    private boolean running;
-    private boolean pause;
-
+    private RunningStatus runningStatus;
     private DmDdt dm;
-    public Thread thread;
+    private Thread thread;
 
-    public void setThread(Thread thread) {
-        this.thread = thread;
+    public void startThread(Runnable runnable) {
+        this.thread = new Thread(runnable);
+        this.thread.start();
     }
 
     public BaseType() {
@@ -42,8 +39,7 @@ public class BaseType implements Serializable {
 
     public void init(DmDdt dm) {
         this.dm = dm;
-        this.running = false;
-        this.pause = false;
+        runningStatus = RunningStatus.NOT_RUNNING;
     }
 
     @SuppressWarnings("unchecked")
@@ -84,7 +80,7 @@ public class BaseType implements Serializable {
         if (baseType == null) {
             return;
         }
-        baseType.setRunning(false);
+        baseType.forceStop();
         baseType.getDm().unbind();
     }
 
@@ -94,7 +90,7 @@ public class BaseType implements Serializable {
         if (baseType == null) {
             return null;
         }
-        baseType.setRunning(false);
+        baseType.setToNotRunningStatus();
         return baseType;
     }
 
@@ -145,55 +141,57 @@ public class BaseType implements Serializable {
     }
 
     public boolean isRunning() {
-        return running;
+        return RunningStatus.RUNNING.equals(this.runningStatus);
     }
 
-    public void setRunning(boolean running) {
-        this.running = running;
+    public void setToRunningStatus() {
+        this.runningStatus = RunningStatus.RUNNING;
     }
 
-    public boolean isPause() {
-        return pause;
-    }
-
-    public void stop() {
-        log.info("[{}] 停止运行", this.dm.getHwnd());
-        this.setRunning(false);
-    }
-
-    public void pause() {
-        log.info("[{}] 暂停运行", this.dm.getHwnd());
-        this.pause = true;
-    }
-
-    public void continueRun() {
-        log.info("[{}] 继续运行", this.dm.getHwnd());
-        this.pause = true;
+    public void setToNotRunningStatus() {
+        this.runningStatus = RunningStatus.NOT_RUNNING;
     }
 
     @SuppressWarnings("deprecation")
-    public void suspend() {
-        if (thread != null) {
-            log.info("[{}] 暂停运行 suspend", this.dm.getHwnd());
-            thread.suspend();
+    public boolean suspend() {
+        if (!RunningStatus.RUNNING.equals(runningStatus)) {
+            return false;
         }
+        if (thread == null) {
+            return false;
+        }
+        log.info("[{}] 暂停运行 suspend", this.dm.getHwnd());
+        this.runningStatus = RunningStatus.PAUSE;
+        GlobalVariable.THREAD_POOL.execute(() -> thread.suspend());
+        return true;
     }
 
     @SuppressWarnings("deprecation")
-    public void resume() {
-        if (thread != null) {
-            log.info("[{}] 恢复运行 resume", this.dm.getHwnd());
-            thread.resume();
+    public boolean resume() {
+        if (!RunningStatus.PAUSE.equals(runningStatus)) {
+            return false;
         }
+        if (thread == null) {
+            return false;
+        }
+        log.info("[{}] 恢复运行 resume", this.dm.getHwnd());
+        this.runningStatus = RunningStatus.PAUSE;
+        GlobalVariable.THREAD_POOL.execute(() -> thread.resume());
+        return true;
     }
 
     @SuppressWarnings("deprecation")
-    public void forceStop() {
-        if (thread != null) {
-            log.info("[{}] 强制停止 stop", this.dm.getHwnd());
-            setRunning(false);
-            thread.stop();
+    public boolean forceStop() {
+        if (RunningStatus.STOP.equals(runningStatus) || RunningStatus.NOT_RUNNING.equals(runningStatus)) {
+            return false;
         }
+        if (thread == null) {
+            return false;
+        }
+        log.info("[{}] 强制停止 stop", this.dm.getHwnd());
+        this.runningStatus = RunningStatus.STOP;
+        GlobalVariable.THREAD_POOL.execute(() -> thread.stop());
+        return true;
     }
 
     public DmDdt getDm() {
@@ -204,12 +202,21 @@ public class BaseType implements Serializable {
         return getDm().getHwnd();
     }
 
-    public void stopOrPause() {
-        if (!this.running) {
-            throw new MyInterruptException("中止运行");
+    public enum RunningStatus {
+        NOT_RUNNING(0),
+        RUNNING(1),
+        PAUSE(2),
+        STOP(3),
+        ;
+        private final Integer status;
+
+        RunningStatus(Integer status) {
+            this.status = status;
         }
-        while (this.pause) {
-            Util.sleep(50L);
+
+        public Integer getStatus() {
+            return status;
         }
     }
+
 }

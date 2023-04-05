@@ -45,7 +45,7 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
     }
 
     @Override
-    public BaseConfig defaultConfig() {
+    public CaptchaConfig defaultConfig() {
         CaptchaConfig captchaConfig = new CaptchaConfig();
 
         List<Integer> way = new ArrayList<>();

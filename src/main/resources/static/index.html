@@ -695,6 +695,123 @@
                     </span>
                 </div>
             </div>
+
+            <hr>
+            <div v-if="vipCoinConfig">
+                <button v-for="name in vipCoinConfigNameList" @click="currentVipCoinConfigName = name">{{name}}</button>
+                <button @click="addNewVipCoinConfig()">新增配置</button>
+                <hr>
+                <div v-if="currentVipCoinConfigName === vipCoinOneConfig.name" v-for="vipCoinOneConfig in vipCoinConfig.vipCoinOneConfigList">
+                    <label>
+                        配置名称
+                        <input v-model="vipCoinOneConfig.newName">
+                    </label>
+                    <button @click="deleteThisConfig()">删除该配置</button>
+
+                    <br/>
+                    <label>
+                        描述
+                        <textarea v-model="vipCoinOneConfig.description"></textarea>
+                    </label>
+                    <hr>
+                    <p>
+                        每项里面的每一行，都是并且的关系，同时满足才会生效。
+                    </p>
+                    <p>
+                        每项外面之间，都是或者的关系，满足任意一个大项目就生效。
+                    </p>
+                    <label>
+                        最小分值总和：
+                        <input v-model="vipCoinOneConfig.minScore" type="number" class="ms-input">
+                    </label>
+                    <ol>
+                        <li v-for="vipCoinCondition in vipCoinOneConfig.vipCoinConditionList">
+                            <div v-for="singleCondition in vipCoinCondition.singleConditionList">
+                                <button @click="singleCondition.contains = !singleCondition.contains">
+                                    {{singleCondition.contains ? "需要" : "不能"}}
+                                </button>
+                                <label>
+                                    <input class="string-input" v-model="singleCondition.name" placeholder="<任意有价值>">
+                                </label>
+                                <label>
+                                    <select v-model="singleCondition.compareType">
+                                        <option value="大于">大于</option>
+                                        <option value="大于等于">大于等于</option>
+                                        <option value="小于">小于</option>
+                                        <option value="小于等于">小于等于</option>
+                                        <option value="等于">等于</option>
+                                        <option value="存在">存在</option>
+                                    </select>
+                                </label>
+                                <label>
+                                    <input v-show="singleCondition.compareType !== '存在'" class="ms-input-small" v-model="singleCondition.num" type="number">
+                                </label>
+                                <button>删除</button>
+                            </div>
+                            <hr>
+                        </li>
+                    </ol>
+
+                    <hr>
+                    <h5>开币设置</h5>
+                    <label>
+                        自动开币
+                        <input type="checkbox" v-model="vipCoinOneConfig.autoOpen">
+                    </label>
+                    <label>
+                        循环开币
+                        <input type="checkbox" v-model="vipCoinOneConfig.cycleOpen">
+                    </label>
+                    <br/>
+                    <span>遇到以下条件之一停止（不填写则不停）</span>
+                    <div v-for="vipCoinStopCondition in vipCoinOneConfig.vipCoinStopConditionList">
+                        <label>
+                            物品：
+                            <input class="string-input" v-model="vipCoinStopCondition.name">
+                        </label>
+                        <label>
+                            数量不少于：
+                            <input class="ms-input-small" v-model="vipCoinStopCondition.num" type="number">
+                        </label>
+                        <button>删除</button>
+                    </div>
+
+                    <hr>
+                    <h5>物品分值设定</h5>
+                    <table>
+                        <thead>
+                        <tr>
+                            <td>有用</td>
+                            <td>物品</td>
+                            <td>分值</td>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        <template v-for="(vipCoinThingScore, index) in vipCoinOneConfig.vipCoinThingScoreList">
+                            <tr>
+                                <td>
+                                    <label>
+                                        {{index + 1}}
+                                        <input type="checkbox" v-model="vipCoinThingScore.enable">
+                                    </label>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input v-model="vipCoinThingScore.name" readonly disabled>
+                                    </label>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input v-model="vipCoinThingScore.score" type="number" class="ms-input-small">
+                                    </label>
+                                </td>
+                            </tr>
+                        </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
 

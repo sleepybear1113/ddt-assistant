@@ -52,7 +52,7 @@ public class Auction extends BaseType {
             return false;
         }
 
-        auctionType.stop();
+        auctionType.forceStop();
         remove(hwnd, Auction.class);
         return true;
     }
@@ -80,7 +80,7 @@ public class Auction extends BaseType {
 
         log.info("[{}] 开始拍卖场功能进行拍卖", getHwnd());
         getDm().bind();
-        setRunning(true);
+        setToRunningStatus();
 
         getDm().clickCorner();
         Util.sleep(100L);
@@ -90,8 +90,6 @@ public class Auction extends BaseType {
             remove();
             return;
         }
-
-        stopOrPause();
 
         putBackItem();
         AuctionData auctionData = SpringContextUtil.getBean(AuctionData.class);
@@ -112,8 +110,6 @@ public class Auction extends BaseType {
         }
 
         for (int[] clickPoint : clickPoints) {
-            stopOrPause();
-
             if (clickPoint == null) {
                 continue;
             }
@@ -139,14 +135,11 @@ public class Auction extends BaseType {
 
             // 开始逐个拍卖
             for (int i = 0; i < indexes.size(); i++) {
-                stopOrPause();
-
                 Integer index = indexes.get(i);
                 if (!getDm().isBind()) {
                     log.info("[{}] 绑定丢失，终止！", getHwnd());
                     break;
                 }
-                stopOrPause();
 
                 try {
                     // 开始拍卖
@@ -177,16 +170,12 @@ public class Auction extends BaseType {
         getDm().clickCorner();
         Util.sleep(100L);
 
-        stopOrPause();
-
         // 关闭出现的弹窗
         List<String> templates = TypeConstants.TemplatePrefix.getAuctionPrefixList();
         List<String> templateImgList = GlobalVariable.getTemplateImgList(templates);
         List<DmDomains.PicEx> picExList = getDm().findPicExInFullGame(templateImgList, "020202", 0.7);
         picExList = closeMsgBox1(picExList, templateImgList);
         closeMsgBox2(picExList, templateImgList);
-
-        stopOrPause();
 
         // 获取第 n 个物品的坐标
         int[] point = AuctionConstants.AuctionPosition.getPoint(n);
@@ -201,8 +190,6 @@ public class Auction extends BaseType {
         // 点击拍卖的地方
         getDm().leftClick(AuctionConstants.AUCTION_INPUT_POINT, 200L);
         Util.sleep(300L);
-
-        stopOrPause();
 
         // ocr 物品名称
         String itemName = ocrItemName();
@@ -239,16 +226,12 @@ public class Auction extends BaseType {
             return null;
         }
 
-        stopOrPause();
-
         // 未启用拍卖
         if (!auctionItem.isEnabled()) {
             log.info("物品[{}]未启用拍卖，放回背包", itemName);
             putItemBack(num);
             return null;
         }
-
-        stopOrPause();
 
         // 物品要被丢弃的
         if (Boolean.TRUE.equals(auctionItem.getDrop())) {
@@ -263,8 +246,6 @@ public class Auction extends BaseType {
             return null;
         }
 
-        stopOrPause();
-
         // 价格数量配置
         AuctionPrice auctionPrice = auctionItem.getPrice(num);
         if (auctionPrice == null) {
@@ -273,16 +254,12 @@ public class Auction extends BaseType {
             return null;
         }
 
-        stopOrPause();
-
         // 输入数量
         if (!ensureNumInput(auctionPrice)) {
             log.info("[{}]数量输入错误，放回背包", itemName);
             putItemBack(num);
             return null;
         }
-
-        stopOrPause();
 
         // 物品数量大于 1 那么需要确认数量放入拍卖格子
         if (num > 1) {
@@ -309,8 +286,6 @@ public class Auction extends BaseType {
         AuctionConstants.AuctionTimeEnum auctionTime = AuctionConstants.AuctionTimeEnum.getAuctionTime(auctionItem.getAuctionTime());
         getDm().leftClick(auctionTime.getPosition());
         Util.sleep(100L);
-
-        stopOrPause();
 
         // 进行拍卖！
         if (Boolean.TRUE.equals(this.confirm)) {
@@ -665,7 +640,6 @@ public class Auction extends BaseType {
     }
 
     public void putItemBack(Integer num) {
-        stopOrPause();
         // 放回原来背包位置
         if (num != null && (num > 1 || num < 0)) {
             // 取消拍卖

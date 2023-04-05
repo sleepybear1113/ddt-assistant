@@ -358,3 +358,77 @@ class FileInfoVo {
         this.lastModified = props.lastModified;
     }
 }
+
+class VipCoinConfig {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.vipCoinOneConfigList = props.vipCoinOneConfigList.map(e => new VipCoinOneConfig(e));
+    }
+}
+
+class VipCoinOneConfig {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.name = props.name;
+        this.newName = props.name;
+        this.description = props.description;
+        this.minScore = props.minScore;
+        this.autoOpen = props.autoOpen;
+        this.cycleOpen = props.cycleOpen;
+        this.vipCoinThingScoreList = props.vipCoinThingScoreList.map(e => new VipCoinThingScore(e));
+        this.vipCoinConditionList = props.vipCoinConditionList.map(e => new VipCoinCondition(e));
+        this.vipCoinStopConditionList = props.vipCoinStopConditionList.map(e => new VipCoinStopCondition(e));
+    }
+}
+
+class VipCoinThingScore {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.name = props.name;
+        this.score = props.score;
+        this.enable = props.enable;
+    }
+}
+
+class VipCoinCondition {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.singleConditionList = props.singleConditionList.map(e => new SingleCondition(e));
+    }
+}
+
+class SingleCondition {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.contains = props.contains;
+        this.name = props.name;
+        this.compareType = props.compareType;
+        this.num = props.num;
+    }
+}
+
+class VipCoinStopCondition {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+
+        this.name = props.name;
+        this.num = props.num;
+    }
+}
