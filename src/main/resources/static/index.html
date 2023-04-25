@@ -699,14 +699,18 @@
             <hr>
             <div v-if="vipCoinConfig">
                 <button v-for="name in vipCoinConfigNameList" @click="currentVipCoinConfigName = name">{{name}}</button>
-                <button @click="addNewVipCoinConfig()">新增配置</button>
+                <span>| </span><button @click="addNewVipCoinConfig()" style="background-color: bisque">新增配置</button>
                 <hr>
+
+                <!-- 遍历每个配置 -->
                 <div v-if="currentVipCoinConfigName === vipCoinOneConfig.name" v-for="vipCoinOneConfig in vipCoinConfig.vipCoinOneConfigList">
+                    <button @click="updateOneConfig(vipCoinOneConfig.name)">保存以下配置</button>
+                    <button @click="deleteThisConfig(vipCoinOneConfig.name)">删除该配置</button>
+                    <br/>
                     <label>
                         配置名称
                         <input v-model="vipCoinOneConfig.newName">
                     </label>
-                    <button @click="deleteThisConfig()">删除该配置</button>
 
                     <br/>
                     <label>
@@ -726,7 +730,7 @@
                     </label>
                     <ol>
                         <li v-for="vipCoinCondition in vipCoinOneConfig.vipCoinConditionList">
-                            <div v-for="singleCondition in vipCoinCondition.singleConditionList">
+                            <div v-for="(singleCondition, index) in vipCoinCondition.singleConditionList">
                                 <button @click="singleCondition.contains = !singleCondition.contains">
                                     {{singleCondition.contains ? "需要" : "不能"}}
                                 </button>
@@ -746,10 +750,16 @@
                                 <label>
                                     <input v-show="singleCondition.compareType !== '存在'" class="ms-input-small" v-model="singleCondition.num" type="number">
                                 </label>
-                                <button>删除</button>
+                                <button @click="deleteCondition(vipCoinCondition.singleConditionList, index)">删除</button>
+                                <div v-show="index === vipCoinCondition.singleConditionList.length - 1">
+                                    <button @click="addSingleCondition(vipCoinCondition.singleConditionList)">新增</button>
+                                </div>
                             </div>
                             <hr>
                         </li>
+                        <template>
+                            <button @click="addCondition(vipCoinOneConfig.vipCoinConditionList)">新增</button>
+                        </template>
                     </ol>
 
                     <hr>
@@ -764,7 +774,7 @@
                     </label>
                     <br/>
                     <span>遇到以下条件之一停止（不填写则不停）</span>
-                    <div v-for="vipCoinStopCondition in vipCoinOneConfig.vipCoinStopConditionList">
+                    <div v-for="(vipCoinStopCondition, index) in vipCoinOneConfig.vipCoinStopConditionList">
                         <label>
                             物品：
                             <input class="string-input" v-model="vipCoinStopCondition.name">
@@ -773,8 +783,9 @@
                             数量不少于：
                             <input class="ms-input-small" v-model="vipCoinStopCondition.num" type="number">
                         </label>
-                        <button>删除</button>
+                        <button @click="deleteStopCondition(vipCoinOneConfig, index)">删除</button>
                     </div>
+                    <button @click="addStopCondition(vipCoinOneConfig)">新增</button>
 
                     <hr>
                     <h5>物品分值设定</h5>

@@ -3,6 +3,7 @@ package cn.xiejx.ddtassistant.base;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ public class VipCoinConfig extends BaseConfig {
 
     @Override
     public String getFileName() {
-        return "VIP币配置文件";
+        return "VIP币配置文件.json";
     }
 
     @Override
@@ -33,48 +34,8 @@ public class VipCoinConfig extends BaseConfig {
         List<VipCoinOneConfig> vipCoinOneConfigList = new ArrayList<>();
         vipCoinConfig.setVipCoinOneConfigList(vipCoinOneConfigList);
 
-        VipCoinOneConfig vipCoinOneConfig = new VipCoinOneConfig();
+        VipCoinOneConfig vipCoinOneConfig = VipCoinOneConfig.defaultConfig();
         vipCoinOneConfigList.add(vipCoinOneConfig);
-        vipCoinOneConfig.setName("默认配置");
-        String description = "" +
-                "【默认配置】选择了常用的物品作为有价值的，并且将分数设置为 10。\n" +
-                "满足以下任一条件：\n" +
-                "① 盘子分数总和不少于 1 【同时】 <包含> <“极” 字样的物品> 数量 <大于等于> <2> 【同时】 <包含> <任意物品> 数量 <大于等于> <12>。（人话：极武器不少于2个并且有价值不少于12个）\n" +
-                "② 盘子分数总和不少于 1 【同时】 <包含> <“极” 字样的物品> 数量 <大于等于> <3> 【同时】 <包含> <任意物品> 数量 <大于等于> <10> 【同时】 <不包含> <“啵咕盾牌” 字样的物品> 数量类型为 <存在>。（人话：极武器不少于3个并且有价值不少于10个并且不存在包含“远古竹枪”的物品）";
-        vipCoinOneConfig.setDescription(description);
-        vipCoinOneConfig.setMinScore(1);
-        vipCoinOneConfig.setVipCoinThingScoreList(VipCoinThingScore.defaultConfig());
-
-        List<VipCoinCondition> vipCoinConditionList = new ArrayList<>();
-        vipCoinOneConfig.setVipCoinConditionList(vipCoinConditionList);
-        VipCoinCondition vipCoinCondition1 = new VipCoinCondition();
-        vipCoinConditionList.add(vipCoinCondition1);
-        List<SingleCondition> singleConditionList1 = new ArrayList<>();
-        vipCoinCondition1.setSingleConditionList(singleConditionList1);
-        singleConditionList1.add(new SingleCondition(true, "极", "大于等于", 2));
-        singleConditionList1.add(new SingleCondition(true, "", "大于等于", 12));
-
-        VipCoinCondition vipCoinCondition2 = new VipCoinCondition();
-        vipCoinConditionList.add(vipCoinCondition2);
-        List<SingleCondition> singleConditionList2 = new ArrayList<>();
-        vipCoinCondition2.setSingleConditionList(singleConditionList2);
-        singleConditionList2.add(new SingleCondition(true, "极", "大于等于", 3));
-        singleConditionList2.add(new SingleCondition(true, "", "大于等于", 10));
-        singleConditionList2.add(new SingleCondition(false, "啵咕盾牌", "存在", null));
-
-        List<VipCoinStopCondition> vipCoinStopConditionList = new ArrayList<>();
-        vipCoinStopConditionList.add(new VipCoinStopCondition("极", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("巴罗夫盾牌", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("真·爱心", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("真·天使", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("真·远古", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("+3", 2));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("+4", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("+5", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("女神之泪", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("阿瑞斯", 1));
-        vipCoinStopConditionList.add(new VipCoinStopCondition("强化石5级", 1));
-        vipCoinOneConfig.setVipCoinStopConditionList(vipCoinStopConditionList);
         return vipCoinConfig;
     }
 
@@ -99,6 +60,30 @@ public class VipCoinConfig extends BaseConfig {
         private List<VipCoinCondition> vipCoinConditionList;
         private List<VipCoinThingScore> vipCoinThingScoreList;
         private List<VipCoinStopCondition> vipCoinStopConditionList;
+
+        public static VipCoinOneConfig defaultConfig() {
+            return defaultConfig(null);
+        }
+
+        public static VipCoinOneConfig defaultConfig(String configName) {
+            if (StringUtils.isBlank(configName)) {
+                configName = "默认配置";
+            }
+            VipCoinOneConfig vipCoinOneConfig = new VipCoinOneConfig();
+            vipCoinOneConfig.setName(configName);
+            String description = "【默认配置】选择了常用的物品作为有价值的，并且将分数设置为 10。\n" +
+                    "满足以下任一条件：\n" +
+                    "① 盘子分数总和不少于 1 【同时】 <包含> <“极” 字样的物品> 数量 <大于等于> <2> 【同时】 <包含> <任意物品> 数量 <大于等于> <12>。（人话：极武器不少于2个并且有价值不少于12个）\n" +
+                    "② 盘子分数总和不少于 1 【同时】 <包含> <“极” 字样的物品> 数量 <大于等于> <3> 【同时】 <包含> <任意物品> 数量 <大于等于> <10> 【同时】 <不包含> <“啵咕盾牌” 字样的物品> 数量类型为 <存在>。（人话：极武器不少于3个并且有价值不少于10个并且不存在包含“远古竹枪”的物品）";
+            vipCoinOneConfig.setDescription(description);
+            vipCoinOneConfig.setMinScore(1);
+            vipCoinOneConfig.setVipCoinThingScoreList(VipCoinThingScore.defaultConfig());
+
+            vipCoinOneConfig.setVipCoinConditionList(VipCoinCondition.defaultConfigList());
+
+            vipCoinOneConfig.setVipCoinStopConditionList(VipCoinStopCondition.defaultConfig());
+            return vipCoinOneConfig;
+        }
     }
 
     @Data
@@ -257,6 +242,25 @@ public class VipCoinConfig extends BaseConfig {
         private static final long serialVersionUID = 4576903677653031081L;
 
         private List<SingleCondition> singleConditionList;
+
+        public static List<VipCoinCondition> defaultConfigList() {
+            List<VipCoinCondition> vipCoinConditionList = new ArrayList<>();
+
+            VipCoinCondition vipCoinCondition1 = new VipCoinCondition();
+            List<SingleCondition> singleConditionList1 = new ArrayList<>();
+            vipCoinCondition1.setSingleConditionList(singleConditionList1);
+            singleConditionList1.add(new SingleCondition(true, "极", "大于等于", 2));
+            singleConditionList1.add(new SingleCondition(true, "", "大于等于", 12));
+            vipCoinConditionList.add(vipCoinCondition1);
+
+            VipCoinCondition vipCoinCondition2 = new VipCoinCondition();
+            List<SingleCondition> singleConditionList2 = new ArrayList<>();
+            vipCoinCondition2.setSingleConditionList(singleConditionList2);
+            singleConditionList2.add(new SingleCondition(true, "极", "大于等于", 3));
+            singleConditionList2.add(new SingleCondition(true, "", "大于等于", 11));
+            vipCoinConditionList.add(vipCoinCondition2);
+            return vipCoinConditionList;
+        }
     }
 
     /**
@@ -311,6 +315,22 @@ public class VipCoinConfig extends BaseConfig {
         public VipCoinStopCondition(String name, Integer num) {
             this.name = name;
             this.num = num;
+        }
+
+        public static List<VipCoinStopCondition> defaultConfig() {
+            List<VipCoinStopCondition> vipCoinStopConditionList = new ArrayList<>();
+            vipCoinStopConditionList.add(new VipCoinStopCondition("极", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("巴罗夫盾牌", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("真·爱心", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("真·天使", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("真·远古", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("+3", 2));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("+4", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("+5", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("女神之泪", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("阿瑞斯", 1));
+            vipCoinStopConditionList.add(new VipCoinStopCondition("强化石5级", 1));
+            return vipCoinStopConditionList;
         }
     }
 }

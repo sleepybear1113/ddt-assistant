@@ -407,6 +407,12 @@ class VipCoinCondition {
 
         this.singleConditionList = props.singleConditionList.map(e => new SingleCondition(e));
     }
+
+    defaultCondition() {
+        let defaultCondition = new VipCoinCondition();
+        defaultCondition.singleConditionList = [new SingleCondition().defaultCondition()];
+        return defaultCondition;
+    }
 }
 
 class SingleCondition {
@@ -420,6 +426,15 @@ class SingleCondition {
         this.compareType = props.compareType;
         this.num = props.num;
     }
+
+    defaultCondition() {
+        let defaultCondition = new SingleCondition();
+        defaultCondition.contains = true;
+        defaultCondition.name = "";
+        defaultCondition.compareType = "大于等于";
+        defaultCondition.num = 10;
+        return defaultCondition;
+    }
 }
 
 class VipCoinStopCondition {
@@ -430,5 +445,12 @@ class VipCoinStopCondition {
 
         this.name = props.name;
         this.num = props.num;
+    }
+
+    defaultConfig() {
+        let defaultConfig = new VipCoinStopCondition();
+        defaultConfig.name = "";
+        defaultConfig.num = 1;
+        return defaultConfig;
     }
 }

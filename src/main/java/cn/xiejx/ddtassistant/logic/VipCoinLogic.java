@@ -1,6 +1,7 @@
 package cn.xiejx.ddtassistant.logic;
 
 import cn.xiejx.ddtassistant.base.VipCoinConfig;
+import cn.xiejx.ddtassistant.exception.FrontException;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.vip.AutoVipCoinOpen;
 import org.apache.commons.collections4.CollectionUtils;
@@ -63,5 +64,40 @@ public class VipCoinLogic {
     public void resume(Integer hwnd) {
         BaseType baseType = BaseType.getBaseType(hwnd, AutoVipCoinOpen.class);
         baseType.resume();
+    }
+
+    public Boolean addNewVipCoinConfig(String newName) {
+        vipCoinConfig.getVipCoinOneConfigList().add(VipCoinConfig.VipCoinOneConfig.defaultConfig(newName));
+        vipCoinConfig.save();
+        return true;
+    }
+
+    public Boolean updateOneConfig(VipCoinConfig.VipCoinOneConfig vipCoinOneConfig) {
+        int index = -1;
+        for (int i = 0; i < this.vipCoinConfig.getVipCoinOneConfigList().size(); i++) {
+            VipCoinConfig.VipCoinOneConfig coinOneConfig = this.vipCoinConfig.getVipCoinOneConfigList().get(i);
+            String name = vipCoinOneConfig.getName();
+            if (coinOneConfig.getName().equals(name)) {
+                index = i;
+                break;
+            }
+        }
+
+        if (index < 0) {
+            throw new FrontException("没有该配置名");
+        }
+        vipCoinOneConfig.setName(vipCoinOneConfig.getNewName());
+        this.vipCoinConfig.getVipCoinOneConfigList().set(index, vipCoinOneConfig);
+        this.vipCoinConfig.save();
+        return true;
+    }
+
+    public Boolean deleteThisConfig(String name) {
+        boolean b = this.vipCoinConfig.getVipCoinOneConfigList().removeIf(vipCoinOneConfig -> vipCoinOneConfig.getName().equals(name));
+        if (!b) {
+            throw new FrontException("没有该配置");
+        }
+        this.vipCoinConfig.save();
+        return true;
     }
 }

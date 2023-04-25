@@ -2,6 +2,7 @@ package cn.xiejx.ddtassistant.controller;
 
 import cn.xiejx.ddtassistant.base.VipCoinConfig;
 import cn.xiejx.ddtassistant.logic.VipCoinLogic;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,6 +28,21 @@ public class VipCoinController {
     @RequestMapping("/vipCoin/getConfig")
     public VipCoinConfig getConfig() {
         return vipCoinLogic.getConfig();
+    }
+
+    @RequestMapping("/vipCoin/addNewVipCoinConfig")
+    public Boolean addNewVipCoinConfig(String newName) {
+        return vipCoinLogic.addNewVipCoinConfig(newName);
+    }
+
+    @RequestMapping("/vipCoin/updateOneConfig")
+    public Boolean updateOneConfig(@RequestBody VipCoinConfig.VipCoinOneConfig config) {
+        return vipCoinLogic.updateOneConfig(config);
+    }
+
+    @RequestMapping("/vipCoin/deleteThisConfig")
+    public Boolean deleteThisConfig(String name) {
+        return vipCoinLogic.deleteThisConfig(name);
     }
 
     @RequestMapping("/vipCoin/stopAll")
