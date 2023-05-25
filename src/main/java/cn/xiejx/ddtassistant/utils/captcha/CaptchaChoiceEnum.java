@@ -21,6 +21,14 @@ public enum CaptchaChoiceEnum {
      * 平川打码
      */
     PC(2, "平川服务器打码", CaptchaConstants.PC_MIN_ANSWER_TIME),
+    /**
+     * 服务器打码1
+     */
+    PC1(3, "服务器打码1", CaptchaConstants.PC_MIN_ANSWER_TIME),
+    /**
+     * 服务器打码2
+     */
+    PC2(4, "服务器打码2", CaptchaConstants.PC_MIN_ANSWER_TIME),
     ;
     private final Integer choice;
     private final String name;

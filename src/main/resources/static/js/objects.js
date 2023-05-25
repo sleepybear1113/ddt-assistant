@@ -35,6 +35,8 @@ class CaptchaConfig {
 
         this.tj = new CaptchaTj(props.tj);
         this.pc = new CaptchaPc(props.pc);
+        this.pc1 = new CaptchaPc1(props.pc1);
+        this.pc2 = new CaptchaPc2(props.pc2);
         this.lowBalanceRemind = props.lowBalanceRemind;
         this.lowBalanceNum = props.lowBalanceNum;
         this.captchaWay = props.captchaWay;
@@ -56,6 +58,30 @@ class CaptchaTj {
 }
 
 class CaptchaPc {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+        this.serverAddr = props.serverAddr;
+        this.username = props.username;
+        this.cami = props.cami;
+        this.author = props.author;
+    }
+}
+
+class CaptchaPc1 {
+    constructor(props) {
+        if (props == null) {
+            return;
+        }
+        this.serverAddr = props.serverAddr;
+        this.username = props.username;
+        this.cami = props.cami;
+        this.author = props.author;
+    }
+}
+
+class CaptchaPc2 {
     constructor(props) {
         if (props == null) {
             return;

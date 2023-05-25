@@ -12,6 +12,8 @@ import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
 import cn.xiejx.ddtassistant.utils.captcha.CaptchaUtil;
+import cn.xiejx.ddtassistant.utils.captcha.pc.Pc1PredictDto;
+import cn.xiejx.ddtassistant.utils.captcha.pc.Pc2PredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.vo.BindResultVo;
@@ -66,6 +68,10 @@ public class CaptchaLogic {
             basePredictDto = new PcPredictDto();
         } else if (CaptchaChoiceEnum.TJ.equals(choiceEnum)) {
             basePredictDto = new TjPredictDto();
+        } else if (CaptchaChoiceEnum.PC1.equals(choiceEnum)) {
+            basePredictDto = new PcPredictDto();
+        } else if (CaptchaChoiceEnum.PC2.equals(choiceEnum)) {
+            basePredictDto = new PcPredictDto();
         } else {
             return BaseResponse.buildEmptyResponse();
         }
@@ -145,6 +151,11 @@ public class CaptchaLogic {
             basePredictDto = new PcPredictDto();
         } else if (CaptchaChoiceEnum.TJ.equals(choiceEnum)) {
             basePredictDto = new TjPredictDto();
+        } else if (CaptchaChoiceEnum.PC1.equals(choiceEnum)) {
+            basePredictDto = new Pc1PredictDto();
+        }
+        else if (CaptchaChoiceEnum.PC2.equals(choiceEnum)) {
+            basePredictDto = new Pc2PredictDto();
         } else {
             return StringRet.buildSuccess("无该类型账户信息");
         }
