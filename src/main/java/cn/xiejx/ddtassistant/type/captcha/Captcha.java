@@ -321,6 +321,10 @@ public class Captcha extends BaseType {
                 baseCaptchaWay = captchaConfig.getTj();
             } else if (CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
                 baseCaptchaWay = captchaConfig.getPc();
+            } else if (CaptchaChoiceEnum.PC1.equals(captchaChoiceEnum)) {
+                baseCaptchaWay = captchaConfig.getPc1();
+            } else if (CaptchaChoiceEnum.PC2.equals(captchaChoiceEnum)) {
+                baseCaptchaWay = captchaConfig.getPc2();
             }
 
             // 验证身份

@@ -60,6 +60,10 @@ public class BaseResponse implements Serializable {
             TjResponse.reportError(captchaInfo);
         } else if (CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
             PcResponse.reportError(captchaInfo);
+        } else if (CaptchaChoiceEnum.PC1.equals(captchaChoiceEnum)) {
+            PcResponse.reportError(captchaInfo);
+        } else if (CaptchaChoiceEnum.PC2.equals(captchaChoiceEnum)) {
+            PcResponse.reportError(captchaInfo);
         }
     }
 

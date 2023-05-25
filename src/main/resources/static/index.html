@@ -141,6 +141,8 @@
                 <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
                 <button v-on:click="changeCaptchaWayTabIndex(1)">图鉴打码</button>
                 <button v-on:click="changeCaptchaWayTabIndex(2)">平川服务器打码</button>
+                <button v-on:click="changeCaptchaWayTabIndex(3)">服务器打码1</button>
+                <button v-on:click="changeCaptchaWayTabIndex(4)">服务器打码2</button>
                 <hr>
 
                 <div v-show="captchaWayTabIndex === 1">
@@ -176,6 +178,43 @@
                     <button v-on:click="testCaptcha(2)">测试验证码</button>
                     <button v-on:click="showTjAccountInfo(2)">查看余额</button>
                 </div>
+
+                <div v-show="captchaWayTabIndex === 3">
+                    <h3>服务器打码1</h3>
+                    <label for="input-pc1-server-addr">服务器地址</label>
+                    <input id="input-pc1-server-addr" v-model="captchaConfig.pc1.serverAddr"
+                           class="string-input-large-xxx">
+                    <br/>
+                    <label for="input-pc1-cami">卡密</label>
+                    <input type="password" id="input-pc1-cami" v-model="captchaConfig.pc1.cami" v-show="!showPc1Cami">
+                    <label for="input-pc1-cami-1"></label>
+                    <input type="text" id="input-pc1-cami-1" v-model="captchaConfig.pc1.cami" v-show="showPc1Cami">
+                    <label for="input-pc1-author" v-show="pc1AuthorShow">author</label>
+                    <input id="input-pc1-author" v-show="pc1AuthorShow" v-model="captchaConfig.pc1.cami">
+                    <button v-on:click="changePc1CamiShow()">显示/隐藏</button>
+                    <br/>
+                    <button v-on:click="testCaptcha(3)">测试验证码</button>
+                    <button v-on:click="showTjAccountInfo(3)">查看余额</button>
+                </div>
+
+                <div v-show="captchaWayTabIndex === 4">
+                    <h3>服务器打码2</h3>
+                    <label for="input-pc2-server-addr">服务器地址</label>
+                    <input id="input-pc2-server-addr" v-model="captchaConfig.pc2.serverAddr"
+                           class="string-input-large-xxx">
+                    <br/>
+                    <label for="input-pc2-cami">卡密</label>
+                    <input type="password" id="input-pc2-cami" v-model="captchaConfig.pc2.cami" v-show="!showPc2Cami">
+                    <label for="input-pc1-cami-1"></label>
+                    <input type="text" id="input-pc2-cami-1" v-model="captchaConfig.pc2.cami" v-show="showPc2Cami">
+                    <label for="input-pc2-author" v-show="pc2AuthorShow">author</label>
+                    <input id="input-pc2-author" v-show="pc2AuthorShow" v-model="captchaConfig.pc2.cami">
+                    <button v-on:click="changePc2CamiShow()">显示/隐藏</button>
+                    <br/>
+                    <button v-on:click="testCaptcha(4)">测试验证码</button>
+                    <button v-on:click="showTjAccountInfo(4)">查看余额</button>
+                </div>
+
                 <hr>
 
                 <input id="checkbox-lowBalanceRemind" type="checkbox" v-model="captchaConfig.lowBalanceRemind">
@@ -194,6 +233,8 @@
                         <option value="0">不打码</option>
                         <option value="1">图鉴打码</option>
                         <option value="2">平川服务器打码</option>
+                        <option value="3">服务器打码1</option>
+                        <option value="4">服务器打码2</option>
                     </select>
                 </template>
 

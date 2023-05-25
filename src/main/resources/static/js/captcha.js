@@ -30,6 +30,8 @@ let captchaApp = new Vue({
             captchaWay: [],
             tj: {},
             pc: {},
+            pc1: {},
+            pc2: {},
         },
         captchaWayTabIndex: 1,
 
@@ -43,7 +45,11 @@ let captchaApp = new Vue({
             {title: "", option: "无"},
         ],
         pcAuthorShow: false,
+        pc1AuthorShow: false,
+        pc2AuthorShow: false,
         showPcCami: false,
+        showPc1Cami: false,
+        showPc2Cami: false,
     },
     created() {
         this.initUserConfig();
@@ -141,6 +147,12 @@ let captchaApp = new Vue({
         },
         changePcCamiShow: function () {
             this.showPcCami = !this.showPcCami;
+        },
+        changePc1CamiShow: function () {
+            this.showPc1Cami = !this.showPc1Cami;
+        },
+        changePc2CamiShow: function () {
+            this.showPc2Cami = !this.showPc2Cami;
         },
 
         captureCaptchaSampleRegion: function () {
