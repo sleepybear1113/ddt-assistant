@@ -20,8 +20,8 @@ public class VipCoinController {
     private VipCoinLogic vipCoinLogic;
 
     @RequestMapping("/vipCoin/start")
-    public Boolean startVipCoinLoop(Integer hwnd) {
-        vipCoinLogic.start(hwnd);
+    public Boolean startVipCoinLoop(Integer hwnd, String name) {
+        vipCoinLogic.start(hwnd, name);
         return true;
     }
 

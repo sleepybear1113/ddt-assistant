@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -99,6 +100,19 @@ public class VipCoinConfig extends BaseConfig {
             this.name = name;
             this.score = score;
             this.enable = enable;
+        }
+
+        public boolean matchName(String outName) {
+            if (StringUtils.isBlank(outName)) {
+                return true;
+            }
+
+            for (String s : outName.split("")) {
+                if (name.contains(s)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         public static List<VipCoinThingScore> defaultConfig() {
@@ -301,6 +315,14 @@ public class VipCoinConfig extends BaseConfig {
             this.name = name;
             this.compareType = compareType;
             this.num = num;
+        }
+
+        public List<String> splitName() {
+            if (StringUtils.isBlank(name)) {
+                return new ArrayList<>();
+            }
+
+            return Arrays.asList(this.name.split(""));
         }
     }
 

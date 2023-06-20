@@ -1,10 +1,14 @@
 package cn.xiejx.ddtassistant.type.vip;
 
+import cn.xiejx.ddtassistant.base.VipCoinConfig;
 import cn.xiejx.ddtassistant.constant.Constants;
 import cn.xiejx.ddtassistant.dm.DmDomains;
 import cn.xiejx.ddtassistant.type.BaseType;
 import cn.xiejx.ddtassistant.type.captcha.CaptchaConstants;
+import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -20,7 +24,9 @@ import java.util.List;
  * @author sleepybear
  * @date 2023/03/05 22:16
  */
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
+@Data
 public class AutoVipCoinOpen extends BaseType {
 
     private static final long serialVersionUID = 3496760745860466985L;
@@ -28,6 +34,8 @@ public class AutoVipCoinOpen extends BaseType {
     private int[] vipCoinPosition = null;
 
     public static List<String> templatePathList = new ArrayList<>();
+
+    private String configName;
 
     static {
         loadVipTemplate();
@@ -99,8 +107,6 @@ public class AutoVipCoinOpen extends BaseType {
     }
 
     public void loop() {
-        Thread thread = Thread.currentThread();
-        System.out.println(thread.getName());
         Integer hwnd = getHwnd();
         if (isRunning()) {
             log.info("[{}] 线程已经在运行中了", hwnd);
@@ -113,6 +119,10 @@ public class AutoVipCoinOpen extends BaseType {
             unbindAndRemove();
             return;
         }
+
+        // VIP 币配置文件
+        VipCoinConfig vipCoinConfig = SpringContextUtil.getBean(VipCoinConfig.class);
+        List<VipCoinConfig.VipCoinOneConfig> vipCoinOneConfigList = vipCoinConfig.getVipCoinOneConfigList();
 
         getDm().bind();
         setToRunningStatus();
@@ -139,14 +149,36 @@ public class AutoVipCoinOpen extends BaseType {
                 }
             }
 
-            // 双击 VIP 币打开盘子
-            openVipCoin();
+            if (!hasOpenVipBoard()) {
+                // 双击 VIP 币打开盘子
+                openVipCoin();
+            }
 
+            // 获取配置文件
+            VipCoinConfig.VipCoinOneConfig vipCoinOneConfig = null;
+            for (VipCoinConfig.VipCoinOneConfig coinOneConfig : vipCoinOneConfigList) {
+                if (coinOneConfig.getName().equals(this.configName)) {
+                    vipCoinOneConfig = coinOneConfig;
+                }
+            }
+            if (vipCoinOneConfig == null) {
+                log.info("[{}] 没有选择可用的配置文件", hwnd);
+                continue;
+            }
+
+            // 获取盘子物品
             List<String> matchThingList = match();
 
             log.info("[{}] 匹配到数量 {}", hwnd, CollectionUtils.size(matchThingList));
 
-            closeVipB();
+            boolean matched = matchConfig(vipCoinOneConfig, matchThingList);
+            if (!matched) {
+                closeVipB();
+            } else {
+
+            }
+
+
         }
 
         setToNotRunningStatus();
@@ -188,6 +220,88 @@ public class AutoVipCoinOpen extends BaseType {
         return res;
     }
 
+    public boolean matchConfig(VipCoinConfig.VipCoinOneConfig vipCoinOneConfig, List<String> matchThingList) {
+        List<VipCoinConfig.VipCoinCondition> vipCoinConditionList = vipCoinOneConfig.getVipCoinConditionList();
+        if (CollectionUtils.isEmpty(vipCoinConditionList)) {
+            return false;
+        }
+
+        List<VipCoinConfig.VipCoinThingScore> vipCoinThingScoreList = vipCoinOneConfig.getVipCoinThingScoreList();
+        if (CollectionUtils.isEmpty(vipCoinThingScoreList)) {
+            return false;
+        }
+
+        // 匹配到的所有物品，包括未启用的
+        List<VipCoinConfig.VipCoinThingScore> matchedThingScoreList = new ArrayList<>();
+        for (VipCoinConfig.VipCoinThingScore vipCoinThingScore : vipCoinThingScoreList) {
+            for (String s : matchThingList) {
+                if (vipCoinThingScore.getName().contains(s)) {
+                    matchedThingScoreList.add(vipCoinThingScore);
+                }
+            }
+        }
+
+        for (VipCoinConfig.VipCoinCondition vipCoinCondition : vipCoinConditionList) {
+            List<VipCoinConfig.SingleCondition> singleConditionList = vipCoinCondition.getSingleConditionList();
+            if (CollectionUtils.isEmpty(singleConditionList)) {
+                continue;
+            }
+
+            int totalMatchSize = singleConditionList.size();
+            int matchSize = 0;
+            for (VipCoinConfig.SingleCondition singleCondition : singleConditionList) {
+                // 开始遍历每个小项条件，需要全部符合才可以
+
+                int matchCount = 0;
+                for (VipCoinConfig.VipCoinThingScore vipCoinThingScore : matchedThingScoreList) {
+                    // 遍历匹配到的列表
+                    if (vipCoinThingScore.matchName(singleCondition.getName())) {
+                        // 如果名字匹配了，那么先增加匹配的数量
+                        matchCount++;
+                    }
+                }
+
+                // 是否符合数量匹配条件
+                boolean numMatched = false;
+                // 设置的最低匹配数量
+                Integer num = singleCondition.getNum();
+                num = num == null ? 1 : num;
+                switch (singleCondition.getCompareType()) {
+                    case "大于":
+                        numMatched = matchCount > num;
+                        break;
+                    case "大于等于":
+                    case "包含":
+                        numMatched = matchCount >= num;
+                        break;
+                    case "等于":
+                        numMatched = matchCount == num;
+                        break;
+                    case "小于等于":
+                        numMatched = matchCount <= num;
+                        break;
+                    case "小于":
+                        numMatched = matchCount < num;
+                        break;
+                }
+
+                if (!Boolean.TRUE.equals(singleCondition.getContains())) {
+                    // 如果不是 包含 条件
+                    numMatched = !numMatched;
+                }
+                if (numMatched) {
+                    matchSize++;
+                }
+            }
+
+            if (matchSize >= totalMatchSize) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public static Integer getPosition(DmDomains.PicEx picEx) {
         for (int i = 0; i < CaptchaConstants.VIP_COIN_POSITION.length; i++) {
             int[] position = CaptchaConstants.VIP_COIN_POSITION[i];
@@ -217,11 +331,12 @@ public class AutoVipCoinOpen extends BaseType {
         return true;
     }
 
-    public static boolean startThread(int hwnd) {
-        if (isRunning(hwnd, AutoVipCoinOpen.class)) {
+    public static boolean startThread(int hwnd, String name) {
+        AutoVipCoinOpen instance = AutoVipCoinOpen.createInstance(hwnd, AutoVipCoinOpen.class, false);
+        instance.setConfigName(name);
+        if (instance.isRunning()) {
             return false;
         }
-        AutoVipCoinOpen instance = AutoVipCoinOpen.createInstance(hwnd, AutoVipCoinOpen.class, false);
         instance.startThread(instance::loop);
         return true;
     }

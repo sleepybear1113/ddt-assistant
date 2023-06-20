@@ -31,12 +31,12 @@ public class VipCoinLogic {
         vipCoinConfig.save();
     }
 
-    public Boolean start(int hwnd) {
+    public Boolean start(int hwnd, String name) {
         boolean running = AutoVipCoinOpen.isRunning(hwnd, AutoVipCoinOpen.class);
         if (running) {
             return false;
         }
-        return AutoVipCoinOpen.startThread(hwnd);
+        return AutoVipCoinOpen.startThread(hwnd, name);
     }
 
     public Boolean stopAll() {
