@@ -61,6 +61,7 @@ class CaptchaPc {
             return;
         }
         this.serverAddr = props.serverAddr;
+        this.serverAddrList = props.serverAddrList;
         this.username = props.username;
         this.cami = props.cami;
         this.author = props.author;

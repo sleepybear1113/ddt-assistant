@@ -148,4 +148,8 @@ public class OcrUtil {
         String[] split = path.split("\\.");
         ImageIO.write(bufferedImage, split[split.length - 1], new File(path));
     }
+
+    public static void main(String[] args) throws TesseractException {
+        ocr("图片/2.bmp");
+    }
 }

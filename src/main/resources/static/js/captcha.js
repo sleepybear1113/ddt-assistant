@@ -101,7 +101,19 @@ let captchaApp = new Vue({
                 showInfo("成功");
             });
         },
-
+        addServerAddrList() {
+            let list = this.captchaConfig.pc.serverAddrList;
+            if (list) {
+                this.captchaConfig.pc.serverAddrList = [""];
+                return;
+            }
+            if (list[list.length - 1]) {
+                this.captchaConfig.pc.serverAddrList.push("");
+            }
+        },
+        deleteAddr(index) {
+            this.captchaConfig.pc.serverAddrList.splice(index, 1);
+        },
         bindAll: function () {
             let url = "captcha/addAllCaptcha"
             showInfo("正在检测窗口...")

@@ -70,6 +70,10 @@ public class CaptchaLogic {
             return BaseResponse.buildEmptyResponse();
         }
         basePredictDto.build(captchaConfig, picPath);
+        boolean b = basePredictDto.testConnection();
+        if (!b) {
+            throw new FrontException("无法连接到打码平台！");
+        }
 
         BaseResponse response = CaptchaUtil.getResponse(basePredictDto);
         if (response == null) {

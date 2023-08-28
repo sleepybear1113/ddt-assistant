@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.9</version>
+        <version>2.7.12</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.xiejx</groupId>
@@ -63,7 +63,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.33</version>
+            <version>2.0</version>
         </dependency>
 
         <dependency>
@@ -103,9 +103,9 @@
         <dependency>
             <groupId>net.sourceforge.tess4j</groupId>
             <artifactId>tess4j</artifactId>
-            <version>5.4.0</version>
+            <version>5.7.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/tess4j-5.4.0-thin.jar</systemPath>
+            <systemPath>${project.basedir}/lib/tess4j-5.7.0-thin.jar</systemPath>
         </dependency>
     </dependencies>
 

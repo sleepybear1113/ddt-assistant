@@ -6,10 +6,12 @@ import cn.xiejx.ddtassistant.utils.captcha.way.TjCaptcha;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,7 +28,15 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
 
     private TjCaptcha tj;
 
+    /**
+     * 平川打码
+     */
     private PcCaptcha pc;
+
+    /**
+     * 使用平川打码数据类型的自定义打码
+     */
+    private List<PcCaptcha> diyCaptchaList;
 
     /**
      * 是否开启低余额提醒
@@ -67,6 +77,13 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
         captchaConfig.setPc(pcCaptcha);
 
         return captchaConfig;
+    }
+
+    public List<PcCaptcha> getDiyCaptchaList() {
+        if(CollectionUtils.isEmpty(diyCaptchaList)) {
+            diyCaptchaList = new ArrayList<>();
+        }
+        return diyCaptchaList;
     }
 
     public void userConfigToCaptchaConfig(UserConfig userConfig) {

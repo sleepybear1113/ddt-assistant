@@ -1,4 +1,4 @@
-package cn.xiejx.ddtassistant.utils.captcha.pc;
+package cn.xiejx.ddtassistant.utils.captcha;
 
 import cn.xiejx.ddtassistant.base.CaptchaConfig;
 import cn.xiejx.ddtassistant.base.SettingConfig;
@@ -9,10 +9,8 @@ import cn.xiejx.ddtassistant.type.captcha.Captcha;
 import cn.xiejx.ddtassistant.utils.EncryptUtil;
 import cn.xiejx.ddtassistant.utils.SpringContextUtil;
 import cn.xiejx.ddtassistant.utils.Util;
-import cn.xiejx.ddtassistant.utils.captcha.BaseDiyPredictDto;
-import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
-import cn.xiejx.ddtassistant.utils.captcha.BaseResponse;
-import cn.xiejx.ddtassistant.utils.captcha.CaptchaChoiceEnum;
+import cn.xiejx.ddtassistant.utils.captcha.pc.PcAccountInfo;
+import cn.xiejx.ddtassistant.utils.captcha.pc.PcResponse;
 import cn.xiejx.ddtassistant.utils.captcha.way.PcCaptcha;
 import cn.xiejx.ddtassistant.utils.http.HttpHelper;
 import cn.xiejx.ddtassistant.utils.http.HttpRequestMaker;
@@ -41,7 +39,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
-public class PcPredictDto extends BaseDiyPredictDto implements Serializable {
+public class BaseDiyPredictDto extends BasePredictDto implements Serializable {
     private static final long serialVersionUID = -3828083082254095381L;
     public static final String ENCRYPT_PREFIX = "c" + "a" + "p" + "t" + "c" + "h" + "a" + ":" + "/" + "/";
     public static final String ENCRYPT_SUFFIX = "." + "c" + "o" + "m";
@@ -54,16 +52,81 @@ public class PcPredictDto extends BaseDiyPredictDto implements Serializable {
     private String author;
     private Integer serverIndex = 0;
 
-    public PcPredictDto() {
+    public BaseDiyPredictDto() {
     }
 
-    public PcPredictDto(String imgFile) {
+    public BaseDiyPredictDto(String imgFile) {
         setImgFile(imgFile);
+    }
+
+    public String getAuthor() {
+        return StringUtils.isBlank(author) ? "sleepy" : author;
+    }
+
+    public String getHost(Integer index, boolean throwException) {
+        List<String> serverAddrList = SpringContextUtil.getBean(CaptchaConfig.class).getPc().getServerAddrList();
+        if (CollectionUtils.size(serverAddrList) <= index) {
+            index = CollectionUtils.size(serverAddrList) - 1;
+        }
+        String host = serverAddrList.get(index);
+        host = decryptHost(host);
+        if (StringUtils.isBlank(host)) {
+            throw new FrontException("服务器地址为空，请检查是否填写保存！");
+        }
+        if ((!host.startsWith("ht" + "tp:" + "//") && !host.startsWith("ht" + "tps" + "://") && !host.startsWith(ENCRYPT_PREFIX))) {
+            if (throwException) {
+                throw new FrontException("服务器地址填写错误");
+            } else {
+                log.warn("服务器地址填写错误");
+            }
+        }
+        return host;
+    }
+
+    public String decryptHost(String host) {
+        if (StringUtils.isBlank(host)) {
+            return host;
+        }
+        if (!host.startsWith(ENCRYPT_PREFIX) && !host.endsWith(ENCRYPT_SUFFIX)) {
+            return host;
+        }
+        host = host.substring(ENCRYPT_PREFIX.length()).replace(ENCRYPT_SUFFIX, "");
+        if (StringUtils.isBlank(host)) {
+            throw new FrontException("加密服务器地址填写错误");
+        }
+        String s = EncryptUtil.aesDecrypt(host, AES_KEY);
+        if (s == null) {
+            throw new FrontException("服务器地址解密失败");
+        }
+        return s;
     }
 
     @Override
     public String getPredictUrl() {
         return getHost(serverIndex, true) + "/predict2";
+    }
+
+    @Override
+    public List<NameValuePair> buildPair() {
+        String base64Img = imgToBase64();
+        if (base64Img == null) {
+            log.warn("图片转 base64 失败");
+            return null;
+        }
+        ArrayList<NameValuePair> pairs = new ArrayList<>();
+        pairs.add(new BasicNameValuePair("file", base64Img));
+        pairs.add(new BasicNameValuePair("cami", this.cami));
+        pairs.add(new BasicNameValuePair("author", this.author));
+        return pairs;
+    }
+
+    @Override
+    public RequestConfig getRequestConfig() {
+        return RequestConfig.custom()
+                .setConnectionRequestTimeout(1000 * 3)
+                .setConnectTimeout(1000 * 3)
+                .setSocketTimeout(1000 * 15)
+                .build();
     }
 
     @Override
@@ -82,6 +145,30 @@ public class PcPredictDto extends BaseDiyPredictDto implements Serializable {
     @SuppressWarnings("unchecked")
     public <T extends BaseResponse> Class<T> getResponseClass() {
         return (Class<T>) PcResponse.class;
+    }
+
+    @Override
+    public boolean testConnection() {
+        this.serverIndex = 0;
+        List<String> serverAddrList = SpringContextUtil.getBean(CaptchaConfig.class).getPc().getServerAddrList();
+        for (int i = 0; i < serverAddrList.size(); i++) {
+            HttpRequestMaker requestMaker = HttpRequestMaker.makeGetHttpHelper(getHost(i, true) + "/test");
+            requestMaker.setConfig(RequestConfig.custom()
+                    .setConnectionRequestTimeout(2000)
+                    .setConnectTimeout(2000)
+                    .setSocketTimeout(2000)
+                    .build());
+            HttpHelper httpHelper = new HttpHelper(requestMaker);
+            HttpResponseHelper request = httpHelper.request();
+            String responseBody = request.getResponseBody();
+            boolean b = !StringUtils.isBlank(responseBody) && responseBody.contains("OK");
+            if (b) {
+                serverIndex = i;
+                log.info("测试连接成功，服务器序号：{}", (i + 1));
+                return b;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -140,7 +227,7 @@ public class PcPredictDto extends BaseDiyPredictDto implements Serializable {
     }
 
     public static void main(String[] args) {
-        PcPredictDto pcPredictDto = new PcPredictDto("test/A@66142-12_54_44.png");
+        BaseDiyPredictDto pcPredictDto = new BaseDiyPredictDto("test/A@66142-12_54_44.png");
         CaptchaConfig captchaConfig = new CaptchaConfig();
         PcCaptcha pc = new PcCaptcha();
         pc.setAuthor("sleepy");

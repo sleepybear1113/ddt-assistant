@@ -1,12 +1,14 @@
 package cn.xiejx.ddtassistant.utils.captcha.way;
 
-import cn.xiejx.ddtassistant.utils.captcha.BasePredictDto;
-import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * There is description
@@ -16,17 +18,17 @@ import java.io.Serializable;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class PcCaptcha extends BaseCaptchaWay implements Serializable {
+public class PcCaptcha extends BaseDiyCaptcha implements Serializable {
     private static final long serialVersionUID = 3701573224665113223L;
 
+    /**
+     * 服务器地址，旧版本仅有一个，新版本有多个。废弃
+     */
     private String serverAddr;
-
-    private String cami;
-    private String author;
 
     @Override
     public boolean validUserInfo() {
-        return StringUtils.isNotBlank(cami);
+        return StringUtils.isNotBlank(getCami());
     }
 
     public void setServerAddr(String serverAddr) {
@@ -36,12 +38,29 @@ public class PcCaptcha extends BaseCaptchaWay implements Serializable {
         }
     }
 
-    public String getAuthor() {
-        return StringUtils.isBlank(author) ? "sleepy" : author;
+    @Override
+    public List<String> getServerAddrList() {
+        if (CollectionUtils.isNotEmpty(super.getServerAddrList())) {
+            return super.getServerAddrList();
+        }
+        return new ArrayList<>(Collections.singletonList(this.serverAddr));
     }
 
     @Override
-    public BasePredictDto getBasePredictDto() {
-        return new PcPredictDto();
+    public void setServerAddr(List<String> serverAddrList) {
+        this.setServerAddrList(serverAddrList);
+        if (CollectionUtils.isNotEmpty(serverAddrList)) {
+            for (int i = 0; i < this.getServerAddrList().size(); i++) {
+                String serverAddr = this.getServerAddrList().get(i);
+                if (StringUtils.isNotBlank(serverAddr)) {
+                    this.getServerAddrList().set(i, serverAddr.trim());
+                }
+            }
+        }
+    }
+
+    @Override
+    public String getAuthor() {
+        return StringUtils.isBlank(super.getAuthor()) ? "sleepy" : super.getAuthor();
     }
 }

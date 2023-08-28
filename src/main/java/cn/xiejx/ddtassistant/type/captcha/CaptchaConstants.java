@@ -87,4 +87,6 @@ public class CaptchaConstants {
      * 平川最低打码所需时间
      */
     public static final int PC_MIN_ANSWER_TIME = 3;
+    public static final int DIY_1_MIN_ANSWER_TIME = 3;
+    public static final int DIY_2_MIN_ANSWER_TIME = 6;
 }

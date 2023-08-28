@@ -14,7 +14,7 @@
 <body>
 <script>
     setTimeout(function () {
-        document.getElementById("ie-h1").innerHTML = "请不要使用IE浏览器访问！！！";
+        document.getElementById("ie-h1").innerHTML = "请不要使用IE浏览器访问！！！或者确保Java黑框已经运行！！！";
         if (document.getElementById("ie-a").innerText !== "true") {
             document.getElementById("main").style.display = "none";
         }
@@ -161,10 +161,16 @@
 
                 <div v-show="captchaWayTabIndex === 2">
                     <h3>平川服务器打码</h3>
-                    <label for="input-pc-server-addr">服务器地址</label>
-                    <input id="input-pc-server-addr" v-model="captchaConfig.pc.serverAddr"
-                           class="string-input-large-xxx">
+                    <label>服务器地址列表</label>
+                    <button @click="addServerAddrList()">新增</button>
                     <br/>
+                    <div v-for="(serverAddr, index) in captchaConfig.pc.serverAddrList">
+                        <label>
+                            <input :id="'input-pc-server-addr-' + index" v-model="captchaConfig.pc.serverAddrList[index]"
+                                   class="string-input-large-xxx">
+                            <button @click="deleteAddr(index)">删除</button>
+                        </label>
+                    </div>
                     <label for="input-pc-cami">卡密</label>
                     <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
                     <label for="input-pc-cami-1"></label>

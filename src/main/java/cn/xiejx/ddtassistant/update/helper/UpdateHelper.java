@@ -167,6 +167,8 @@ public class UpdateHelper {
         // 过滤没有更新文件的
         versionInfoList.removeIf(v -> v.getUpdateListVo() == null || CollectionUtils.isEmpty(v.getUpdateListVo().getStatics()));
 
+        log.info("新版本检测完毕");
+
         return updateInfoVo;
     }
 

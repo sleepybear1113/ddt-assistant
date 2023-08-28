@@ -20,10 +20,10 @@ import cn.xiejx.ddtassistant.utils.captcha.pc.PcPredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjPredictDto;
 import cn.xiejx.ddtassistant.utils.captcha.tj.TjResponse;
 import cn.xiejx.ddtassistant.utils.captcha.way.BaseCaptchaWay;
-import javafx.util.Pair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -420,7 +420,7 @@ public class Captcha extends BaseType {
             log.info("[{}] 发现副本大翻牌！", getHwnd());
         }
 
-        MonitorLogic.FLOP_BONUS_CACHER.set(MonitorLogic.FLOP_BONUS_FOUND_KEY, new Pair<>(pveFlopBonusAppearDelay, getDm()), userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
+        MonitorLogic.FLOP_BONUS_CACHER.set(MonitorLogic.FLOP_BONUS_FOUND_KEY, Pair.of(pveFlopBonusAppearDelay, getDm()), userConfig.getPveFlopBonusDisappearDelay(), ExpireWayEnum.AFTER_UPDATE);
     }
 
     public static boolean captchaValid(String path) {
