@@ -10,13 +10,11 @@
 ## 准备 Java 相关环境
 建议使用 JetBrains IntelliJ IDEA Ultimate 打开本项目进行构建和运行。
 
-本项目需要使用 Java 8 x86 作为构建运行的环境。由于更高版本的 Java 不支持 32 位，所以此处选用了该版本。
-
-欲下载 32 位 Java 8，可以访问 [Oracle 官网](https://www.oracle.com/java/technologies/downloads)。
+本项目需要使用 Java 17 x86 作为构建运行的环境。由于官方没有高于 8 的 32 位的 Java，于是采用了 [Liberica JDK](https://bell-sw.com/pages/downloads/)。
 
 运行前，需要在 java/bin 路径下（java.exe同路径下）放置 `jacob-1.18-x86.dll` 文件，以让 Java 可以通过 jacob 来调用 com。
 
-`jacob-1.18-x86.dll` 文件可以在互联网处获取，但是可能文件名有差异。请使用 32 位的 dll 并且将文件名重命名为 `jacob-1.18-x86.dll` 即可（版本号基本无关）。
+`jacob-1.18-x86.dll` 文件可以在互联网处获取，但是可能文件名有差异。请使用 32 位的 dll 并且将文件名重命名为 `jacob-1.18-x86.dll` 即可（版本号基本无关）。本项目的 `其他文件` 下也有该文件，可以直接使用。
 
 `jacob-1.18-x86.dll` 文件也可以从 [jacob-project](https://github.com/freemansoft/jacob-project/releases/tag/Root_B-1_20) 处下载，下载 `jacob-1.20.zip` 并解压，重命名 `jacob-1.20-x86.dll` 为 `jacob-1.18-x86.dll` 即可。
 ## 准备大漠插件环境

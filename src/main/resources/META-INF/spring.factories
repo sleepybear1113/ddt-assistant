@@ -1,1 +1,1 @@
-org.springframework.boot.diagnostics.FailureAnalyzer=cn.xiejx.ddtassistant.config.PortFailureAnalyzer
+org.springframework.boot.diagnostics.FailureAnalyzer=cn.sleepybear.ddtassistant.config.PortFailureAnalyzer

@@ -32,13 +32,45 @@ class CaptchaConfig {
         if (props == null) {
             return;
         }
-
-        this.tj = new CaptchaTj(props.tj);
-        this.pc = new CaptchaPc(props.pc);
+        this.captchaInfoList = props.captchaInfoList ? props.captchaInfoList.map(item => item) : [];
         this.lowBalanceRemind = props.lowBalanceRemind;
         this.lowBalanceNum = props.lowBalanceNum;
-        this.captchaWay = props.captchaWay;
-        this.captchaChoiceEnumList = props.captchaChoiceEnumList;
+        this.captchaWay = props.captchaWay ? props.captchaWay.map(item => item) : [];
+
+        if (this.captchaInfoList) {
+            for (let i = 0; i < this.captchaInfoList.length; i++) {
+                let captchaInfo = this.captchaInfoList[i];
+                if (captchaInfo.captchaType === 1) {
+                    this.captchaInfoList[i] = new CaptchaTj(captchaInfo);
+                } else if (captchaInfo.captchaType === 2) {
+                    this.captchaInfoList[i] = new CaptchaPc(captchaInfo);
+                }
+            }
+        }
+    }
+
+    buildParamsAndReturn() {
+        if (this.captchaInfoList) {
+            for (let i = 0; i < this.captchaInfoList.length; i++) {
+                let captchaInfo = this.captchaInfoList[i];
+                captchaInfo.buildParams();
+            }
+        }
+        return this;
+    }
+}
+
+class CaptchaWay {
+    constructor(props = {}) {
+        this.id = props.id;
+        this.captchaName = props.captchaName;
+    }
+
+    no() {
+        let way = new CaptchaWay();
+        way.id = 0;
+        way.captchaName = "不打码";
+        return way;
     }
 }
 
@@ -47,11 +79,39 @@ class CaptchaTj {
         if (props == null) {
             return;
         }
-        this.serverAddr = props.serverAddr;
-        this.username = props.username;
-        this.password = props.password;
-        this.softId = props.softId;
-        this.typeId = props.typeId;
+        this.id = props.id;
+        this.captchaName = props.captchaName;
+        this.captchaType = props.captchaType;
+        this.serverAddressList = props.serverAddressList ? props.serverAddressList.map(item => item) : [];
+        this.validTimeList = props.validTimeList ? props.validTimeList.map(item => item) : [];
+        this.params = props.params ? props.params.map(item => item) : [];
+
+        this.username = ""
+        this.password = ""
+        this.softId = ""
+        this.typeId = ""
+        if (this.params) {
+            switch (this.params.length) {
+                case 4:
+                    this.typeId = this.params[3];
+                case 3:
+                    this.softId = this.params[2];
+                case 2:
+                    this.password = this.params[1];
+                case 1:
+                    this.username = this.params[0];
+                default:
+                    break;
+            }
+        }
+    }
+
+    buildParams() {
+        this.params = [];
+        this.params.push(this.username);
+        this.params.push(this.password);
+        this.params.push(this.softId);
+        this.params.push(this.typeId);
     }
 }
 
@@ -60,11 +120,31 @@ class CaptchaPc {
         if (props == null) {
             return;
         }
-        this.serverAddr = props.serverAddr;
-        this.serverAddrList = props.serverAddrList;
-        this.username = props.username;
-        this.cami = props.cami;
-        this.author = props.author;
+        this.id = props.id;
+        this.captchaType = props.captchaType;
+        this.captchaName = props.captchaName;
+        this.validTimeList = props.validTimeList ? props.validTimeList.map(item => item) : [];
+        this.serverAddressList = props.serverAddressList ? props.serverAddressList.map(item => item) : [];
+        this.params = props.params ? props.params.map(item => item) : [];
+
+        this.cami = "";
+        this.author = "";
+        if (this.params) {
+            switch (this.params.length) {
+                case 2:
+                    this.author = this.params[1];
+                case 1:
+                    this.cami = this.params[0];
+                default:
+                    break;
+            }
+        }
+    }
+
+    buildParams() {
+        this.params = [];
+        this.params.push(this.cami);
+        this.params.push(this.author);
     }
 }
 
@@ -174,15 +254,32 @@ class AuctionItem {
 }
 
 class SettingConfig {
-    constructor(props) {
-        if (props == null) {
-            return;
-        }
-
+    constructor(props = {}) {
         this.keyPadPressWay = props.keyPadPressWay;
+        this.bindWindowConfig = !props.bindWindowConfig ? new BindWindowConfig() : new BindWindowConfig(props.bindWindowConfig);
         this.email = new Email(props.email);
         this.loginConfig = new LoginConfig(props.loginConfig);
         this.updateConfig = new UpdateConfig(props.updateConfig);
+    }
+}
+
+class BindWindowConfig {
+    constructor(props = {}) {
+        this.displayType = props.displayType ? props.displayType : "dx2";
+        this.mouseType = props.mouseType ? props.mouseType : "windows";
+        this.keypadType = props.keypadType ? props.keypadType : "windows";
+    }
+
+    getDisplayTypeList() {
+        return ["normal", "gdi", "gdi2", "dx", "dx2", "dx3"];
+    }
+
+    getMouseTypeList() {
+        return ["normal", "windows", "windows2", "windows3", "dx", "dx2"];
+    }
+
+    getKeypadTypeList() {
+        return ["normal", "windows", "dx"];
     }
 }
 

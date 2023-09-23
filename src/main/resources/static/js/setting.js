@@ -1,8 +1,9 @@
 let settingApp = new Vue({
     el: '#setting',
     data: {
-        selectedTab: "按键设置",
+        selectedTab: "大漠绑定设置",
         tabs: [
+            {name: "大漠绑定设置"},
             {name: "按键设置"},
             {name: "邮箱设置"},
             {name: "登录设置"},
@@ -10,6 +11,7 @@ let settingApp = new Vue({
         ],
         settingConfig: {
             keyPadPressWay: "dm",
+            bindWindowConfig: new BindWindowConfig(),
             email: {
                 emailFrom: "",
                 emailPassword: "",

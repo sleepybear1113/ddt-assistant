@@ -139,48 +139,67 @@
             <hr>
             <div class="area">
                 <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
-                <button v-on:click="changeCaptchaWayTabIndex(1)">图鉴打码</button>
-                <button v-on:click="changeCaptchaWayTabIndex(2)">平川服务器打码</button>
+
+                <button v-for="captchaInfo in captchaConfig.captchaInfoList" v-on:click="changeCaptchaWayTabIndex(captchaInfo.id)">{{captchaInfo.captchaName}}</button>
+                <span> ------ </span>
+                <button @click="addCaptchaServer()">新增打码服务器</button>
                 <hr>
 
-                <div v-show="captchaWayTabIndex === 1">
-                    <h3>图鉴打码</h3>
-                    <label>打码平台：</label><a href="http://www.ttshitu.com"
-                                               target="_blank">http://www.ttshitu.com</a><br/>
-                    <label for="input-username">用户名</label>
-                    <input id="input-username" v-model="captchaConfig.tj.username"><br/>
-                    <label for="input-password">密码　</label>
-                    <input id="input-password" v-model="captchaConfig.tj.password" type="password"><br/>
-                    <label for="input-softId">softId </label>
-                    <input id="input-softId" v-model="captchaConfig.tj.softId"><br/>
-                    <label for="input-typeId">typeId </label>
-                    <input id="input-typeId" v-model="captchaConfig.tj.typeId"><br/>
-                    <button v-on:click="testCaptcha(1)">测试验证码</button>
-                    <button v-on:click="showTjAccountInfo(1)">查看余额</button>
-                </div>
+                <div v-for="captchaInfo in captchaConfig.captchaInfoList">
 
-                <div v-show="captchaWayTabIndex === 2">
-                    <h3>平川服务器打码</h3>
-                    <label>服务器地址列表</label>
-                    <button @click="addServerAddrList()">新增</button>
-                    <br/>
-                    <div v-for="(serverAddr, index) in captchaConfig.pc.serverAddrList">
+                    <!--图鉴类型-->
+                    <div v-if="captchaInfo.captchaType === 1 && captchaWayTabIndex === captchaInfo.id">
+                        <h3>{{captchaInfo.captchaName}}</h3>
                         <label>
-                            <input :id="'input-pc-server-addr-' + index" v-model="captchaConfig.pc.serverAddrList[index]"
-                                   class="string-input-large-xxx">
-                            <button @click="deleteAddr(index)">删除</button>
+                            打码名称
+                            <input v-model="captchaInfo.captchaName">
                         </label>
+                        <button @click="deleteCaptcha(captchaInfo.id)">删除</button><br/>
+                        <label>打码平台：</label><a href="http://www.ttshitu.com"
+                                                   target="_blank">http://www.ttshitu.com</a><br/>
+                        <label for="input-username">用户名</label>
+                        <input id="input-username" v-model="captchaInfo.username"><br/>
+                        <label for="input-password">密码　</label>
+                        <input id="input-password" v-model="captchaInfo.password" type="password"><br/>
+                        <label for="input-softId">softId </label>
+                        <input id="input-softId" v-model="captchaInfo.softId"><br/>
+                        <label for="input-typeId">typeId </label>
+                        <input id="input-typeId" v-model="captchaInfo.typeId"><br/>
+                        <button v-on:click="testCaptcha(captchaInfo.id)">测试验证码</button>
+                        <button v-on:click="showAccountInfo(captchaInfo.id)">查看余额</button>
                     </div>
-                    <label for="input-pc-cami">卡密</label>
-                    <input type="password" id="input-pc-cami" v-model="captchaConfig.pc.cami" v-show="!showPcCami">
-                    <label for="input-pc-cami-1"></label>
-                    <input type="text" id="input-pc-cami-1" v-model="captchaConfig.pc.cami" v-show="showPcCami">
-                    <label for="input-pc-author" v-show="pcAuthorShow">author</label>
-                    <input id="input-pc-author" v-show="pcAuthorShow" v-model="captchaConfig.pc.cami">
-                    <button v-on:click="changePcCamiShow()">显示/隐藏</button>
-                    <br/>
-                    <button v-on:click="testCaptcha(2)">测试验证码</button>
-                    <button v-on:click="showTjAccountInfo(2)">查看余额</button>
+
+                    <!--平川类型-->
+                    <div v-if="captchaInfo.captchaType === 2 && captchaWayTabIndex === captchaInfo.id">
+                        <h3>{{captchaInfo.captchaName}}</h3>
+                        <label>
+                            打码名称
+                            <input v-model="captchaInfo.captchaName">
+                        </label>
+                        <button @click="deleteCaptcha(captchaInfo.id)">删除</button><br/>
+                        <label>服务器地址列表</label>
+                        <button @click="addServerAddrList(captchaInfo.id)">新增</button>
+                        <br/>
+                        <div v-for="(serverAddr, index) in captchaInfo.serverAddressList">
+                            <label>
+                                <input :id="'input-pc-server-addr-' + index" v-model="captchaInfo.serverAddressList[index]"
+                                       class="string-input-large-xxx">
+                                <button @click="deleteAddr(captchaInfo.id, index)">删除</button>
+                            </label>
+                        </div>
+                        <label for="input-pc-cami">卡密</label>
+                        <input type="password" id="input-pc-cami" v-model="captchaInfo.cami" v-show="!showPcCami">
+                        <label for="input-pc-cami-1"></label>
+                        <input type="text" id="input-pc-cami-1" v-model="captchaInfo.cami" v-show="showPcCami">
+                        <label for="input-pc-author" v-show="pcAuthorShow">author</label>
+                        <input id="input-pc-author" v-show="pcAuthorShow" v-model="captchaInfo.cami">
+                        <button v-on:click="changePcCamiShow()">显示/隐藏</button>
+                        <br/>
+                        <button v-on:click="testCaptcha(captchaInfo.id)">测试验证码</button>
+                        <button v-on:click="showAccountInfo(captchaInfo.id)">查看余额</button>
+                    </div>
+
+
                 </div>
                 <hr>
 
@@ -197,9 +216,7 @@
                 <template v-for="index in captchaConfig.captchaWay.length">
                     <label for="select-captchaWay"></label>
                     <select id="select-captchaWay" v-model="captchaConfig.captchaWay[index - 1]">
-                        <option value="0">不打码</option>
-                        <option value="1">图鉴打码</option>
-                        <option value="2">平川服务器打码</option>
+                        <option v-for="captchaWay in totalCaptchaWayList" :value="captchaWay.id">{{captchaWay.captchaName}}</option>
                     </select>
                 </template>
 
@@ -282,6 +299,7 @@
                 <hr>
                 <div>
                     <button v-on:click="bindAll()">检测并添加所有窗口</button>
+                    <button v-on:click="unbindAll()">解绑所有窗口</button>
                 </div>
             </div>
         </div>
@@ -848,6 +866,26 @@
              <button v-on:click="changeTab(tab)">{{tab.name}}</button>
             </span>
             <hr>
+
+            <div v-show="selectedTab === '大漠绑定设置'">
+                <h5>大漠绑定设置</h5>
+                鼠标模式：
+                <label v-for="mouseType in settingConfig.bindWindowConfig.getMouseTypeList()">
+                    <input type="radio" v-model="settingConfig.bindWindowConfig.mouseType" :value="mouseType">
+                    {{mouseType}}
+                    <span>/</span>
+                </label>
+                <br>
+
+                键盘模式：
+                <label v-for="keypadType in settingConfig.bindWindowConfig.getKeypadTypeList()">
+                    <input type="radio" v-model="settingConfig.bindWindowConfig.keypadType" :value="keypadType">
+                    {{keypadType}}
+                    <span>/</span>
+                </label>
+                <br>
+                <button v-on:click="update()">保存设置</button>
+            </div>
 
             <div v-show="selectedTab === '按键设置'">
                 <h5>按键设置</h5>
