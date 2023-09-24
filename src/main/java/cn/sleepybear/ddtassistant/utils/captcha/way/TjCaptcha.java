@@ -1,15 +1,16 @@
 package cn.sleepybear.ddtassistant.utils.captcha.way;
 
-import cn.sleepybear.ddtassistant.utils.captcha.CaptchaChoiceEnum;
-import cn.sleepybear.ddtassistant.utils.captcha.tj.TjPredictDto;
+import cn.sleepybear.ddtassistant.type.captcha.CaptchaConstants;
+import cn.sleepybear.ddtassistant.utils.captcha.BaseCaptchaWay;
 import cn.sleepybear.ddtassistant.utils.captcha.BasePredictDto;
+import cn.sleepybear.ddtassistant.utils.captcha.tj.TjPredictDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -40,9 +41,17 @@ public class TjCaptcha extends BaseCaptchaWay implements Serializable {
      */
     private String typeId;
 
+    public String getSoftId() {
+        return StringUtils.isEmpty(this.softId) ? DEFAULT_SOFT_ID : this.softId;
+    }
+
+    public String getTypeId() {
+        return StringUtils.isEmpty(this.typeId) ? DEFAULT_TYPE_ID : this.typeId;
+    }
+
     @Override
     public BaseCaptchaWay convertType() {
-        if (getCaptchaTypeEnum() != CaptchaChoiceEnum.TJ) {
+        if (getCaptchaTypeEnum() != CaptchaConstants.CaptchaChoiceEnum.TJ) {
             return null;
         }
 
@@ -68,19 +77,6 @@ public class TjCaptcha extends BaseCaptchaWay implements Serializable {
     }
 
     @Override
-    public void fillParams() {
-        if (CollectionUtils.isNotEmpty(getParams())) {
-            return;
-        }
-
-        setParams(new ArrayList<>());
-        getParams().add(this.username);
-        getParams().add(this.password);
-        getParams().add(this.softId);
-        getParams().add(this.typeId);
-    }
-
-    @Override
     public boolean validUserInfo() {
         return this.username != null && !this.username.isEmpty() & this.password != null && !this.password.isEmpty();
     }
@@ -88,6 +84,11 @@ public class TjCaptcha extends BaseCaptchaWay implements Serializable {
     @Override
     public BasePredictDto getBasePredictDto() {
         return new TjPredictDto(this);
+    }
+
+    @Override
+    public Integer getMinAnswerTime() {
+        return CaptchaConstants.TJ_MIN_ANSWER_TIME;
     }
 
     @Override

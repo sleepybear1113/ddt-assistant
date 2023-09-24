@@ -49,7 +49,7 @@ let captureApp = new Vue({
             clearInterval(this.intervalRes);
             let params = {params: {hwnd: hwnd, imgQuality: imgQuality}};
             axios.get(url, params).then((res) => {
-                this.src = res.data.result.string;
+                this.src = res.data.result;
                 this.msg = hwnd == null ? msg : hwnd;
             });
             if (this.interval == null) {
@@ -57,7 +57,7 @@ let captureApp = new Vue({
             }
             this.intervalRes = setInterval(() => {
                 axios.get(url, params).then((res) => {
-                    this.src = res.data.result.string;
+                    this.src = res.data.result;
                     this.msg = hwnd == null ? msg : hwnd;
                 });
             }, this.interval);

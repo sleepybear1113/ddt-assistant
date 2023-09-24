@@ -3,11 +3,10 @@ class UserConfig {
         if (props == null) {
             return;
         }
-        this.username = props.username;
-        this.password = props.password;
-        this.softId = props.softId;
-        this.typeId = props.typeId;
+
+        this.noSaveCaptchaImg = props.noSaveCaptchaImg;
         this.captureInterval = props.captureInterval;
+        this.captchaDetectType = props.captchaDetectType ? props.captchaDetectType : 0;
         this.captchaAppearDelay = props.captchaAppearDelay;
         this.keyPressAfterCaptchaShow = props.keyPressAfterCaptchaShow;
         this.keyPressAfterCaptchaDisappear = props.keyPressAfterCaptchaDisappear;

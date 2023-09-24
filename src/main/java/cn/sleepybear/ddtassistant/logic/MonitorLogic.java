@@ -76,6 +76,7 @@ public class MonitorLogic {
      * 开始循环监控
      */
     public void monitorKeyPressActionLoop() {
+        //noinspection InfiniteLoopStatement
         while (true) {
             Util.sleep(100L);
             monitorCaptchaAppearAction();
@@ -87,6 +88,7 @@ public class MonitorLogic {
         Util.sleep(5000L);
         MonitorVariable newCaptchaVariable = new MonitorVariable();
         MonitorVariable monitorOfflineDetectVariable = new MonitorVariable();
+        //noinspection InfiniteLoopStatement
         while (true) {
             Util.sleep(100L);
             monitorNewCaptchaBind(userConfig.getDetectNewWindowInterval(), newCaptchaVariable);

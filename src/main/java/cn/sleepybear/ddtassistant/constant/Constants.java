@@ -24,6 +24,7 @@ public class Constants {
     public static final String CAPTCHA_TEST_DIR = RESOURCE_PIC_DIR + "验证码测试/";
     public static final String FLOP_BONUS_DIR = PIC_DIR + "副本翻牌截图/";
     public static final String CAPTCHA_DIR = PIC_DIR + "验证码截图/";
+    public static final String TEST_CAPTURE_DIR = PIC_DIR + "测试截图/";
     public static final String TESS_DATA_DIR = "tessdata";
     public static final String TEMP_GAME_SCREEN_SHOT_DIR = TEMP_DIR + "gameScreen/";
     public static final String AUCTION_TMP_DIR = Constants.TEMP_DIR + "auction/";

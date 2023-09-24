@@ -85,7 +85,6 @@ public class WebSocketServer {
      * 实现服务器主动推送消息
      *
      * @param message 消息
-     * @throws IOException
      */
     public void sendMessage(String message) {
         try {
@@ -105,7 +104,6 @@ public class WebSocketServer {
      * 群发自定义消息
      *
      * @param message 自定义消息
-     * @throws IOException
      */
     public static void sendInfo(String message) throws IOException {
         log.info("推送消息内容：" + message);

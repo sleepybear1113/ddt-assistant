@@ -521,6 +521,17 @@ public class Util {
         }
     }
 
+    public static String rbgToHexStr(int[] rgb) {
+        if (rgb == null || rgb.length != 3) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i : rgb) {
+            sb.append(String.format("%02X", i));
+        }
+        return sb.toString();
+    }
+
     public static void main(String[] args) {
         openWithExplorer("资源图片/模板/副本-验证码-倒计时-1.png", true);
     }

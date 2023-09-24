@@ -1,5 +1,6 @@
 package cn.sleepybear.ddtassistant.utils.captcha;
 
+import cn.sleepybear.ddtassistant.type.captcha.CaptchaConstants;
 import cn.sleepybear.ddtassistant.type.captcha.CaptchaImgInfo;
 import cn.sleepybear.ddtassistant.utils.captcha.pc.PcResponse;
 import cn.sleepybear.ddtassistant.utils.captcha.tj.TjResponse;
@@ -51,16 +52,15 @@ public class BaseResponse implements Serializable {
 
         String lastCaptchaId = captchaImgInfo.getLastCaptchaId();
         if (StringUtils.isBlank(lastCaptchaId)) {
-            log.info("[{}] [报错] {}打码错误，但是没有打码id进行上报平台", hwnd, captchaImgInfo.getCaptchaChoiceEnum().getName());
+            log.info("[{}] [报错] {}打码错误，但是没有打码id进行上报平台", hwnd, captchaImgInfo.getCaptchaName());
             return;
         }
 
-        log.info("[{}] [报错] 对上一次错误打码报错给[{}]平台，id = {}", hwnd, captchaImgInfo.getCaptchaChoiceEnum().getName(), lastCaptchaId);
+        log.info("[{}] [报错] 对上一次错误打码报错给[{}]平台，id = {}", hwnd, captchaImgInfo.getCaptchaName(), lastCaptchaId);
 
-        CaptchaChoiceEnum captchaChoiceEnum = captchaImgInfo.getCaptchaChoiceEnum();
-        if (CaptchaChoiceEnum.TJ.equals(captchaChoiceEnum)) {
+        if (CaptchaConstants.CaptchaChoiceEnum.TJ.getChoice().equals(captchaImgInfo.getCaptchaType())) {
             TjResponse.reportError(captchaImgInfo);
-        } else if (CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
+        } else if (CaptchaConstants.CaptchaChoiceEnum.PC.getChoice().equals(captchaImgInfo.getCaptchaType())) {
             PcResponse.reportError(captchaImgInfo);
         }
     }

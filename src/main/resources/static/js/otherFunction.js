@@ -26,7 +26,7 @@ let otherFunction = new Vue({
         getHost: function () {
             let url = "system/getHost";
             axios.get(url).then((res) => {
-                this.host = res.data.result.string;
+                this.host = res.data.result;
             });
         },
         updateHost: function () {

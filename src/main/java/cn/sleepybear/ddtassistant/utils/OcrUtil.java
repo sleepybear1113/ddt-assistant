@@ -151,7 +151,7 @@ public class OcrUtil {
             // 在这里可以对图像进行处理或使用
             String ocr = ocr(image, END_LANGUAGE);
             return true;
-        } catch (Exception e) {
+        } catch (Error | Exception e) {
             log.info(e.getMessage(), e);
             return false;
         }

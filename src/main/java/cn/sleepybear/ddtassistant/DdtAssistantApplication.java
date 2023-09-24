@@ -34,9 +34,10 @@ public class DdtAssistantApplication {
             System.out.println("大漠插件版本号： " + version);
             dmDdt.release();
             if (StringUtils.isBlank(version)) {
-                throw new RuntimeException("未能获取大漠版本号");
+                System.out.println("未能获取大漠版本号");
+                return;
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             System.out.println("启动失败！大漠插件未找到，请注册！");
             return;
         }

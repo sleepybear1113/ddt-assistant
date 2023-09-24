@@ -1,6 +1,5 @@
 package cn.sleepybear.ddtassistant.type.captcha;
 
-import cn.sleepybear.ddtassistant.utils.captcha.CaptchaChoiceEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,14 +12,18 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CaptchaImgInfo {
-    private CaptchaChoiceEnum captchaChoiceEnum;
+    private Integer captchaId;
+    private Integer captchaType;
+    private String captchaName;
     private long lastCaptchaTime;
     private String lastCaptchaId;
     private String lastCaptchaFilePath;
     private Integer count;
 
-    public CaptchaImgInfo(CaptchaChoiceEnum captchaChoiceEnum, long lastCaptchaTime, String lastCaptchaId, String lastCaptchaFilePath) {
-        this.captchaChoiceEnum = captchaChoiceEnum;
+    public CaptchaImgInfo(Integer captchaId, Integer captchaType, String captchaName, long lastCaptchaTime, String lastCaptchaId, String lastCaptchaFilePath) {
+        this.captchaId = captchaId;
+        this.captchaType = captchaType;
+        this.captchaName = captchaName;
         this.lastCaptchaTime = lastCaptchaTime;
         this.lastCaptchaId = lastCaptchaId;
         this.lastCaptchaFilePath = lastCaptchaFilePath;

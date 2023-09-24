@@ -54,7 +54,7 @@ function jumpToDonatePage() {
 function showGameShot(hwnd, imgQuality) {
     let url = "dm/getGameScreenPath";
     axios.get(url, {params: {hwnd: hwnd, imgQuality: imgQuality}}).then((res) => {
-        showImg(res.data.result.string);
+        showImg(res.data.result);
     });
 }
 

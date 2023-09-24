@@ -1,8 +1,8 @@
 package cn.sleepybear.ddtassistant.controller;
 
-import cn.sleepybear.ddtassistant.type.auction.AuctionData;
 import cn.sleepybear.ddtassistant.logic.AuctionLogic;
-import cn.sleepybear.ddtassistant.vo.MyString;
+import cn.sleepybear.ddtassistant.type.auction.AuctionData;
+import cn.sleepybear.ddtassistant.advice.ResultCode;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,8 +49,8 @@ public class AuctionController {
     }
 
     @RequestMapping("/auction/bindAndSellAll")
-    public MyString bindAndSell(Integer[] hwnds, Boolean confirm) {
-        return new MyString(auctionLogic.bindAndSellAll(hwnds, Boolean.TRUE.equals(confirm)));
+    public ResultCode<String> bindAndSell(Integer[] hwnds, Boolean confirm) {
+        return ResultCode.buildResult(auctionLogic.bindAndSellAll(hwnds, Boolean.TRUE.equals(confirm)));
     }
 
     @RequestMapping("/auction/stop")

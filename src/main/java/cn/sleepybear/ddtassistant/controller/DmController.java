@@ -1,7 +1,7 @@
 package cn.sleepybear.ddtassistant.controller;
 
 import cn.sleepybear.ddtassistant.logic.DmLogic;
-import cn.sleepybear.ddtassistant.vo.MyString;
+import cn.sleepybear.ddtassistant.advice.ResultCode;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,8 +25,8 @@ public class DmController {
     }
 
     @RequestMapping("/dm/getGameScreenPath")
-    public MyString getGameScreenPath(int hwnd, Integer imgQuality) {
-        return new MyString(dmLogic.getGameScreenPath(hwnd, imgQuality));
+    public ResultCode<String> getGameScreenPath(int hwnd, Integer imgQuality) {
+        return ResultCode.buildResult(dmLogic.getGameScreenPath(hwnd, imgQuality));
     }
 
 }

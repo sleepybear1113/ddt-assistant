@@ -1,8 +1,8 @@
 package cn.sleepybear.ddtassistant.base;
 
-import cn.sleepybear.ddtassistant.utils.captcha.CaptchaChoiceEnum;
+import cn.sleepybear.ddtassistant.type.captcha.CaptchaConstants;
 import cn.sleepybear.ddtassistant.utils.captcha.CaptchaInfo;
-import cn.sleepybear.ddtassistant.utils.captcha.way.BaseCaptchaWay;
+import cn.sleepybear.ddtassistant.utils.captcha.BaseCaptchaWay;
 import cn.sleepybear.ddtassistant.utils.captcha.way.PcCaptcha;
 import cn.sleepybear.ddtassistant.utils.captcha.way.TjCaptcha;
 import lombok.Data;
@@ -98,7 +98,7 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
         CaptchaInfo tjCaptcha = new CaptchaInfo();
         tjCaptcha.setId(1);
         tjCaptcha.setCaptchaName("图鉴打码");
-        tjCaptcha.setCaptchaType(CaptchaChoiceEnum.TJ.getChoice());
+        tjCaptcha.setCaptchaType(CaptchaConstants.CaptchaChoiceEnum.TJ.getChoice());
         tjCaptcha.setParams(List.of(new String[]{"", "", TjCaptcha.DEFAULT_SOFT_ID, TjCaptcha.DEFAULT_TYPE_ID}));
         return tjCaptcha;
     }
@@ -107,7 +107,7 @@ public class CaptchaConfig extends BaseConfig implements Serializable {
         CaptchaInfo captchaInfo = new CaptchaInfo();
         captchaInfo.setId(2);
         captchaInfo.setCaptchaName("平川打码");
-        captchaInfo.setCaptchaType(CaptchaChoiceEnum.PC.getChoice());
+        captchaInfo.setCaptchaType(CaptchaConstants.CaptchaChoiceEnum.PC.getChoice());
         captchaInfo.setParams(List.of(new String[]{"", "sleepy"}));
         captchaInfo.setServerAddressList(List.of("http://sq3.sleepybear.cn:34775","http://sq1.sleepybear.cn:33080","https://pc1.sleepybear1113.cn"));
         return captchaInfo;

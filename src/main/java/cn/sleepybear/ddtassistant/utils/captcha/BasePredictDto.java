@@ -2,7 +2,7 @@ package cn.sleepybear.ddtassistant.utils.captcha;
 
 import cn.sleepybear.ddtassistant.base.CaptchaConfig;
 import cn.sleepybear.ddtassistant.exception.FrontException;
-import cn.sleepybear.ddtassistant.utils.captcha.way.BaseCaptchaWay;
+import cn.sleepybear.ddtassistant.type.captcha.CaptchaConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,7 @@ public abstract class BasePredictDto implements Serializable {
     public String getServerUrl(boolean checkConnection) {
         List<String> serverAddressList = this.baseCaptchaWay.getServerAddressList();
         if (CollectionUtils.isEmpty(serverAddressList)) {
-            throw new FrontException("服务器地址为空，请检查是否填写保存！");
+            throw new FrontException("服务器地址为空！请检查确认是否填写并且点击“保存打码设置”！");
         }
 
         String url = null;

@@ -1,7 +1,8 @@
 package cn.sleepybear.ddtassistant.utils.captcha.way;
 
+import cn.sleepybear.ddtassistant.type.captcha.CaptchaConstants;
+import cn.sleepybear.ddtassistant.utils.captcha.BaseCaptchaWay;
 import cn.sleepybear.ddtassistant.utils.captcha.BasePredictDto;
-import cn.sleepybear.ddtassistant.utils.captcha.CaptchaChoiceEnum;
 import cn.sleepybear.ddtassistant.utils.captcha.pc.PcPredictDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ public class PcCaptcha extends BaseCaptchaWay implements Serializable {
 
     @Override
     public BaseCaptchaWay convertType() {
-        if (getCaptchaTypeEnum() != CaptchaChoiceEnum.PC) {
+        if (getCaptchaTypeEnum() != CaptchaConstants.CaptchaChoiceEnum.PC) {
             return null;
         }
 
@@ -47,17 +47,6 @@ public class PcCaptcha extends BaseCaptchaWay implements Serializable {
     }
 
     @Override
-    public void fillParams() {
-        if (CollectionUtils.isNotEmpty(getParams())) {
-            return;
-        }
-
-        setParams(new ArrayList<>());
-        getParams().add(this.cami);
-        getParams().add(this.author);
-    }
-
-    @Override
     public boolean validUserInfo() {
         return StringUtils.isNotBlank(this.cami);
     }
@@ -65,6 +54,11 @@ public class PcCaptcha extends BaseCaptchaWay implements Serializable {
     @Override
     public BasePredictDto getBasePredictDto() {
         return new PcPredictDto(this);
+    }
+
+    @Override
+    public Integer getMinAnswerTime() {
+        return CaptchaConstants.PC_MIN_ANSWER_TIME;
     }
 
     public String getAuthor() {

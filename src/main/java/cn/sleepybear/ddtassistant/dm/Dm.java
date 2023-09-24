@@ -67,6 +67,13 @@ public class Dm {
         return id;
     }
 
+    public int getLastError() {
+        Variant variant = invoke("GetLastError");
+        int lastError = variant.getInt();
+        variant.safeRelease();
+        return lastError;
+    }
+
     public void bindWindow(int hwnd, String display, String mouse, String keypad, int mode) {
         invoke("BindWindow", hwnd, display, mouse, keypad, mode).safeRelease();
     }
@@ -175,6 +182,20 @@ public class Dm {
         return i;
     }
 
+    public String readData(int hwnd, String address, int length) {
+        System.out.println(address);
+        Variant variant = invoke("ReadData", hwnd, address.toUpperCase(), length);
+        String string = variant.getString();
+        variant.safeRelease();
+        return string;
+    }
+
+    public String readData(int hwnd, int address, int length) {
+        // address 转 16 进制
+        String addressHex = Long.toHexString(address);
+        return readData(hwnd, addressHex, length);
+    }
+
     public void captureBmp(int x1, int y1, int x2, int y2, String path) {
         capture(x1, y1, x2, y2, path);
     }
@@ -203,6 +224,40 @@ public class Dm {
         }
         Variant variant = invoke("CaptureJpg", x1, y1, x2, y2, path, quality);
         variant.safeRelease();
+    }
+
+    public Integer getScreenData(int[] xy) {
+        return getScreenData(xy[0], xy[1], xy[2], xy[3]);
+    }
+
+    public Integer getScreenData(int x1, int y1, int x2, int y2) {
+        if (x2 <= x1 || y2 <= y1) {
+            log.error("截图失败：坐标越界！({}, {}), ({}, {})", x1, y1, x2, y2);
+            return null;
+        }
+        Variant variant = invoke("GetScreenData", x1, y1, x2, y2);
+        int i = variant.getInt();
+        variant.safeRelease();
+        return i;
+    }
+
+    public String getScreenDataBmp(int[] xy) {
+        return getScreenDataBmp(xy[0], xy[1], xy[2], xy[3]);
+    }
+
+    public String getScreenDataBmp(int x1, int y1, int x2, int y2) {
+        if (x2 <= x1 || y2 <= y1) {
+            log.error("截图失败：坐标越界！({}, {}), ({}, {})", x1, y1, x2, y2);
+            return null;
+        }
+        Variant pointer = new Variant(0, true);
+        Variant size = new Variant(0, true);
+        Variant variant = invoke("GetScreenDataBmp", x1, y1, x2, y2, pointer, size);
+        variant.safeRelease();
+        String s = pointer.getInt() + "-" + size.getInt();
+        pointer.safeRelease();
+        size.safeRelease();
+        return s;
     }
 
     public int[] findPic(int[] xy, String templatePath, String deltaColor, double threshold, DmConstants.SearchWay searchWay) {
@@ -305,6 +360,31 @@ public class Dm {
         String string = variant.getString();
         variant.safeRelease();
         return string;
+    }
+
+    public String getColor(int x, int y) {
+        Variant variant = invoke("GetColor", x, y);
+        String string = variant.getString();
+        variant.safeRelease();
+        return string;
+    }
+
+    public int getColorNum(int[] xy, String color, double sim) {
+        return getColorNum(xy[0], xy[1], xy[2], xy[3], color, sim);
+    }
+
+    public int getColorNum(int x1, int y1, int x2, int y2, String color, double sim) {
+        Variant variant = invoke("GetColorNum", x1, y1, x2, y2, color, sim);
+        int i = variant.getInt();
+        variant.safeRelease();
+        return i;
+    }
+
+    public boolean cmpColor(int x, int y, String color, double sim) {
+        Variant variant = invoke("CmpColor", x, y, color, sim);
+        boolean b = variant.getBoolean();
+        variant.safeRelease();
+        return b;
     }
 
     public int imageToBmp(String fromPicName, String toBmpName) {

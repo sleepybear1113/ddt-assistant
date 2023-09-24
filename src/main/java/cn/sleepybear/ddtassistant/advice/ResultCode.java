@@ -1,4 +1,4 @@
-package cn.sleepybear.ddtassistant.vo;
+package cn.sleepybear.ddtassistant.advice;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,18 +14,28 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
-public class ResultCode implements Serializable {
+public class ResultCode<T> implements Serializable {
     @Serial
     private static final long serialVersionUID = -2938642554402365880L;
 
     private Integer code;
     private String message;
-    private Object result;
+    private T result;
 
-    public ResultCode(Object result) {
+    public ResultCode(T result) {
         this.code = ResultCodeConstant.CodeEnum.SUCCESS.getCode();
         this.message = null;
         this.result = result;
+    }
+
+    public static ResultCode<String> buildMsg(String s) {
+        return new ResultCode<>(ResultCodeConstant.CodeEnum.SUCCESS.getCode(), s);
+    }
+
+    public static ResultCode<String> buildResult(String s) {
+        ResultCode<String> resultCode = new ResultCode<>(ResultCodeConstant.CodeEnum.SUCCESS.getCode(), null);
+        resultCode.setResult(s);
+        return resultCode;
     }
 
     public ResultCode(Integer code, String message) {
@@ -38,12 +48,5 @@ public class ResultCode implements Serializable {
         this.code = ResultCodeConstant.CodeEnum.COMMON_ERROR.getCode();
         this.message = message;
         this.result = null;
-    }
-
-    public static ResultCode buildString(String s) {
-        ResultCode resultCode = new ResultCode();
-        resultCode.code = ResultCodeConstant.CodeEnum.SUCCESS.getCode();
-        resultCode.setResult(s);
-        return resultCode;
     }
 }

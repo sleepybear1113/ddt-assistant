@@ -77,11 +77,8 @@ let captchaApp = new Vue({
             });
             Vue.set(this.totalCaptchaWayList, 0, new CaptchaWay().no());
         },
-        addCaptchaServer() {
-            this.addPcCaptchaServer();
-        },
-        addPcCaptchaServer() {
-            if (!confirm("是否新增一个平川类型的打码服务器？\n可以使用和平川打码相同格式的返回结果的打码服务器")) {
+        addCaptchaServer(tip, captchaType) {
+            if (!confirm(tip)) {
                 return;
             }
 
@@ -105,13 +102,24 @@ let captchaApp = new Vue({
                 return;
             }
 
-            let captchaPc = new CaptchaPc();
-            captchaPc.id = newId;
-            captchaPc.captchaName = name;
-            captchaPc.captchaType = 2;
+            let captchaWay = {};
+            if (captchaType === 1) {
+                captchaWay = new CaptchaTj();
+            } else if (captchaType === 2) {
+                captchaWay = new CaptchaPc();
+            }
+            captchaWay.id = newId;
+            captchaWay.captchaName = name;
+            captchaWay.captchaType = captchaType;
 
-            captchaInfoList.push(captchaPc);
+            captchaInfoList.push(captchaWay);
             this.refreshTotalCaptchaWay();
+        },
+        addTjCaptchaServer() {
+            this.addCaptchaServer("是否新增一个图鉴打码服务器？", 1);
+        },
+        addPcCaptchaServer() {
+            this.addCaptchaServer("是否新增一个平川类型的打码服务器？\n可以使用和平川打码相同格式的返回结果的打码服务器", 2);
         },
         deleteCaptcha(id) {
             if (!confirm("是否删除这个打码方式？")) {
@@ -130,6 +138,12 @@ let captchaApp = new Vue({
             if (index >= 0) {
                 captchaInfoList.splice(index, 1);
             }
+        },
+        addValidTime(captchaInfo) {
+            captchaInfo.validTimeList.push([[], [], [], []]);
+        },
+        deleteValidTime(captchaInfo, index) {
+            captchaInfo.validTimeList.splice(index, 1);
         },
         changeCaptchaWayTabIndex: function (index) {
             this.captchaWayTabIndex = index;

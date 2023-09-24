@@ -11,7 +11,6 @@ import cn.sleepybear.ddtassistant.utils.SpringContextUtil;
 import cn.sleepybear.ddtassistant.utils.Util;
 import cn.sleepybear.ddtassistant.utils.captcha.BasePredictDto;
 import cn.sleepybear.ddtassistant.utils.captcha.BaseResponse;
-import cn.sleepybear.ddtassistant.utils.captcha.CaptchaChoiceEnum;
 import cn.sleepybear.ddtassistant.utils.captcha.way.PcCaptcha;
 import cn.sleepybear.ddtassistant.utils.http.HttpHelper;
 import cn.sleepybear.ddtassistant.utils.http.HttpRequestMaker;
@@ -138,10 +137,10 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
         Boolean lowBalanceRemind = captchaConfig.getLowBalanceRemind();
         Double lowBalanceNum = captchaConfig.getLowBalanceNum();
 
-        StringBuilder sb = new StringBuilder(CaptchaChoiceEnum.PC.getName());
+        StringBuilder sb = new StringBuilder(getCaptchaWay().getCaptchaName());
 
         if (StringUtils.isBlank(cami)) {
-            return sb.append("卡密为空，无可用用户信息").toString();
+            return sb.append("卡密为空，无可用用户信息，请确认是否点击“保存打码设置”").toString();
         }
         try {
             String url = String.format(getServerUrl(true) + ACCOUNT_INFO_SUFFIX_URL, cami, author);

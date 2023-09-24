@@ -3,8 +3,7 @@ package cn.sleepybear.ddtassistant.controller;
 import cn.sleepybear.ddtassistant.logic.SystemLogic;
 import cn.sleepybear.ddtassistant.utils.Util;
 import cn.sleepybear.ddtassistant.vo.FileInfoVo;
-import cn.sleepybear.ddtassistant.vo.MyString;
-import cn.sleepybear.ddtassistant.vo.ResultCode;
+import cn.sleepybear.ddtassistant.advice.ResultCode;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +28,7 @@ public class SystemController {
     }
 
     @RequestMapping("/system/getHost")
-    public MyString getHost() {
+    public ResultCode<String> getHost() {
         return systemLogic.getHost();
     }
 
@@ -59,7 +58,7 @@ public class SystemController {
     }
 
     @RequestMapping("/system/getLastSomeRows")
-    public ResultCode getLastSomeRows(String filename, Integer n) {
-        return ResultCode.buildString(systemLogic.getLastSomeRows(filename, n));
+    public ResultCode<String> getLastSomeRows(String filename, Integer n) {
+        return ResultCode.buildResult(systemLogic.getLastSomeRows(filename, n));
     }
 }

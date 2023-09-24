@@ -32,6 +32,17 @@ public class UserConfig extends BaseConfig implements Serializable {
      * 识屏时间间隔
      */
     private Long captureInterval;
+
+    /**
+     * 检测验证码的方式<br>
+     * 0/null - 旧方式，图片匹配<br>
+     * 1 - 新方式，颜色匹配
+     */
+    private Integer captchaDetectType;
+    /**
+     * 是否保存验证码
+     */
+    private Boolean noSaveCaptchaImg;
     /**
      * 验证码出现后等待的毫秒
      */

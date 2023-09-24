@@ -23,7 +23,7 @@ public class CaptchaInfo implements Serializable {
      */
     private String captchaName;
     /**
-     * 验证码类型，参考 {@link cn.sleepybear.ddtassistant.utils.captcha.CaptchaChoiceEnum}
+     * 验证码类型，参考 {@link cn.sleepybear.ddtassistant.type.captcha.CaptchaConstants.CaptchaChoiceEnum}
      */
     private Integer captchaType;
 

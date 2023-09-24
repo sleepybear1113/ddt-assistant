@@ -6,7 +6,7 @@ import cn.sleepybear.ddtassistant.exception.FrontException;
 import cn.sleepybear.ddtassistant.utils.SpringContextUtil;
 import cn.sleepybear.ddtassistant.utils.Util;
 import cn.sleepybear.ddtassistant.vo.FileInfoVo;
-import cn.sleepybear.ddtassistant.vo.MyString;
+import cn.sleepybear.ddtassistant.advice.ResultCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,13 +31,13 @@ public class SystemLogic {
         Util.openWithExplorer(path, select);
     }
 
-    public MyString getHost() {
+    public ResultCode<String> getHost() {
         String hostFilename = getHostFilename();
         if (StringUtils.isBlank(hostFilename)) {
-            return new MyString("");
+            return ResultCode.buildResult("");
         }
         String s = Util.readFile(hostFilename);
-        return new MyString(s);
+        return ResultCode.buildResult(s);
     }
 
     public Boolean updateHost(String host) {

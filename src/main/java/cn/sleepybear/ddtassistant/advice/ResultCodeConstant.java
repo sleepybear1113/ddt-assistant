@@ -1,4 +1,4 @@
-package cn.sleepybear.ddtassistant.vo;
+package cn.sleepybear.ddtassistant.advice;
 
 import cn.sleepybear.ddtassistant.exception.FrontException;
 import lombok.Getter;

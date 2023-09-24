@@ -3,28 +3,12 @@ package cn.sleepybear.ddtassistant.utils;
 
 import lombok.Getter;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
-import java.awt.Toolkit;
-import java.awt.Transparency;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorConvertOp;
-import java.awt.image.ColorModel;
-import java.awt.image.ConvolveOp;
-import java.awt.image.Kernel;
-import java.awt.image.MemoryImageSource;
-import java.awt.image.PixelGrabber;
-import java.awt.image.RescaleOp;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.awt.image.*;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -32,8 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.imageio.ImageIO;
 
 /**
  * 验证码图片过滤清理
@@ -910,7 +892,7 @@ public class ImageClean {
                             cleanMethodName = cleanMethodName.replace("()", "");
                         }
 
-                        if (!"".equals(cleanMethodName)) {
+                        if (!cleanMethodName.isEmpty()) {
                             // 查看缓存
                             Method m = cleanMethodsCache.get(cleanMethodName);
                             if (m != null) {

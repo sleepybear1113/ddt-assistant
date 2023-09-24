@@ -95,6 +95,10 @@ public class SimpleTest {
         }
     }
 
+    public static void cap() {
+
+    }
+
     @Data
     static class Aq {
         @JsonAnySetter

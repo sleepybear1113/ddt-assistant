@@ -1,7 +1,7 @@
 package cn.sleepybear.ddtassistant.controller;
 
 import cn.sleepybear.ddtassistant.logic.ServerLogLogic;
-import cn.sleepybear.ddtassistant.vo.ResultCode;
+import cn.sleepybear.ddtassistant.advice.ResultCode;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +18,7 @@ public class ServerLogController {
     private ServerLogLogic serverLogLogic;
 
     @RequestMapping("/serverLog/getLastSomeRows")
-    public ResultCode getLastSomeRows(String filename, Integer n) {
-        return ResultCode.buildString(serverLogLogic.getLastSomeRows(filename, n));
+    public ResultCode<String> getLastSomeRows(String filename, Integer n) {
+        return ResultCode.buildResult(serverLogLogic.getLastSomeRows(filename, n));
     }
 }

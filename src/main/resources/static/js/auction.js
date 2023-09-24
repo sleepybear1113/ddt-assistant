@@ -231,7 +231,7 @@ let auctionApp = new Vue({
                     confirm: this.auctionData.confirm
                 }
             }).then((res) => {
-                showInfo(res.data.result.string);
+                showInfo(res.data.result);
             });
         },
         stop: function (hwnd) {

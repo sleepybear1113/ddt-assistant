@@ -1,12 +1,14 @@
 package cn.sleepybear.ddtassistant.controller;
 
-import cn.sleepybear.ddtassistant.logic.MonitorLogic;
+import cn.sleepybear.ddtassistant.advice.ResultCode;
 import cn.sleepybear.ddtassistant.annotation.LogAppInfo;
+import cn.sleepybear.ddtassistant.constant.Constants;
 import cn.sleepybear.ddtassistant.constant.GlobalVariable;
 import cn.sleepybear.ddtassistant.dm.DmDdt;
+import cn.sleepybear.ddtassistant.exception.FrontException;
+import cn.sleepybear.ddtassistant.logic.MonitorLogic;
 import cn.sleepybear.ddtassistant.utils.Util;
 import cn.sleepybear.ddtassistant.utils.captcha.CaptchaUtil;
-import cn.sleepybear.ddtassistant.vo.MyString;
 import jakarta.annotation.Resource;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -68,13 +70,29 @@ public class TestController {
 
     @LogAppInfo("查看缓存大小")
     @RequestMapping("/test/getCacherSize")
-    public MyString getCacherSize() {
+    public ResultCode<String> getCacherSize() {
         int monitorTimeSize = MonitorLogic.TIME_CACHER.size();
         int monitorBonusSize = MonitorLogic.FLOP_BONUS_CACHER.size();
         int captchaSize = CaptchaUtil.CACHER.size();
         String s = "monitorTimeSize = " + monitorTimeSize + ", monitorBonusSize = " + monitorBonusSize + ", captchaSize = " + captchaSize;
         log.info(s);
-        return new MyString(s);
+        return ResultCode.buildResult(s);
+    }
+
+    @LogAppInfo("测试截图")
+    @RequestMapping("/test/capture")
+    public ResultCode<String> capture(Integer hwnd) {
+        if (hwnd == null) {
+            throw new FrontException("没有输入句柄！");
+        }
+        DmDdt dmDdt = GlobalVariable.DM_DDT_MAP.get(hwnd);
+        if (dmDdt == null) {
+            throw new FrontException("没有找到句柄为[" + hwnd + "]的窗口！");
+        }
+        dmDdt.bind();
+        long l = System.currentTimeMillis();
+        dmDdt.captureFullGamePic(Constants.TEST_CAPTURE_DIR + l + ".bmp");
+        return ResultCode.buildResult(String.valueOf(l));
     }
 
     @Data

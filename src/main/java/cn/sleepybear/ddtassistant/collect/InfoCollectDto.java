@@ -2,9 +2,9 @@ package cn.sleepybear.ddtassistant.collect;
 
 import cn.sleepybear.ddtassistant.config.AppProperties;
 import cn.sleepybear.ddtassistant.constant.GlobalVariable;
-import cn.sleepybear.ddtassistant.utils.Util;
-import cn.sleepybear.ddtassistant.utils.captcha.CaptchaChoiceEnum;
+import cn.sleepybear.ddtassistant.type.captcha.CaptchaConstants;
 import cn.sleepybear.ddtassistant.utils.SpringContextUtil;
+import cn.sleepybear.ddtassistant.utils.Util;
 import lombok.Data;
 
 import java.io.Serial;
@@ -50,11 +50,11 @@ public class InfoCollectDto implements Serializable {
         this.hwndNum = GlobalVariable.DM_DDT_MAP.size();
     }
 
-    public void addCaptchaCount(CaptchaChoiceEnum captchaChoiceEnum) {
-        if (CaptchaChoiceEnum.PC.equals(captchaChoiceEnum)) {
+    public void addCaptchaCount(Integer captchaType) {
+        if (CaptchaConstants.CaptchaChoiceEnum.PC.getChoice().equals(captchaType)) {
             captchaCountPc++;
             captchaCountTotalPc++;
-        } else if (CaptchaChoiceEnum.TJ.equals(captchaChoiceEnum)) {
+        } else if (CaptchaConstants.CaptchaChoiceEnum.TJ.getChoice().equals(captchaType)) {
             captchaCountTj++;
             captchaCountTotalTj++;
         }

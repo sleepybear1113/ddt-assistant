@@ -19,7 +19,6 @@ import cn.sleepybear.ddtassistant.utils.SpringContextUtil;
 import cn.sleepybear.ddtassistant.utils.Util;
 import cn.sleepybear.ddtassistant.utils.captcha.*;
 import cn.sleepybear.ddtassistant.utils.captcha.tj.TjResponse;
-import cn.sleepybear.ddtassistant.utils.captcha.way.BaseCaptchaWay;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,7 +44,7 @@ public class Captcha extends BaseType {
     private static final long serialVersionUID = -2259938240133602111L;
     private static final Logger logMore = LoggerFactory.getLogger("MORE");
 
-    private final Map<CaptchaChoiceEnum, CaptchaImgInfo> captchaInfoMap = new HashMap<>();
+    private final Map<Integer, CaptchaImgInfo> captchaImgInfoMap = new HashMap<>();
 
     private static boolean hasGetUserInfo = false;
 
@@ -75,10 +74,28 @@ public class Captcha extends BaseType {
         getDm().capturePicByRegion(path, CaptchaConstants.CAPTCHA_FULL_REACT);
     }
 
+    public boolean findCaptcha(Integer type, boolean again) {
+        if (type == null || type == 0) {
+            return findCaptcha();
+        }
+
+        if (type == 1) {
+            return findCaptchaByColor(again);
+        }
+
+        return false;
+    }
+
     public boolean findCaptcha() {
         List<String> templateImgList = GlobalVariable.getTemplateImgList(TypeConstants.TemplatePrefix.PVE_CAPTCHA_COUNT_DOWN);
         List<DmDomains.PicEx> picExList = getDm().findPicEx(CaptchaConstants.CAPTCHA_COUNTDOWN_FIND_REACT, templateImgList, "020202", 0.7);
         return CollectionUtils.isNotEmpty(picExList);
+    }
+
+    public boolean findCaptchaByColor(boolean again) {
+        int[] area = again ? CaptchaConstants.CAPTCHA_BOTTOM_DETECT_AREA_1 : CaptchaConstants.CAPTCHA_BOTTOM_DETECT_AREA_2;
+        int colorNum = getDm().getColorNum(area, Util.rbgToHexStr(CaptchaConstants.CAPTCHA_BUTTON_DETECT_COLOR) + "-" + Util.rbgToHexStr(CaptchaConstants.CAPTCHA_BOTTOM_VALID_DELTA_COLOR), 1.0);
+        return colorNum > CaptchaConstants.CAPTCHA_BOTTOM_COLOR_NUM;
     }
 
     public boolean findFlopBonus() {
@@ -199,19 +216,19 @@ public class Captcha extends BaseType {
             return;
         }
 
-        if (!findCaptcha()) {
+        if (!findCaptcha(userConfig.getCaptchaDetectType(), false)) {
             // 没找到验证码
             return;
         }
 
         // 验证码保存路径
         String captchaDir = Constants.CAPTCHA_DIR + Util.getTimeString(Util.TIME_YMD_FORMAT) + "/";
-        String captchaName = captchaDir + getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
+        String captchaImgFileName = captchaDir + getHwnd() + "-" + Util.getTimeString(Util.TIME_HMS_FORMAT) + ".png";
 
         // 截屏
-        captureCaptchaQuestionPic(captchaName);
-        log.info("[{}] 验证码保存到本地，文件名为：{}", getHwnd(), captchaName);
-        if (!captchaValid(captchaName)) {
+        captureCaptchaQuestionPic(captchaImgFileName);
+        log.info("[{}] 验证码保存到本地，文件名为：{}", getHwnd(), captchaImgFileName);
+        if (!captchaValid(captchaImgFileName)) {
             getDm().clickCorner();
             log.info("[{}] 保存验证码图片为非验证码内容，不予上传！", getHwnd());
             return;
@@ -219,7 +236,7 @@ public class Captcha extends BaseType {
         log.info("[{}] 发现副本验证码！", getHwnd());
 
         // 读取发现的验证码图片到内存
-        BufferedImage current = ImgUtil.read(captchaName);
+        BufferedImage current = ImgUtil.read(captchaImgFileName);
         // 判断是否为与上一次重复的验证码
         if (isSameCaptcha(lastCaptchaImg, current)) {
             log.info("[{}] 验证码第[{}]次重复！！请检查程序点击功能是否正常！！请打开网页进入“测试功能正常”中进行点击功能检查！！", getHwnd(), lastCaptchaImg.getSameTimes());
@@ -245,8 +262,8 @@ public class Captcha extends BaseType {
 
         // 上报错误，如果有
         CaptchaImgInfo lastErrorCaptchaImgInfo = null;
-        if (!captchaInfoMap.isEmpty()) {
-            for (CaptchaImgInfo captchaImgInfo : captchaInfoMap.values()) {
+        if (!captchaImgInfoMap.isEmpty()) {
+            for (CaptchaImgInfo captchaImgInfo : captchaImgInfoMap.values()) {
                 if (lastErrorCaptchaImgInfo == null) {
                     lastErrorCaptchaImgInfo = captchaImgInfo;
                     continue;
@@ -260,7 +277,7 @@ public class Captcha extends BaseType {
         }
 
         // 获取打码结果
-        BaseResponse response = getCaptchaAnswer(captchaConfig, userConfig, captchaName);
+        BaseResponse response = getCaptchaAnswer(captchaConfig, userConfig, captchaImgFileName);
         if (response == null) {
             // 内部非验证码返回 null，跳出
             return;
@@ -269,10 +286,11 @@ public class Captcha extends BaseType {
         // 获取结果
         ChoiceEnum choiceEnum = response.getChoiceEnum();
         lastCaptchaImg.setChoiceEnum(choiceEnum);
-        ChoiceEnum choiceEnumResult = clickCaptchaAnswer(choiceEnum, userConfig.getDefaultChoiceAnswer());
+        clickCaptchaAnswer(choiceEnum, userConfig.getDefaultChoiceAnswer());
 
-        // 上传服务器验证码结果
-        GlobalVariable.THREAD_POOL.execute(() -> Util.uploadToServer(captchaName, choiceEnumResult));
+        if (Boolean.TRUE.equals(userConfig.getNoSaveCaptchaImg())) {
+            Util.delayDeleteFile(captchaImgFileName, null);
+        }
 
         Util.sleep(1000L);
     }
@@ -282,10 +300,10 @@ public class Captcha extends BaseType {
      *
      * @param captchaConfig captchaConfig
      * @param userConfig    userConfig
-     * @param captchaName   captchaName
+     * @param captchaImgFileName   captchaImgFileName
      * @return 如果不为 null 那么就结果，否则上层方法跳出循环
      */
-    private BaseResponse getCaptchaAnswer(CaptchaConfig captchaConfig, UserConfig userConfig, String captchaName) {
+    private BaseResponse getCaptchaAnswer(CaptchaConfig captchaConfig, UserConfig userConfig, String captchaImgFileName) {
         // 空结果
         BaseResponse response = TjResponse.buildEmptyResponse();
         // 遍历所有的打码方式
@@ -296,8 +314,9 @@ public class Captcha extends BaseType {
                 break;
             }
 
-            List<CaptchaInfo> captchaInfoList = captchaConfig.getCaptchaInfoList();
+            // 提取当前的打码类型
             CaptchaInfo captchaInfo = null;
+            List<CaptchaInfo> captchaInfoList = captchaConfig.getCaptchaInfoList();
             if (CollectionUtils.isNotEmpty(captchaInfoList)) {
                 for (CaptchaInfo info : captchaInfoList) {
                     if (captchaInfoId.equals(info.getId())) {
@@ -312,40 +331,48 @@ public class Captcha extends BaseType {
                 continue;
             }
 
-            if (!first && !findCaptcha()) {
+            // 单个打码
+            BaseCaptchaWay baseCaptchaWay = BaseCaptchaWay.buildBaseCaptchaWay(captchaInfo);
+            if (baseCaptchaWay == null) {
+                // 未找到打码方式
+                continue;
+            }
+
+            // 判断是否在指定时间内
+            if (!baseCaptchaWay.inValidTime(System.currentTimeMillis())) {
+                continue;
+            }
+
+            // 验证身份
+            if (!baseCaptchaWay.validUserInfo()) {
+                log.info("[{}] 用户名或密码填写错误，无法提交打码平台，请确认是否点击“保存打码设置”", baseCaptchaWay.getCaptchaName());
+                response.setChoiceEnum(ChoiceEnum.UNDEFINED);
+                continue;
+            }
+
+            if (!first && !findCaptcha(userConfig.getCaptchaDetectType(), true)) {
                 // 没找到验证码（二次验证是否有验证码）
                 return null;
             }
             first = false;
 
-            // 倒计时时间
+            // 识别倒计时时间
             Integer countDown = captureAndOcrCountDown();
-
             // 判断倒计时剩余时间
-            CaptchaChoiceEnum captchaChoiceEnum = CaptchaChoiceEnum.getChoice(captchaInfo.getCaptchaType());
-            Integer minAnswerTime = captchaChoiceEnum.getMinAnswerTime();
+            Integer minAnswerTime = baseCaptchaWay.getMinAnswerTime();
             if (countDown != null && countDown <= minAnswerTime) {
                 response.setChoiceEnum(ChoiceEnum.UNDEFINED);
-                log.info("[{}] 验证码倒计时剩下 {} 秒，[{}]来不及提交打码", getHwnd(), countDown, captchaChoiceEnum.getName());
+                log.info("[{}] 验证码倒计时剩下 {} 秒，[{}]来不及提交打码", getHwnd(), countDown, baseCaptchaWay.getCaptchaName());
                 continue;
             }
 
             // 倒计时剩余时间
             long countDownTime = countDown == null ? 18 * 1000 : countDown * 1000L;
-            log.info("[{}] 准备提交[{}]识别...倒计时还剩下 {} 秒", getHwnd(), captchaChoiceEnum.getName(), countDown);
+            log.info("[{}] 准备提交[{}]识别...倒计时还剩下 {} 秒", getHwnd(), baseCaptchaWay.getCaptchaName(), countDown);
 
-            // 单个打码
-            BaseCaptchaWay baseCaptchaWay = BaseCaptchaWay.buildBaseCaptchaWay(captchaInfo);
-            // 验证身份
-            if (!baseCaptchaWay.validUserInfo()) {
-                log.info("[{}] 用户名或密码填写错误，无法提交打码平台", captchaChoiceEnum.getName());
-                response.setChoiceEnum(ChoiceEnum.UNDEFINED);
-                continue;
-            }
-
-            // 打码请求体
+            // 构建打码请求体
             BasePredictDto basePredictDto = baseCaptchaWay.getBasePredictDto();
-            basePredictDto.setImgFile(captchaName);
+            basePredictDto.setImgFile(captchaImgFileName);
             response = CaptchaUtil.waitToGetChoice(getHwnd(), countDownTime - 2000L, userConfig.getKeyPressDelayAfterCaptchaDisappear(), basePredictDto);
             if (!basePredictDto.getResponseClass().isInstance(response)) {
                 log.info("[{}] 解析返回结果失败，可能是网络波动或者平台暂时出现问题等", getHwnd());
@@ -355,12 +382,12 @@ public class Captcha extends BaseType {
 
             // 打码 id
             String captchaId = response.getCaptchaId();
-            CaptchaImgInfo captchaImgInfo = captchaInfoMap.get(captchaChoiceEnum);
+            CaptchaImgInfo captchaImgInfo = captchaImgInfoMap.get(baseCaptchaWay.getId());
             if (captchaImgInfo == null) {
-                captchaImgInfo = new CaptchaImgInfo(captchaChoiceEnum, System.currentTimeMillis(), captchaId, captchaName);
-                captchaInfoMap.put(captchaChoiceEnum, captchaImgInfo);
+                captchaImgInfo = new CaptchaImgInfo(baseCaptchaWay.getId(), baseCaptchaWay.getCaptchaType(), baseCaptchaWay.getCaptchaName(), System.currentTimeMillis(), captchaId, captchaImgFileName);
+                captchaImgInfoMap.put(baseCaptchaWay.getId(), captchaImgInfo);
             } else {
-                captchaImgInfo.renew(System.currentTimeMillis(), captchaId, captchaName);
+                captchaImgInfo.renew(System.currentTimeMillis(), captchaId, captchaImgFileName);
             }
 
             if (!ChoiceEnum.UNDEFINED.equals(response.getChoiceEnum())) {
@@ -370,7 +397,7 @@ public class Captcha extends BaseType {
                 }
 
                 // 验证码次数收集
-                GlobalVariable.INFO_COLLECT_DTO.addCaptchaCount(captchaChoiceEnum);
+                GlobalVariable.INFO_COLLECT_DTO.addCaptchaCount(baseCaptchaWay.getCaptchaType());
                 // 获取到正常选项，退出
                 break;
             }

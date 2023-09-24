@@ -14,7 +14,8 @@
 <body>
 <script>
     setTimeout(function () {
-        document.getElementById("ie-h1").innerHTML = "请不要使用IE浏览器访问！！！或者确保Java黑框已经运行！！！";
+        document.getElementById("ie-h1").innerHTML = "请不要使用IE浏览器访问！！！或者确保Java控制台黑框已经运行！！！";
+        document.getElementById("ie-h2").innerHTML = "如果控制台已经在运行中，那么请点开Java控制台黑框，单击黑框内，然后按下2次回车。";
         if (document.getElementById("ie-a").innerText !== "true") {
             document.getElementById("main").style.display = "none";
         }
@@ -22,6 +23,8 @@
 </script>
 <div id="ie">
     <h1 id="ie-h1"></h1>
+    <br>
+    <h1 id="ie-h2"></h1>
     <a id="ie-a" style="display: none"></a>
 </div>
 <div id="main">
@@ -30,8 +33,10 @@
             <span>版本号：</span><u>{{appVersion}}</u>
             <button id="logout" v-show="hasLoginCookie" onclick="logout()">退出登录</button>
         </div>
-        <label for="textarea-info">信息：</label>
-        <textarea id="textarea-info" style="width: 400px; height: 70px" readonly></textarea>
+        <label for="textarea-info">
+            信息：
+            <textarea id="textarea-info" style="width: 400px; height: 70px" readonly></textarea>
+        </label>
         <div id="cover" onclick="hideImg()" style="display: none; z-index: 100"></div>
         <div id="large-pic-div" style="display: none; position: absolute">
             <img id="cover-img" src="" width="80%" alt="1">
@@ -118,7 +123,7 @@
             <div id="log-div" v-show="open">
                 <div id="log-control">
                     <button onclick="changeMode()">切换模式</button>
-                    <button v-on:click="shown = !shown">{{shown? "隐藏": "显示"}}</button>
+                    <button v-on:click="shown = !shown">{{shown ? "隐藏" : "显示"}}</button>
                     <button v-on:click="open = false">关闭</button>
                 </div>
                 <div v-show="shown" class="move-handle">
@@ -140,9 +145,12 @@
             <div class="area">
                 <a class="red-font">修改完参数之后，记得点击保存，包括用户名密码，否则无效！</a><br/>
 
-                <button v-for="captchaInfo in captchaConfig.captchaInfoList" v-on:click="changeCaptchaWayTabIndex(captchaInfo.id)">{{captchaInfo.captchaName}}</button>
+                <button v-for="captchaInfo in captchaConfig.captchaInfoList"
+                        v-on:click="changeCaptchaWayTabIndex(captchaInfo.id)">{{captchaInfo.captchaName}}
+                </button>
                 <span> ------ </span>
-                <button @click="addCaptchaServer()">新增打码服务器</button>
+                <button @click="addTjCaptchaServer()">新增图鉴打码服务器</button>
+                <button @click="addPcCaptchaServer()">新增平川打码服务器</button>
                 <hr>
 
                 <div v-for="captchaInfo in captchaConfig.captchaInfoList">
@@ -154,19 +162,59 @@
                             打码名称
                             <input v-model="captchaInfo.captchaName">
                         </label>
-                        <button @click="deleteCaptcha(captchaInfo.id)">删除</button><br/>
-                        <label>打码平台：</label><a href="http://www.ttshitu.com"
-                                                   target="_blank">http://www.ttshitu.com</a><br/>
-                        <label for="input-username">用户名</label>
-                        <input id="input-username" v-model="captchaInfo.username"><br/>
-                        <label for="input-password">密码　</label>
-                        <input id="input-password" v-model="captchaInfo.password" type="password"><br/>
-                        <label for="input-softId">softId </label>
-                        <input id="input-softId" v-model="captchaInfo.softId"><br/>
-                        <label for="input-typeId">typeId </label>
-                        <input id="input-typeId" v-model="captchaInfo.typeId"><br/>
+                        <button @click="deleteCaptcha(captchaInfo.id)">删除</button>
+                        <br/>
+                        <label>
+                            打码平台：
+                            <a href="http://www.ttshitu.com" target="_blank">http://www.ttshitu.com</a><br/>
+                        </label>
+
+                        <label>
+                            用户名
+                            <input v-model="captchaInfo.username"><br/>
+                        </label>
+                        <label>
+                            密码　
+                            <input v-model="captchaInfo.password" type="password"><br/>
+                        </label>
+
+                        <label>
+                            softId
+                            <input v-model="captchaInfo.softId"><br/>
+                        </label>
+                        <label>
+                            typeId
+                            <input v-model="captchaInfo.typeId"><br/>
+                        </label>
                         <button v-on:click="testCaptcha(captchaInfo.id)">测试验证码</button>
                         <button v-on:click="showAccountInfo(captchaInfo.id)">查看余额</button>
+                        <br/>
+                        <br/>
+                        <span>限定下述时间可用</span>
+                        <button @click="addValidTime(captchaInfo)">添加</button>
+                        <div v-for="(timeList, index) in captchaInfo.validTimeList">
+                            <label>
+                                <select v-model="timeList[0]">
+                                    <option v-for="hour in 24">{{hour - 1}}</option>
+                                </select>
+                                <span>:</span>
+                                <select v-model="timeList[1]">
+                                    <option v-for="minute in 60">{{minute - 1}}</option>
+                                </select>
+                                <span>-</span>
+                                <select v-model="timeList[2]">
+                                    <option v-for="hour in 24">{{hour - 1}}</option>
+                                </select>
+                                <span>:</span>
+                                <select v-model="timeList[3]">
+                                    <option v-for="minute in 60">{{minute - 1}}</option>
+                                </select>
+                                <button @click="deleteValidTime(captchaInfo, index)">删除</button>
+                            </label>
+                        </div>
+                        <div v-show="captchaInfo.validTimeList == null || captchaInfo.validTimeList.length === 0">
+                            <i>全天均可用</i>
+                        </div>
                     </div>
 
                     <!--平川类型-->
@@ -176,48 +224,79 @@
                             打码名称
                             <input v-model="captchaInfo.captchaName">
                         </label>
-                        <button @click="deleteCaptcha(captchaInfo.id)">删除</button><br/>
+                        <button @click="deleteCaptcha(captchaInfo.id)">删除</button>
+                        <br/>
                         <label>服务器地址列表</label>
                         <button @click="addServerAddrList(captchaInfo.id)">新增</button>
                         <br/>
                         <div v-for="(serverAddr, index) in captchaInfo.serverAddressList">
                             <label>
-                                <input :id="'input-pc-server-addr-' + index" v-model="captchaInfo.serverAddressList[index]"
-                                       class="string-input-large-xxx">
+                                <input v-model="captchaInfo.serverAddressList[index]" class="string-input-large-xxx">
                                 <button @click="deleteAddr(captchaInfo.id, index)">删除</button>
                             </label>
                         </div>
-                        <label for="input-pc-cami">卡密</label>
-                        <input type="password" id="input-pc-cami" v-model="captchaInfo.cami" v-show="!showPcCami">
-                        <label for="input-pc-cami-1"></label>
-                        <input type="text" id="input-pc-cami-1" v-model="captchaInfo.cami" v-show="showPcCami">
-                        <label for="input-pc-author" v-show="pcAuthorShow">author</label>
-                        <input id="input-pc-author" v-show="pcAuthorShow" v-model="captchaInfo.cami">
-                        <button v-on:click="changePcCamiShow()">显示/隐藏</button>
+                        <label>
+                            卡密
+                            <input :type="showPcCami? 'text': 'password'" v-model="captchaInfo.cami">
+                            <button v-on:click="changePcCamiShow()">显示/隐藏</button>
+                        </label>
+
+                        <label v-show="pcAuthorShow">
+                            author
+                            <input v-show="pcAuthorShow" v-model="captchaInfo.cami">
+                        </label>
                         <br/>
                         <button v-on:click="testCaptcha(captchaInfo.id)">测试验证码</button>
                         <button v-on:click="showAccountInfo(captchaInfo.id)">查看余额</button>
+                        <br/>
+                        <br/>
+                        <span>限定下述时间可用</span>
+                        <button @click="addValidTime(captchaInfo)">添加</button>
+                        <div v-for="(timeList, index) in captchaInfo.validTimeList">
+                            <label>
+                                <select v-model="timeList[0]">
+                                    <option v-for="hour in 24">{{hour - 1}}</option>
+                                </select>
+                                <span>:</span>
+                                <select v-model="timeList[1]">
+                                    <option v-for="minute in 60">{{minute - 1}}</option>
+                                </select>
+                                <span>-</span>
+                                <select v-model="timeList[2]">
+                                    <option v-for="hour in 24">{{hour - 1}}</option>
+                                </select>
+                                <span>:</span>
+                                <select v-model="timeList[3]">
+                                    <option v-for="minute in 60">{{minute - 1}}</option>
+                                </select>
+                                <button @click="deleteValidTime(captchaInfo, index)">删除</button>
+                            </label>
+                        </div>
+                        <div v-show="captchaInfo.validTimeList == null || captchaInfo.validTimeList.length === 0">
+                            <i>全天均可用</i>
+                        </div>
                     </div>
-
-
                 </div>
                 <hr>
+                <hr>
 
-                <input id="checkbox-lowBalanceRemind" type="checkbox" v-model="captchaConfig.lowBalanceRemind">
-                <label for="checkbox-lowBalanceRemind">
+                <label>
+                    <input type="checkbox" v-model="captchaConfig.lowBalanceRemind">
                     余额低于
-                    <label for="input-lowBalanceNum"></label>
-                    <input id="input-lowBalanceNum" v-model="captchaConfig.lowBalanceNum" class="ms-input-small">
+                    <input v-model="captchaConfig.lowBalanceNum" class="ms-input-small">
                     元，开启邮件提醒
                 </label>
                 <button onclick="jumpToMailSettingPage()">转到邮箱设置页</button>
                 <br/>
                 <span>打码次序</span>
                 <template v-for="index in captchaConfig.captchaWay.length">
-                    <label for="select-captchaWay"></label>
-                    <select id="select-captchaWay" v-model="captchaConfig.captchaWay[index - 1]">
-                        <option v-for="captchaWay in totalCaptchaWayList" :value="captchaWay.id">{{captchaWay.captchaName}}</option>
-                    </select>
+                    <label>
+                        <select v-model="captchaConfig.captchaWay[index - 1]">
+                            <option v-for="captchaWay in totalCaptchaWayList" :value="captchaWay.id">
+                                {{captchaWay.captchaName}}
+                            </option>
+                        </select>
+                    </label>
                 </template>
 
                 <hr>
@@ -229,67 +308,99 @@
             <div style="border: black solid 1px">
                 <ul>
                     <li>
-                        <label for="input-captureInterval">识屏间隔(毫秒)</label>
-                        <input type="number" id="input-captureInterval" v-model="userConfig.captureInterval"
-                               class="ms-input"><br/>
+                        <label>
+                            识屏间隔(毫秒)
+                            <input type="number" v-model="userConfig.captureInterval" class="ms-input"><br/>
+                        </label>
                     </li>
                     <li>
-                        <label for="select-defaultChoiceAnswer">识别出现异常的默认选择</label>
-                        <select id="select-defaultChoiceAnswer" v-model="userConfig.defaultChoiceAnswer">
-                            <option v-for="item in answerChoices" :value="item.title">{{item.option}}</option>
-                        </select>
+                        <label>
+                            检测验证码模式
+                            <select v-model="userConfig.captchaDetectType">
+                                <option value="0">图片匹配(旧)</option>
+                                <option value="1">颜色匹配(新)</option>
+                            </select>
+                        </label>
                     </li>
                     <li>
-                        <label for="input-captchaAppearDelay">当出现验证码后经过</label>
-                        <input id="input-captchaAppearDelay" v-model="userConfig.captchaAppearDelay" type="number"
-                               class="ms-input">
-                        <label for="input-keyPressAfterCaptchaShow">毫秒，按下键盘按键</label>
-                        <input id="input-keyPressAfterCaptchaShow" v-model="userConfig.keyPressAfterCaptchaShow"
-                               class="string-input">
+                        <label>
+                            识别出现异常的默认选择
+                            <select v-model="userConfig.defaultChoiceAnswer">
+                                <option v-for="item in answerChoices" :value="item.title">{{item.option}}</option>
+                            </select>
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            当出现验证码后经过
+                            <input v-model="userConfig.captchaAppearDelay" type="number" class="ms-input">
+                        </label>
+                        <label>
+                            毫秒，按下键盘按键
+                            <input v-model="userConfig.keyPressAfterCaptchaShow" class="string-input">
+                        </label>
                         <br/>
-                        <label for="input-keyPressDelayAfterCaptchaDisappear">当验证码消失后经过</label>
-                        <input id="input-keyPressDelayAfterCaptchaDisappear"
-                               v-model="userConfig.keyPressDelayAfterCaptchaDisappear"
-                               type="number" class="ms-input">
-                        <label for="input-keyPressAfterCaptchaDisappear">毫秒，按下键盘按键</label>
-                        <input id="input-keyPressAfterCaptchaDisappear"
-                               v-model="userConfig.keyPressAfterCaptchaDisappear"
-                               class="string-input">
+                        <label>
+                            当验证码消失后经过
+                            <input v-model="userConfig.keyPressDelayAfterCaptchaDisappear" type="number"
+                                   class="ms-input">
+                        </label>
+                        <label>
+                            毫秒，按下键盘按键
+                            <input v-model="userConfig.keyPressAfterCaptchaDisappear"
+                                   class="string-input">
+                        </label>
                     </li>
                     <li>
-                        <label for="input-pveFlopBonusAppearDelay">当出现副本大翻牌后经过</label>
-                        <input id="input-pveFlopBonusAppearDelay" v-model="userConfig.pveFlopBonusAppearDelay"
-                               type="number"
-                               class="ms-input">
-                        <label for="input-keyPressAfterPveFlopBonus">毫秒，按下键盘按键</label>
-                        <input id="input-keyPressAfterPveFlopBonus" v-model="userConfig.keyPressAfterPveFlopBonus"
-                               class="string-input">
-                        <label for="checkbox-pveFlopBonusCapture">并且截屏</label>
-                        <input id="checkbox-pveFlopBonusCapture" v-model="userConfig.pveFlopBonusCapture"
-                               type="checkbox">
-                        <label for="checkbox-pveFlopBonusCaptureMosaic">名字打码(另保存)</label>
-                        <input id="checkbox-pveFlopBonusCaptureMosaic" v-model="userConfig.pveFlopBonusCaptureMosaic"
-                               type="checkbox">
+                        <label>
+                            验证后删除验证码
+                            <input v-model="userConfig.noSaveCaptchaImg" type="checkbox">
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            当出现副本大翻牌后经过
+                            <input v-model="userConfig.pveFlopBonusAppearDelay" type="number" class="ms-input">
+                        </label>
+
+                        <label>
+                            毫秒，按下键盘按键
+                            <input v-model="userConfig.keyPressAfterPveFlopBonus" class="string-input">
+                        </label>
+
+                        <label>
+                            并且截屏
+                            <input v-model="userConfig.pveFlopBonusCapture" type="checkbox">
+                        </label>
+
+                        <label>
+                            名字打码(另保存)
+                            <input v-model="userConfig.pveFlopBonusCaptureMosaic" type="checkbox">
+                        </label>
+
                         <br/>
-                        <label for="input-pveFlopBonusDisappearDelay">当副本大翻牌消失后经过</label>
-                        <input id="input-pveFlopBonusDisappearDelay" v-model="userConfig.pveFlopBonusDisappearDelay"
-                               type="number"
-                               class="ms-input">
-                        <label for="input-keyPressAfterPveFlopBonusDisappear">毫秒，按下键盘按键</label>
-                        <input id="input-keyPressAfterPveFlopBonusDisappear"
-                               v-model="userConfig.keyPressAfterPveFlopBonusDisappear"
-                               class="string-input">
+                        <label>
+                            当副本大翻牌消失后经过
+                            <input v-model="userConfig.pveFlopBonusDisappearDelay" type="number" class="ms-input">
+                        </label>
+
+                        <label>
+                            毫秒，按下键盘按键
+                            <input v-model="userConfig.keyPressAfterPveFlopBonusDisappear" class="string-input">
+                        </label>
                     </li>
                     <li>
-                        <label for="input-logPrintInterval">窗口运行每次打印的频率(毫秒)</label>
-                        <input id="input-logPrintInterval" v-model="userConfig.logPrintInterval" type="number"
-                               class="ms-input"><br/>
+                        <label>
+                            窗口运行每次打印的频率(毫秒)
+                            <input v-model="userConfig.logPrintInterval" type="number" class="ms-input"><br/>
+                        </label>
+
                     </li>
                     <li>
-                        <label for="input-detectNewWindowInterval">检测新的游戏窗口的时间(毫秒)</label>
-                        <input id="input-detectNewWindowInterval" v-model="userConfig.detectNewWindowInterval"
-                               type="number"
-                               class="ms-input">
+                        <label>
+                            检测新的游戏窗口的时间(毫秒)
+                            <input v-model="userConfig.detectNewWindowInterval" type="number" class="ms-input">
+                        </label>
                     </li>
                 </ul>
 
@@ -309,25 +420,38 @@
             <h3>{{tabName}}</h3><span>掉线、页面异常、离线等检测</span>
             <hr>
 
-            <label for="input-detectOfflineDelay">检测时间间隔</label>
-            <input id="input-detectOfflineDelay" type="number" class="ms-input" v-model="offlineDetection.delay"
-                   min="5000">
-            <label for="checkbox-detectOfflineCheckbox">毫秒，并且邮件提醒</label>
-            <input id="checkbox-detectOfflineCheckbox" type="checkbox" v-model="offlineDetection.emailRemind">
+            <label>
+                检测时间间隔
+                <input type="number" class="ms-input" v-model="offlineDetection.delay" min="5000">
+            </label>
+            <label>
+                毫秒，并且邮件提醒
+                <input type="checkbox" v-model="offlineDetection.emailRemind">
+            </label>
             <button onclick="jumpToMailSettingPage()">转到邮箱设置页</button>
             <br/>
             <span>请根据自身情况设置间隔，出于性能考虑，请不要低于 5000 毫秒。</span>
             <hr>
-            <label for="offline-checkBox">游戏断线提醒</label><input id="offline-checkBox" type="checkbox"
-                                                                     v-model="offlineDetection.disconnect"><br/>
-            <label for="token-checkBox">凭证过期提醒</label><input id="token-checkBox" type="checkbox"
-                                                                   v-model="offlineDetection.tokenExpired"><br/>
-            <label for="offsite-checkBox">异地登录提醒</label><input id="offsite-checkBox" type="checkbox"
-                                                                     v-model="offlineDetection.offsite"><br/>
-            <label for="leave-game-checkBox">离开游戏弹窗</label><input id="leave-game-checkBox" type="checkbox"
-                                                                        v-model="offlineDetection.leaveGame"><br/>
-            <label for="white-game-checkBox">游戏白屏检测</label><input id="white-game-checkBox" type="checkbox"
-                                                                        v-model="offlineDetection.whiteScreen">
+            <label>
+                游戏断线提醒
+                <input type="checkbox" v-model="offlineDetection.disconnect"><br/>
+            </label>
+            <label>
+                凭证过期提醒
+                <input type="checkbox" v-model="offlineDetection.tokenExpired"><br/>
+            </label>
+            <label>
+                异地登录提醒
+                <input type="checkbox" v-model="offlineDetection.offsite"><br/>
+            </label>
+            <label>
+                离开游戏弹窗
+                <input type="checkbox" v-model="offlineDetection.leaveGame"><br/>
+            </label>
+            <label>
+                游戏白屏检测
+                <input type="checkbox" v-model="offlineDetection.whiteScreen">
+            </label>
             <span>（试验版）</span><br/>
             <hr>
             <button v-on:click="update()">保存</button>
@@ -338,9 +462,7 @@
             <h3>{{tabName}}</h3>
             <span>用来自动化挂物品到拍卖场。自动识别数量和物品名称，计算价格和是否拍卖，然后根据条件挂拍卖场。</span>
             <hr>
-            <span v-for="tab in tabs">
-             <button v-on:click="changeTab(tab)">{{tab.name}}</button>
-        </span>
+            <button v-for="tab in tabs" v-on:click="changeTab(tab)">{{tab.name}}</button>
             <hr>
             <hr>
             <div v-show="selectedTab === '使用界面'">
@@ -348,43 +470,48 @@
                 <button v-on:click="stopAll()">停止所有句柄运行</button>
                 <br/>
                 <button v-on:click="getDdtHwnds()">获取全部句柄</button>
-                <label for="checkbox-auctionConfirm">确认拍卖</label>
-                <input type="checkbox" id="checkbox-auctionConfirm" v-model="auctionData.confirm">
+                <label>
+                    确认拍卖
+                    <input type="checkbox" v-model="auctionData.confirm">
+                </label>
                 <div>
-                <span v-for="hwnd in hwnds">
-                    <label :for="'hwnd-' + hwnd.hwnd">{{hwnd.hwnd}}</label>
-                    <label>
-                        <input :id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
-                    </label>
-                    <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
-                    <button v-on:click="sell(hwnd.hwnd)">运行</button>
-                    <button v-on:click="stop(hwnd.hwnd)">停止</button>
-                    <br/>
-                </span>
+                    <span v-for="hwnd in hwnds">
+                        <label>
+                            {{hwnd.hwnd}}
+                            <input :id="'hwnd-' + hwnd.hwnd" type="checkbox" v-model="hwnd.enabled">
+                        </label>
+                        <button v-on:click="getGameShot(hwnd.hwnd)">查看游戏截图</button>
+                        <button v-on:click="sell(hwnd.hwnd)">运行</button>
+                        <button v-on:click="stop(hwnd.hwnd)">停止</button>
+                        <br/>
+                    </span>
                     <span v-show="hwnds.length === 0"><i>没有获取可运行的句柄，请点击“获取”</i></span>
-
                 </div>
                 <hr>
 
                 <div id="auction-data-filter">
-                    <label for="filter-condition">筛选条件</label>
-                    <input id="filter-condition" v-model="newFilterCondition">
+                    <label>
+                        筛选条件
+                        <input v-model="newFilterCondition">
+                    </label>
                     <button v-on:click="addFilterConditionList(newFilterCondition)">添加</button>
                     <button v-on:click="deleteFilterConditionList()">删除</button>
                     <button v-on:click="saveFilterConditionList()">保存</button>
                     <br/>
                     <span v-for="button in filterConditionButtonList">
-                <button :class="button.chosen === true? 'button-chosen': ''"
-                        v-on:click="changeAuctionFilterList(button)">{{button.condition}}</button>
-            </span>
+                        <button :class="button.chosen? 'button-chosen': ''"
+                                v-on:click="changeAuctionFilterList(button)">{{button.condition}}</button>
+                    </span>
                 </div>
 
                 <hr>
                 <button v-on:click="savaItems()">保存</button>
                 <button v-on:click="getItems()">重载</button>
                 <button v-on:click="addNewItem()">添加一行</button>
-                <label for="checkbox-autoAddUnknown">是否自动添加未识别的OCR物品</label>
-                <input id="checkbox-autoAddUnknown" type="checkbox" v-model="auctionData.autoAddUnknown">
+                <label>
+                    是否自动添加未识别的OCR物品
+                    <input type="checkbox" v-model="auctionData.autoAddUnknown">
+                </label>
 
                 <div>
                     <label>
@@ -664,7 +791,7 @@
         <div class="tab" id="capture">
             <h3>截屏查看</h3>
             <hr>
-            <span>刷新频率：{{interval == null ? "无" : (interval + "毫秒")}}</span>
+            <span>刷新频率：{{interval? (interval + "毫秒"): "无"}}</span>
             <br/>
             <span v-for="i in intervalList"><button v-on:click="changeInterval(i)">{{i}}</button></span>
             <button v-on:click="changeInterval(interval - 100)">-100</button>
@@ -710,8 +837,8 @@
                 <strong>什么是补偿截图</strong>
                 <br/>
                 <span>
-                某些人的电脑可能由于设置原因，游戏画面的图片样本和默认自带的图库有些许差别，导致找图无法找到。所以这个功能是在找图找不到的情况下，自行截图游戏画面的样图，作为自己的识别图片。
-            </span>
+                    某些人的电脑可能由于设置原因，游戏画面的图片样本和默认自带的图库有些许差别，导致找图无法找到。所以这个功能是在找图找不到的情况下，自行截图游戏画面的样图，作为自己的识别图片。
+                </span>
                 <hr>
                 <button v-on:click="openResourceDir()">打开模板图片文件夹</button>
                 <hr>
@@ -795,10 +922,12 @@
                         <td>{{file.filename}}</td>
                         <td>{{getReadableFileSizeString(file.size)}}</td>
                         <td>
-                            <button v-show="file.isDir" v-on:click="getLocalFileWithDir(currentPath + file.filename + '/')">进入</button>
+                            <button v-show="file.isDir"
+                                    v-on:click="getLocalFileWithDir(currentPath + file.filename + '/')">进入
+                            </button>
                             <a v-show="!file.isDir" :href="currentPath + file.filename" target="_blank">打开</a>
                         </td>
-                        <td>{{file.isDir? "文件夹": "文件"}}</td>
+                        <td>{{file.isDir ? "文件夹" : "文件"}}</td>
                     </tr>
                 </template>
                 </tbody>
@@ -811,21 +940,27 @@
             <hr>
             <span>若点击操作无反应，请启动 “运行-管理员.exe”，部分人的可能存在不提高权限不能点击的情况</span><br/>
             <span class="red-font">如果以下都不能正常使用，那么本程序可能将无法正常使用</span><br/>
-            <label for="input-testDelay">以下操作延迟时间(毫秒)</label>
-            <input id="input-testDelay" v-model="test.testDelay" type="number" value="500" class="ms-input">
+            <label>
+                以下操作延迟时间(毫秒)
+                <input v-model="test.testDelay" type="number" value="500" class="ms-input">
+            </label>
             <div id="div-click">
-                <label for="input-clickX">X坐标</label>
-                <input id="input-clickX" v-model="test.clickX" type="number" maxlength="4" max="9999" value="530"
-                       class="ms-input">
-                <label for="input-clickY">Y坐标</label>
-                <input id="input-clickY" v-model="test.clickY" type="number" maxlength="4" max="9999" value="585"
-                       class="ms-input">
+                <label>
+                    X坐标
+                    <input v-model="test.clickX" type="number" maxlength="4" max="9999" value="530" class="ms-input">
+                </label>
+                <label>
+                    Y坐标
+                    <input v-model="test.clickY" type="number" maxlength="4" max="9999" value="585" class="ms-input">
+                </label>
                 <button v-on:click="testClick()">测试点击该坐标</button>
                 <span>(530,585)坐标正常为“充值”按钮，可以根据自己需要点击其他位置</span>
             </div>
             <div id="div-keyPress">
-                <label for="input-keyPress">按下键盘的按键(仅支持Fn)</label>
-                <input id="input-keyPress" v-model="test.keyPress" value="F5" class="string-input">
+                <label>
+                    按下键盘的按键(仅支持Fn)
+                    <input v-model="test.keyPress" value="F5" class="string-input">
+                </label>
                 <button v-on:click="testKeyPress()">测试按键</button>
                 <span>若设置F5则看当前页面是否刷新，或者根据自己需要设置其他Fn按键</span>
             </div>
@@ -863,7 +998,7 @@
             <h3>设置相关</h3>
             <hr>
             <span v-for="tab in tabs">
-             <button v-on:click="changeTab(tab)">{{tab.name}}</button>
+                <button v-on:click="changeTab(tab)">{{tab.name}}</button>
             </span>
             <hr>
 
@@ -894,12 +1029,14 @@
                 <br/>
                 <span>这里有两种调用方式。一种是“大漠”：用大漠插件内置的，一种是“Java Robot”，用 Java 内置的方式调用。如果一种方法存在问题，可以切换另一种。</span>
                 <br/>
-                <label for="keyPadPressWay-dm">大漠</label>
-                <input id="keyPadPressWay-dm" type="radio" name="keyPadPressGroup" value="dm"
-                       v-model="settingConfig.keyPadPressWay">
-                <label for="keyPadPressWay-robot">| Java Robot</label>
-                <input id="keyPadPressWay-robot" type="radio" name="keyPadPressGroup" value="robot"
-                       v-model="settingConfig.keyPadPressWay">
+                <label>
+                    大漠
+                    <input type="radio" name="keyPadPressGroup" value="dm" v-model="settingConfig.keyPadPressWay">
+                </label>
+                <label>
+                    | Java Robot
+                    <input type="radio" name="keyPadPressGroup" value="robot" v-model="settingConfig.keyPadPressWay">
+                </label>
                 <hr>
                 <button v-on:click="update()">保存设置</button>
             </div>
@@ -908,35 +1045,50 @@
                 <h5>邮箱设置</h5>
                 <span>通过邮箱功能，可以进行相关功能的提醒</span><br/>
                 <br/>
-                <label for="input-emailFrom">发件人邮箱</label>
-                <input id="input-emailFrom" v-model="settingConfig.email.emailFrom" placeholder="收、发件人可相同">
+                <label>
+                    发件人邮箱
+                    <input v-model="settingConfig.email.emailFrom" placeholder="收、发件人可相同">
+                </label>
                 <br/>
-                <label for="input-emailPassword">发件人授权码</label>
-                <input id="input-emailPassword" v-model="settingConfig.email.emailPassword" type="password">
+                <label>
+                    发件人授权码
+                    <input v-model="settingConfig.email.emailPassword" type="password">
+                </label>
                 <br/>
-                <label for="input-emailTo">收件人邮箱列表</label>
-                <input id="input-emailTo" v-model="settingConfig.email.emailTo" placeholder="若多邮箱 请逗号分隔">
+                <label>
+                    收件人邮箱列表
+                    <input v-model="settingConfig.email.emailTo" placeholder="若多邮箱 请逗号分隔">
+                </label>
                 <hr>
-                <label for="hostNameInput">主机名</label>
-                <input id="hostNameInput" v-model="settingConfig.email.hostName">
+                <label>
+                    主机名
+                    <input v-model="settingConfig.email.hostName">
+                </label>
                 <hr>
                 <h5>高级设置</h5>
                 <span>本机设置：</span>
                 <br/>
-                <input type="checkbox" id="input-allowRemoteConnect" v-model="settingConfig.email.allowRemoteConnect">
-                <label for="input-allowRemoteConnect">是否允许远程方连接到本机</label>
+                <label>
+                    <input type="checkbox" v-model="settingConfig.email.allowRemoteConnect">
+                    是否允许远程方连接到本机
+                </label>
                 <br/>
                 <span>远程设置：</span>
                 <br/>
-                <label for="input-remoteSenderAddr">链接到远程的主机ip/域名地址</label>
-                <input id="input-remoteSenderAddr" v-model="settingConfig.email.remoteSenderAddr">
+                <label>
+                    链接到远程的主机ip/域名地址
+                    <input v-model="settingConfig.email.remoteSenderAddr">
+                </label>
                 <br/>
-                <input type="checkbox" id="input-enableRemoteSender" v-model="settingConfig.email.enableRemoteSender">
-                <label for="input-enableRemoteSender">启动远程发送功能</label>
+                <label>
+                    <input type="checkbox" v-model="settingConfig.email.enableRemoteSender">
+                    启动远程发送功能
+                </label>
                 <br/>
-                <input type="checkbox" id="input-useRemoteLocalConfigFirst"
-                       v-model="settingConfig.email.useRemoteLocalConfigFirst">
-                <label for="input-useRemoteLocalConfigFirst">优先使用远程发送方的邮箱配置发送邮件</label>
+                <label>
+                    <input type="checkbox" v-model="settingConfig.email.useRemoteLocalConfigFirst">
+                    优先使用远程发送方的邮箱配置发送邮件
+                </label>
                 <br/>
                 <label>此项功能为，一台电脑不能/不想发送邮件，那么使用远程有启用本程序的电脑进行发送。</label>
                 <hr>
@@ -1071,7 +1223,8 @@
                                 <td>{{getUpdateUpdateStrategyStr(fileInfo.updateStrategy)}}</td>
                                 <td>{{fileInfo.info}}</td>
                                 <td>
-                                    <template v-if="updateInfoVo.currentVersion === versionInfo.version || fileInfo.filename.indexOf('ddt-assistant') >= 0">
+                                    <template
+                                            v-if="updateInfoVo.currentVersion === versionInfo.version || fileInfo.filename.indexOf('ddt-assistant') >= 0">
                                         <button v-if="fileInfo.updateStrategy === 1 || fileInfo.updateStrategy === 2"
                                                 v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">更新
                                         </button>
@@ -1081,7 +1234,8 @@
                                                 v-on:click="updateFile(updateInfoVo.id, versionInfo.id, fileInfo.id)">删除
                                         </button>
                                     </template>
-                                    <template v-if="updateInfoVo.currentVersion !== versionInfo.version && fileInfo.filename.indexOf('ddt-assistant') < 0">
+                                    <template
+                                            v-if="updateInfoVo.currentVersion !== versionInfo.version && fileInfo.filename.indexOf('ddt-assistant') < 0">
                                         <span>请先更新Jar文件</span>
                                     </template>
                                 </td>

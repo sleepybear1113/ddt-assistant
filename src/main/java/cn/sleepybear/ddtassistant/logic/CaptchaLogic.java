@@ -13,7 +13,7 @@ import cn.sleepybear.ddtassistant.utils.captcha.BasePredictDto;
 import cn.sleepybear.ddtassistant.utils.captcha.BaseResponse;
 import cn.sleepybear.ddtassistant.utils.captcha.CaptchaInfo;
 import cn.sleepybear.ddtassistant.utils.captcha.CaptchaUtil;
-import cn.sleepybear.ddtassistant.utils.captcha.way.BaseCaptchaWay;
+import cn.sleepybear.ddtassistant.utils.captcha.BaseCaptchaWay;
 import cn.sleepybear.ddtassistant.vo.BindResultVo;
 import cn.sleepybear.ddtassistant.vo.StringRet;
 import jakarta.annotation.Resource;
@@ -148,7 +148,7 @@ public class CaptchaLogic {
     public StringRet getAccountInfo(Integer captchaInfoId) {
         CaptchaInfo captchaInfo = captchaConfig.getByCaptchaInfoId(captchaInfoId);
         if (captchaInfo == null) {
-            return StringRet.buildSuccess("无该类型账户信息");
+            return StringRet.buildSuccess("无该类型账户信息！请检查确认是否填写并且点击“保存打码设置”！");
         }
 
         BasePredictDto basePredictDto = BaseCaptchaWay.buildBaseCaptchaWay(captchaInfo).getBasePredictDto();

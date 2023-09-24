@@ -1,8 +1,6 @@
 package cn.sleepybear.ddtassistant.advice;
 
 import cn.sleepybear.ddtassistant.exception.FrontException;
-import cn.sleepybear.ddtassistant.vo.ResultCode;
-import cn.sleepybear.ddtassistant.vo.ResultCodeConstant;
 import jakarta.annotation.Nonnull;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -33,18 +31,18 @@ public class ControllerReturnAdvice implements ResponseBodyAdvice<Object> {
             return o;
         }
 
-        return new ResultCode(o);
+        return new ResultCode<>(o);
     }
 
     @ExceptionHandler(value = FrontException.class)
-    public ResultCode handlerGlobeMyException(HttpServletRequest request, FrontException exception) {
+    public <T> ResultCode<T> handlerGlobeMyException(HttpServletRequest request, FrontException exception) {
         log.warn("用户错误：" + exception.getMessage());
-        return new ResultCode(ResultCodeConstant.CodeEnum.COMMON_ERROR.getCode(), exception.getMessage(), null);
+        return new ResultCode<>(ResultCodeConstant.CodeEnum.COMMON_ERROR.getCode(), exception.getMessage(), null);
     }
 
     @ExceptionHandler(value = Exception.class)
-    public ResultCode handlerGlobeException(HttpServletRequest request, Exception exception) {
+    public <T> ResultCode<T> handlerGlobeException(HttpServletRequest request, Exception exception) {
         log.error("系统错误：" + exception.getMessage(), exception);
-        return new ResultCode(ResultCodeConstant.CodeEnum.SYSTEM_ERROR.getCode(), exception.getMessage(), null);
+        return new ResultCode<>(ResultCodeConstant.CodeEnum.SYSTEM_ERROR.getCode(), exception.getMessage(), null);
     }
 }
