@@ -163,6 +163,11 @@ public class CaptchaConstants {
                 return;
             }
 
+            List<String> serverAddressList = expiredCaptchaInfo.getServerAddressList();
+            if (CollectionUtils.isEmpty(serverAddressList) || !serverAddressList.contains(url)) {
+                return;
+            }
+
             BaseCaptchaWay baseCaptchaWay = BaseCaptchaWay.buildBaseCaptchaWay(expiredCaptchaInfo);
             BasePredictDto basePredictDto = baseCaptchaWay.getBasePredictDto();
 
