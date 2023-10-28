@@ -83,7 +83,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
             requestMaker.setConfig(RequestConfig.custom()
                     .setConnectionRequestTimeout(2000)
                     .setConnectTimeout(2000)
-                    .setSocketTimeout(2000)
+                    .setSocketTimeout(3500)
                     .build());
             HttpHelper httpHelper = new HttpHelper(requestMaker);
             HttpResponseHelper request = httpHelper.request();
