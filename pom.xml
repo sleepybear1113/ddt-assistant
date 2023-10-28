@@ -5,17 +5,17 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.4</version>
+        <version>3.1.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>cn.sleepybear</groupId>
     <artifactId>ddt-assistant</artifactId>
-    <version>3.0.1.1</version>
+    <version>3.0.1.2</version>
     <name>ddt-assistant</name>
     <description>ddt-assistant</description>
     <properties>
         <java.version>17</java.version>
-        <versions>11001</versions>
+        <versions>11012</versions>
     </properties>
     <dependencies>
         <dependency>

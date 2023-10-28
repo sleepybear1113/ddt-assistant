@@ -60,6 +60,7 @@ public abstract class BasePredictDto implements Serializable {
                     if (!testConnection(serverAddress)) {
                         // 测试连接失败，设置过期时间
                         CaptchaConstants.CAPTCHA_SERVER_CONNECT_FAIL_CACHER.set(key, System.currentTimeMillis(), CaptchaConstants.DEFAULT_EXPIRE_TIME);
+                        log.info("服务器地址 [{}] 连接失败，暂时跳过", serverAddress);
                         continue;
                     }
                 }

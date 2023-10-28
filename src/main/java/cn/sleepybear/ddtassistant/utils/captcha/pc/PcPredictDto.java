@@ -68,7 +68,7 @@ public class PcPredictDto extends BasePredictDto implements Serializable {
         }
 
         serverUrl = decryptHost(serverUrl);
-        return serverUrl + "/predict2";
+        return serverUrl + "/predict";
     }
 
     @Override

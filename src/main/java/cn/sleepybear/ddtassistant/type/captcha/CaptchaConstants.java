@@ -176,6 +176,8 @@ public class CaptchaConstants {
                 if (!basePredictDto.testConnection(url)) {
                     log.info("打码平台[{}]的服务器地址[{}]连接重试再次失败", expiredCaptchaInfo2.getCaptchaName(), url);
                     CAPTCHA_SERVER_CONNECT_FAIL_CACHER.set(key, System.currentTimeMillis(), DEFAULT_EXPIRE_TIME);
+                } else {
+                    log.info("打码平台[{}]的服务器地址[{}]连接重试成功", expiredCaptchaInfo2.getCaptchaName(), url);
                 }
             });
         });
